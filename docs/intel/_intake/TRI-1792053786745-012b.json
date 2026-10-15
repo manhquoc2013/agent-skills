@@ -1,0 +1,245 @@
+{
+  "request_id": "ses_ec240392dffeLSq0Yfk24k3dTK/msg_13eb92dad0010Y3Gq9UuJ4OaY6/call_00_vfXsxPqfdshyUjLK9PKK3197",
+  "decision_axes": {
+    "version": 1,
+    "scope": {
+      "files": 20,
+      "packages": 0,
+      "write_regions": 1
+    },
+    "risk": {
+      "status": "unassessed",
+      "groups": []
+    },
+    "complexity": "unassessed",
+    "execution": {
+      "owner": true,
+      "basis": "scope_envelope",
+      "parallelism": "not_inferred",
+      "local_batch_files": 8
+    }
+  },
+  "triage_id": "TRI-1792053786745-012b",
+  "created_at": 1792053786745,
+  "request_summary": "Tối ưu bộ skill agent-skills theo kết quả đối chiếu 6 nguồn tham khảo trong docs/references/: nâng cấp 10 skill/reference hiện có (TDD RED/GREEN enforcement, debugging stop-rule + technique refs, frontend priority table + dual-theme contrast, planning template, code-review depth tiers, code-simplification boundary, git worktree guards + integration menu, security retroactive verification, testing-patterns concurrency/property-based, definition-of-done maker-checker) + 3 skill mới (verification-before-completion, receiving-code-review, dispatching-parallel-agents) kèm eval case + cập nhật anatomy và README.",
+  "change_class": "C2",
+  "handling": "solo_lane",
+  "evidence": {
+    "edit_target_files": [
+      "docs/skill-anatomy.md",
+      "evals/cases/dispatching-parallel-agents.json",
+      "evals/cases/receiving-code-review.json",
+      "evals/cases/verification-before-completion.json",
+      "README.md",
+      "references/definition-of-done.md",
+      "references/testing-patterns.md",
+      "skills/code-review-and-quality/SKILL.md",
+      "skills/code-simplification/SKILL.md",
+      "skills/debugging-and-error-recovery/references/condition-based-waiting.md",
+      "skills/debugging-and-error-recovery/references/root-cause-tracing.md",
+      "skills/debugging-and-error-recovery/SKILL.md",
+      "skills/dispatching-parallel-agents/SKILL.md",
+      "skills/frontend-ui-engineering/SKILL.md",
+      "skills/git-workflow-and-versioning/SKILL.md",
+      "skills/planning-and-task-breakdown/SKILL.md",
+      "skills/receiving-code-review/SKILL.md",
+      "skills/security-and-hardening/SKILL.md",
+      "skills/test-driven-development/SKILL.md",
+      "skills/verification-before-completion/SKILL.md"
+    ],
+    "impact_files": [
+      "docs/skill-anatomy.md",
+      "evals/cases/dispatching-parallel-agents.json",
+      "evals/cases/receiving-code-review.json",
+      "evals/cases/verification-before-completion.json",
+      "README.md",
+      "references/definition-of-done.md",
+      "references/testing-patterns.md",
+      "skills/code-review-and-quality/SKILL.md",
+      "skills/code-simplification/SKILL.md",
+      "skills/debugging-and-error-recovery/references/condition-based-waiting.md",
+      "skills/debugging-and-error-recovery/references/root-cause-tracing.md",
+      "skills/debugging-and-error-recovery/SKILL.md",
+      "skills/dispatching-parallel-agents/SKILL.md",
+      "skills/frontend-ui-engineering/SKILL.md",
+      "skills/git-workflow-and-versioning/SKILL.md",
+      "skills/planning-and-task-breakdown/SKILL.md",
+      "skills/receiving-code-review/SKILL.md",
+      "skills/security-and-hardening/SKILL.md",
+      "skills/test-driven-development/SKILL.md",
+      "skills/verification-before-completion/SKILL.md"
+    ],
+    "packages": [],
+    "shape": "brownfield",
+    "write_scope_clusters": 1,
+    "brownfield_extend": false,
+    "one_way_door_hits": [],
+    "risk_effects": [],
+    "dev_footprint": "unknown"
+  },
+  "rationale": "C2: 20 edit-target files exceed the inline gate (20 edit-target files / 0 package(s) / 1 write-scope clusters / co-change unassessed / shape=brownfield)",
+  "entry_point": "Repo là plugin/marketplace Claude Code; người dùng cài và agent kích hoạt skill qua description. Mọi thay đổi được kiểm bằng CI: validate-skills.js, validate-reference-links.js, validate-artifact-paths.js, run-evals.js.",
+  "blast_radius": 20,
+  "done_oracle": "Mọi file sửa/mới tuân đúng docs/skill-anatomy.md (markdown-first, frontmatter chuẩn, model-neutral, tiếng Anh, SKILL.md < 500 dòng); 3 skill mới có eval case đúng schema (≥3 trigger dương, ≥2 trigger âm, ≥1 behavioral) và được liệt kê trong README; mỗi quy tắc thêm vào truy được về một file dẫn chứng dưới docs/references/ đã đọc; không sao chép nguyên văn format của nguồn tham khảo; các phần skill hiện có không bị xóa trừ khi thay bằng nội dung mạnh hơn có cùng phạm vi.",
+  "verification_commands": [
+    {
+      "command": "node scripts/validate-skills.js",
+      "cwd": "C:\\Works\\Tools\\agent-skills",
+      "timeout_ms": 120000
+    },
+    {
+      "command": "node scripts/validate-reference-links.js",
+      "cwd": "C:\\Works\\Tools\\agent-skills",
+      "timeout_ms": 120000
+    },
+    {
+      "command": "node scripts/validate-artifact-paths.js",
+      "cwd": "C:\\Works\\Tools\\agent-skills",
+      "timeout_ms": 120000
+    }
+  ],
+  "change_type": "implementation",
+  "declared_write_scope": [
+    "docs/skill-anatomy.md",
+    "evals/cases/dispatching-parallel-agents.json",
+    "evals/cases/receiving-code-review.json",
+    "evals/cases/verification-before-completion.json",
+    "README.md",
+    "references/definition-of-done.md",
+    "references/testing-patterns.md",
+    "skills/code-review-and-quality/SKILL.md",
+    "skills/code-simplification/SKILL.md",
+    "skills/debugging-and-error-recovery/references/condition-based-waiting.md",
+    "skills/debugging-and-error-recovery/references/root-cause-tracing.md",
+    "skills/debugging-and-error-recovery/SKILL.md",
+    "skills/dispatching-parallel-agents/SKILL.md",
+    "skills/frontend-ui-engineering/SKILL.md",
+    "skills/git-workflow-and-versioning/SKILL.md",
+    "skills/planning-and-task-breakdown/SKILL.md",
+    "skills/receiving-code-review/SKILL.md",
+    "skills/security-and-hardening/SKILL.md",
+    "skills/test-driven-development/SKILL.md",
+    "skills/verification-before-completion/SKILL.md"
+  ],
+  "seam_claims": [
+    {
+      "file": "docs/skill-anatomy.md",
+      "line": 34,
+      "quote": "Top-level keys are limited to the [Agent Skills specification](https://agentskills.io) fields: `name`, `description`, `license`, `compatibility`, `metadata`, and `allowed-tools`.",
+      "source_hash": "1cc86114099946a26890bbe93fb54a46ff76b59496905af403fb8635493d94f3",
+      "quote_hash": "2b335e6b8fcdcaf4e9ebe0f70c886816031e4c10e3d5a718ea6f686cc7437d03",
+      "note": "frontmatter contract to keep while adding optional sections"
+    },
+    {
+      "file": "docs/skill-anatomy.md",
+      "line": 46,
+      "quote": "### Standard Sections (Recommended Pattern)",
+      "source_hash": "1cc86114099946a26890bbe93fb54a46ff76b59496905af403fb8635493d94f3",
+      "quote_hash": "7bba13eae87045b8528d9df8910e18d30b75684c8235be9d4fdc360b1c2ad20c"
+    },
+    {
+      "file": "skills/test-driven-development/SKILL.md",
+      "line": 49,
+      "quote": "### Step 1: RED — Write a Failing Test",
+      "source_hash": "910826de7f019df9cc551a2796ae302630a89b3a9840d2b24d34e96a68653070",
+      "quote_hash": "7ea33d721807916a56a753fc469c8c801e43baf331235ca2b53b85948480b99a"
+    },
+    {
+      "file": "skills/test-driven-development/SKILL.md",
+      "line": 51,
+      "quote": "Write the test first. It must fail. A test that passes immediately proves nothing.",
+      "source_hash": "910826de7f019df9cc551a2796ae302630a89b3a9840d2b24d34e96a68653070",
+      "quote_hash": "7fa5b8288a3a45be39a3d4f7d9937cce10f3751b35b28c4f782a81cfe03e69c1"
+    },
+    {
+      "file": "skills/debugging-and-error-recovery/SKILL.md",
+      "line": 23,
+      "quote": "## The Stop-the-Line Rule",
+      "source_hash": "4502894e2046a35e7b4803c9918bad6711c79e601d906a685b885ecf3a3a9c7b",
+      "quote_hash": "dad4777611539bac8534a348f7144de81a5cf9e854001b7d49d79dfc817f700c"
+    },
+    {
+      "file": "skills/debugging-and-error-recovery/SKILL.md",
+      "line": 276,
+      "quote": "## Treating Error Output as Untrusted Data",
+      "source_hash": "4502894e2046a35e7b4803c9918bad6711c79e601d906a685b885ecf3a3a9c7b",
+      "quote_hash": "034448eae2e56184c66343a93bd5b7275fff409202e6ef1edb131d37a5cf6744"
+    },
+    {
+      "file": "skills/frontend-ui-engineering/SKILL.md",
+      "line": 344,
+      "quote": "**The SEE IT gate.** A UI change you have not *looked at* is not finished",
+      "source_hash": "ea19f27b510a8343428f9a6106ad68015ad5693523f707a71fb12829561463b0",
+      "quote_hash": "c2636c8b5a12b85fe9f2bcd72760b9a8d03ed48dc0d0007e7d6da318cc29ebc8"
+    },
+    {
+      "file": "skills/frontend-ui-engineering/SKILL.md",
+      "line": 174,
+      "quote": "- Use semantic color tokens: `text-primary`, `bg-surface`, `border-default` — not raw hex values",
+      "source_hash": "ea19f27b510a8343428f9a6106ad68015ad5693523f707a71fb12829561463b0",
+      "quote_hash": "a5c0096e47474c60e0b285ed7ee274603ef4ce089c9c80d70d447104d923ed68"
+    },
+    {
+      "file": "skills/planning-and-task-breakdown/SKILL.md",
+      "line": 81,
+      "quote": "Each task follows this structure, whether it lands in the markdown task list or as an item in an external tracker (see Output Files):",
+      "source_hash": "b40b6a54d295964c05e7be12d130da7f6b62f7172109a1f521d8f36ea1dad50d",
+      "quote_hash": "08c476f16a406412aef0c2969efbf25285e40dbba52bc293ddf23314a25c3cfd"
+    },
+    {
+      "file": "skills/code-review-and-quality/SKILL.md",
+      "line": 24,
+      "quote": "## The Five-Axis Review",
+      "source_hash": "5e98956a81edbb2f2e11be3cddca5f997339a5e34f811f12b386ee9423cf1711",
+      "quote_hash": "5e022bef888da459d8210318f6e8871d037d10c9a8cdbfa771bdaccdc1f26908"
+    },
+    {
+      "file": "skills/code-simplification/SKILL.md",
+      "line": 30,
+      "quote": "## The Five Principles",
+      "source_hash": "f0c5ed754057eb0c1e027e2587f59de816651feb5e837242296c43ea21cf621d",
+      "quote_hash": "e6df7cb624a54ffbb3286a90ea0d86af6454867443d36a055b8368c1f43c7ea9"
+    },
+    {
+      "file": "skills/git-workflow-and-versioning/SKILL.md",
+      "line": 143,
+      "quote": "## Working with Worktrees",
+      "source_hash": "2d86c37c784d3562223c89632c1d60dff6265678024c09ca8209f9f07f0a2a48",
+      "quote_hash": "ed068b84640e61e489d489142f68a55fb115de5f775ff27fb8815f44fd1e22cf"
+    },
+    {
+      "file": "skills/security-and-hardening/SKILL.md",
+      "line": 23,
+      "quote": "## Process: Threat Model First",
+      "source_hash": "b93afed6062a85bbe9f6e7fbd4ce864dc90ec7510a66644a04e786fca0ef0cfa",
+      "quote_hash": "5603b61a72c6ef4efb2bf4e4f675c04e2669bf36c4ee19f1df4037c2b56b28b1"
+    },
+    {
+      "file": "references/testing-patterns.md",
+      "line": 224,
+      "quote": "## Test Anti-Patterns",
+      "source_hash": "f0bf05acd0edcadc27297ad5b74f104c8103ccfedba1a05cd6d6ae4af8364c56",
+      "quote_hash": "5ee615e02e8284a1127d570af9e75354e5176f946979173cf39611a4f77c3246"
+    },
+    {
+      "file": "references/definition-of-done.md",
+      "line": 17,
+      "quote": "## The Standing Checklist",
+      "source_hash": "d1c75d2ae65d2c7a9cd01f93fa8de63e00e75f2fe5d08be224d576157054dcee",
+      "quote_hash": "02d78fd70d98506e73dd01ba1a55ca5f10051dea5725a35d48af1aed17729b52"
+    }
+  ],
+  "source_snapshot": {
+    "vcs": "git",
+    "head": "0444a8056580d45acdb7b5e7dc6b9afd8216ccb9",
+    "dirty": true,
+    "captured_at": 1792053787015
+  },
+  "budget": {
+    "wall_clock_ms": 6780000,
+    "turns": 366,
+    "turns_used": 87
+  },
+  "risk_facts": [],
+  "risk_facts_source": "declared"
+}

@@ -1,0 +1,42 @@
+{
+  "skill_name": "receiving-code-review",
+  "trigger": {
+    "positive": [
+      {
+        "prompt": "Here are my review comments on your PR — go through them",
+        "top_k": 3
+      },
+      {
+        "prompt": "The reviewer says your change breaks the API — check and respond",
+        "top_k": 3
+      },
+      {
+        "prompt": "I left 6 comments on the diff, fix them",
+        "top_k": 3
+      }
+    ],
+    "negative": [
+      {
+        "prompt": "Review this pull request across correctness and security",
+        "owner": "code-review-and-quality"
+      },
+      {
+        "prompt": "Split my messy diff into clean atomic commits",
+        "owner": "git-workflow-and-versioning"
+      }
+    ]
+  },
+  "evals": [
+    {
+      "id": 1,
+      "kind": "dialogue",
+      "prompt": "A reviewer commented on your PR: \"This endpoint is unused, remove it.\" The endpoint is actually called by the CLI. Respond.",
+      "expected_output": "A reasoned pushback citing the call site, or a removal after verifying actual usage",
+      "expectations": [
+        "The agent checks actual usage before agreeing or removing",
+        "No performative agreement (\"you're absolutely right\") appears",
+        "The reply is a technical argument or an action, not a social pleasantry"
+      ]
+    }
+  ]
+}

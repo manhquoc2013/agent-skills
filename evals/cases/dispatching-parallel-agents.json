@@ -1,0 +1,43 @@
+{
+  "skill_name": "dispatching-parallel-agents",
+  "trigger": {
+    "positive": [
+      {
+        "prompt": "Three test files fail with different causes — investigate them in parallel",
+        "top_k": 3
+      },
+      {
+        "prompt": "I have five independent bugs across the repo, dispatch agents for each",
+        "top_k": 3
+      },
+      {
+        "prompt": "Run these two investigations concurrently, they don't share files",
+        "top_k": 3
+      }
+    ],
+    "negative": [
+      {
+        "prompt": "The login page is broken after yesterday's deploy",
+        "owner": "debugging-and-error-recovery"
+      },
+      {
+        "prompt": "Which skill should I use for this task?",
+        "owner": "using-agent-skills"
+      }
+    ]
+  },
+  "evals": [
+    {
+      "id": 1,
+      "kind": "dialogue",
+      "prompt": "Four test files fail: auth, billing, notifications, dashboard. I suspect they're independent. Split the work.",
+      "expected_output": "One brief per domain, each with scope, goal, constraints, and expected output, plus a note on issuing them together",
+      "expectations": [
+        "The response groups failures by subsystem, one brief per independent domain",
+        "Each brief names scope, constraints, and expected output",
+        "The response notes that dispatches issued together run in parallel",
+        "Related failures are not split blindly if they share a cause"
+      ]
+    }
+  ]
+}
