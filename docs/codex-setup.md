@@ -5,7 +5,7 @@ This repository is also a [Codex plugin](https://developers.openai.com/codex/plu
 ## Install
 
 ```bash
-codex plugin marketplace add addyosmani/agent-skills
+codex plugin marketplace add manhquoc2013/agent-skills
 codex plugin add agent-skills@agent-skills
 ```
 

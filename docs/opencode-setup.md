@@ -23,14 +23,14 @@ After either step, create your own project-local `AGENTS.md` and, if you want th
 The fastest path is the open [`skills` CLI](https://github.com/vercel-labs/skills):
 
 ```bash
-npx skills add addyosmani/agent-skills            # install selected skills
-npx skills add addyosmani/agent-skills --list     # browse before installing
+npx skills add manhquoc2013/agent-skills            # install selected skills
+npx skills add manhquoc2013/agent-skills --list     # browse before installing
 ```
 
 Install a single skill:
 
 ```bash
-npx skills add addyosmani/agent-skills --skill spec-driven-development
+npx skills add manhquoc2013/agent-skills --skill spec-driven-development
 ```
 
 By default `npx skills` installs into a tool-specific directory (often `.claude/skills/` or a shared location). OpenCode will discover skills placed there because it reads `.claude/skills/<name>/SKILL.md` and the generic `.agents/skills/<name>/SKILL.md` paths.
@@ -49,7 +49,7 @@ cp -r .claude/skills/<skill-name> .opencode/skills/
 1. Clone the repository:
 
 ```bash
-git clone https://github.com/addyosmani/agent-skills.git
+git clone https://github.com/manhquoc2013/agent-skills.git
 ```
 
 2. Copy the desired skills into one of the OpenCode skill discovery paths.
@@ -93,7 +93,7 @@ Copy the directories under `skills/` (for example `skills/spec-driven-developmen
 
 ## Project `AGENTS.md`
 
-Create an `AGENTS.md` in **your own project** root. This is the system prompt that tells OpenCode when and how to invoke the installed skills. Unlike the repo-scoped `AGENTS.md` in `addyosmani/agent-skills`, this file belongs to your project and should be adapted to your stack.
+Create an `AGENTS.md` in **your own project** root. This is the system prompt that tells OpenCode when and how to invoke the installed skills. Unlike the repo-scoped `AGENTS.md` in `manhquoc2013/agent-skills`, this file belongs to your project and should be adapted to your stack.
 
 Below is a template you can paste into your project's `AGENTS.md`:
 
@@ -133,7 +133,7 @@ For every request:
 
 Save this as `AGENTS.md` in your project root. OpenCode will load it automatically.
 
-> **Note:** The root `AGENTS.md` inside the `addyosmani/agent-skills` repository is intended for contributors working on this repository and should not be copied into other projects. See [CONTRIBUTING.md](../CONTRIBUTING.md#repo-scoped-files).
+> **Note:** The root `AGENTS.md` inside the `manhquoc2013/agent-skills` repository is intended for contributors working on this repository and should not be copied into other projects. See [CONTRIBUTING.md](../CONTRIBUTING.md#repo-scoped-files).
 
 ## How It Works
 
@@ -251,9 +251,9 @@ These rules are enforced by your project's `AGENTS.md`, not by the copy of the s
 
 ## Summary
 
-1. Install the skills you need, either with `npx skills add addyosmani/agent-skills` or by copying them from a clone of this repository into `.opencode/skills/` (project), `~/.config/opencode/skills/` (global), or a cross-compatible path such as `.claude/skills/` / `.agents/skills/`.
+1. Install the skills you need, either with `npx skills add manhquoc2013/agent-skills` or by copying them from a clone of this repository into `.opencode/skills/` (project), `~/.config/opencode/skills/` (global), or a cross-compatible path such as `.claude/skills/` / `.agents/skills/`.
 2. Create your own project-local `AGENTS.md` with the rules and intent mapping above.
 3. OpenCode discovers the skills and your `AGENTS.md` guides the agent to invoke them.
 4. Optionally add `.opencode/commands/*.md` for explicit slash commands.
 
-This keeps the reusable assets (skills) separate from the repository-specific configuration (the `addyosmani/agent-skills` root `AGENTS.md`).
+This keeps the reusable assets (skills) separate from the repository-specific configuration (the `manhquoc2013/agent-skills` root `AGENTS.md`).

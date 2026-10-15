@@ -82,7 +82,7 @@ The README install section lists only hosts a maintainer has installed and run t
 
 ## Repo-scoped files
 
-`AGENTS.md` and `CLAUDE.md` at the repo root configure agents working on the [`addyosmani/agent-skills`](https://github.com/addyosmani/agent-skills) repository itself. When writing setup guides or docs, do not instruct users to copy these files into their own projects or into a global agent configuration; the reusable assets are the skills in `skills/`.
+`AGENTS.md` and `CLAUDE.md` at the repo root configure agents working on the [`manhquoc2013/agent-skills`](https://github.com/manhquoc2013/agent-skills) repository itself. When writing setup guides or docs, do not instruct users to copy these files into their own projects or into a global agent configuration; the reusable assets are the skills in `skills/`.
 
 ## Translations
 
