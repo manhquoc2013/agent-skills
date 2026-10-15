@@ -40,7 +40,7 @@ Each agent gets exactly what it needs and nothing inherited:
 - **Constraints:** what it must NOT touch.
 - **Expected output:** the summary it must return.
 
-Paste the relevant error messages and test names into the brief — the agent has no other context. A brief that says "fix the race condition" without the log line is a treasure hunt, not a task.
+Paste the relevant error messages and test names into the brief — the agent has no other context.
 
 ### 3. Dispatch Together
 

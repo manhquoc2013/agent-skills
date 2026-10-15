@@ -7,7 +7,7 @@ description: Enforces evidence before completion claims — proof from freshly r
 
 ## Overview
 
-Evidence before claims, always. The moment you report work as complete, passing, or fixed, you are making a factual claim — and a claim without a fresh verification run is an assertion wearing a status. Violating the letter of this rule is violating the spirit of this rule.
+Evidence before claims, always. The moment you report work as complete, passing, or fixed, you are making a factual claim — and a claim without a fresh verification run is an assertion wearing a status.
 
 ## When to Use
 
