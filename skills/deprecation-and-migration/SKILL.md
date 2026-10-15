@@ -20,6 +20,8 @@ Most engineering organizations are good at building things. Few are good at remo
 - Planning the lifecycle of a new system (deprecation planning starts at design time)
 - Deciding whether to maintain a legacy system or invest in migration
 
+**When NOT to use:** Building a new capability rather than retiring an old one — that's `spec-driven-development`. Come back here when something must be removed and its users moved off it.
+
 ## Core Principles
 
 ### Code Is a Liability
@@ -150,16 +152,7 @@ class LegacyTaskService implements OldTaskAPI {
 
 ### Feature Flag Migration
 
-Use feature flags to switch consumers from old to new system one at a time:
-
-```typescript
-function getTaskService(userId: string): TaskService {
-  if (featureFlags.isEnabled('new-task-service', { userId })) {
-    return new NewTaskService();
-  }
-  return new LegacyTaskService();
-}
-```
+Switch consumers from the old system to the new one at a time, so each cohort can be rolled back independently. Flag mechanics and lifecycle are in the `shipping-and-launch` skill.
 
 ### Database Schema Migrations (Expand/Contract)
 

@@ -154,7 +154,7 @@ Explicit user phrases (“follow TDD”, “use code-review-and-quality”) stil
 
 | You are… | Skill |
 |----------|--------|
-| Clarifying requirements | `interview-me`, `idea-refine`, `spec-driven-development` |
+| Clarifying requirements | `interview-me`, `idea-refine`, `document-clarification`, `spec-driven-development` |
 | Planning tasks | `planning-and-task-breakdown` |
 | Implementing | `incremental-implementation`, `frontend-ui-engineering`, `api-and-interface-design` |
 | Testing | `test-driven-development`, `browser-testing-with-devtools` |

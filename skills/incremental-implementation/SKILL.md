@@ -146,18 +146,7 @@ After each increment, the project must build and existing tests must pass. Don't
 
 ### Rule 3: Feature Flags for Incomplete Features
 
-If a feature isn't ready for users but you need to merge increments:
-
-```typescript
-// Feature flag for work-in-progress
-const ENABLE_TASK_SHARING = process.env.FEATURE_TASK_SHARING === 'true';
-
-if (ENABLE_TASK_SHARING) {
-  // New sharing UI
-}
-```
-
-This lets you merge small increments to the main branch without exposing incomplete work.
+Merge small increments behind a flag instead of holding them back, so incomplete work never reaches users. Flag lifecycle and cleanup rules live in the `shipping-and-launch` skill.
 
 ### Rule 4: Safe Defaults
 

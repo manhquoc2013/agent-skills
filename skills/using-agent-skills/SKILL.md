@@ -1,6 +1,6 @@
 ---
 name: using-agent-skills
-description: Discovers and invokes agent skills. Use when starting a session, or when you need to decide which skill or workflow applies to the piece of work at hand. This is the meta-skill that governs how all other skills are discovered and invoked.
+description: Discovers and invokes agent skills. Use when unsure which skill or workflow applies to the work at hand. This is the meta-skill that governs how all other skills are discovered and invoked.
 ---
 
 # Using Agent Skills
@@ -8,6 +8,14 @@ description: Discovers and invokes agent skills. Use when starting a session, or
 ## Overview
 
 Agent Skills is a collection of engineering workflow skills organized by development phase. Each skill encodes a specific process that senior engineers follow. This meta-skill helps you discover and apply the right skill for your current task.
+
+## When to Use
+
+- You are unsure which skill or workflow applies to the work at hand
+- The work spans several phases and you need the order to run them in
+- A skill you expected does not fit and you need the nearest alternative
+
+**When NOT to use:** You already know which skill applies — invoke it directly. This meta-skill routes work; it does not do it.
 
 ## Skill Discovery
 
@@ -19,6 +27,7 @@ Task arrives
     ├── Don't know what you want yet? ──────→ interview-me
     ├── Have a rough concept, need variants? → idea-refine
     ├── New project/feature/change? ──→ spec-driven-development
+    ├── Spec/PRD has open points? ────→ document-clarification
     ├── No quality bar written down? ──→ constraint-driven-development
     ├── Have a spec, need tasks? ──────→ planning-and-task-breakdown
     ├── Implementing code? ────────────→ incremental-implementation
@@ -138,6 +147,8 @@ These are the subtle errors that look like productivity but create problems:
 
 4. **When in doubt, start with a spec.** If the task is non-trivial and there's no spec, begin with `spec-driven-development`.
 
+5. **When skills conflict, the narrower and nearer one wins.** Order of precedence: (1) the active skill's explicit instruction, (2) a task-specific skill over a general one, (3) the pack-level contract (`using-agent-skills`, `../../references/definition-of-done.md`, `../../docs/skill-anatomy.md`), (4) default behavior. When two skills both claim a step (for example, a pre-commit hook path named by both `git-workflow-and-versioning` and `constraint-driven-development`), follow the one whose scope is closest to the task. If they still conflict, surface the conflict and ask rather than guessing.
+
 ## Lifecycle Sequence
 
 For a complete feature, the typical skill sequence is:
@@ -170,6 +181,8 @@ Not every task needs every skill. A bug fix might only need: `debugging-and-erro
 | Define | interview-me | Surface what the user actually wants before any plan, spec, or code exists |
 | Define | idea-refine | Refine ideas through structured divergent and convergent thinking |
 | Define | spec-driven-development | Requirements and acceptance criteria before code |
+| Define | document-clarification | Turn open points in a spec or PRD into answerable questions |
+| Define | constraint-driven-development | Turn the project's quality bar into enforced constraints |
 | Plan | planning-and-task-breakdown | Decompose into small, verifiable tasks |
 | Build | incremental-implementation | Thin vertical slices, test each before expanding |
 | Build | source-driven-development | Verify against official docs before implementing |

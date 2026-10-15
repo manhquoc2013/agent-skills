@@ -6,8 +6,8 @@ Invoke the agent-skills:incremental-implementation skill alongside agent-skills:
 
 ## Modes
 
-- **`/build`** — implement the *next* pending task, then stop (careful, one slice at a time).
-- **`/build auto`** — generate the plan if needed, get a single approval, then implement *every* task without stopping between them.
+- **`/s-build`** — implement the *next* pending task, then stop (careful, one slice at a time).
+- **`/s-build auto`** — generate the plan if needed, get a single approval, then implement *every* task without stopping between them.
 
 `$ARGUMENTS` selects the mode. Treat `auto` (canonical) or `all` as autonomous mode; anything else (or empty) is the default single-task mode. Note: autonomous mode is not faster *per task* — it runs the same test-driven loop — it only removes the human stepping *between* tasks.
 
@@ -24,11 +24,11 @@ Pick the next pending task from the plan. Then:
 7. Commit with a descriptive message
 8. Mark the task complete and stop
 
-## Autonomous: the whole plan (`/build auto`)
+## Autonomous: the whole plan (`/s-build auto`)
 
 Use this once a spec exists and you want to collapse plan + build into one run. It removes the manual stepping between tasks — **not** the verification. Every task still earns a passing test and its own commit.
 
-1. **Require a spec.** Look only for a spec at a known path: `SPEC.md` at the repo root, `docs/SPEC.md`, or a file under `spec/`. A README or arbitrary doc does **not** count. If none exists, stop and tell the user to run `/spec` first — do not invent requirements.
+1. **Require a spec.** Look only for a spec at a known path: `SPEC.md` at the repo root, `docs/SPEC.md`, or a file under `spec/`. A README or arbitrary doc does **not** count. If none exists, stop and tell the user to run `/s-spec` first — do not invent requirements.
 2. **Establish a clean baseline.** Run `git status --porcelain`. If there are uncommitted changes outside the expected planning artifacts (`SPEC.md`, `docs/SPEC.md`, `spec/*`, `tasks/plan.md`, `tasks/todo.md`), stop and ask the user to commit, stash, or confirm how to handle them. Autonomous per-task commits must not absorb unrelated local work, or the clean-rollback guarantee breaks.
 3. **Plan if needed.** If there is no `tasks/plan.md`, invoke agent-skills:planning-and-task-breakdown to generate one.
 4. **Single checkpoint.** Present the full plan and wait for an unambiguous affirmative (e.g. "approve", "go", "yes"). Treat hedged responses ("looks reasonable", "I guess") as **not** approved. This is the only human gate — after approval, run autonomously. If you generated `tasks/plan.md`, commit it as a single preparatory commit now so it doesn't bleed into the first task's commit.
@@ -38,7 +38,7 @@ Use this once a spec exists and you want to collapse plan + build into one run. 
    - the spec is ambiguous, or a task needs a decision the spec doesn't cover
    - a task is high-risk or irreversible — auth/permission changes, destructive data migrations, payments, deletions, deploys, anything touching secrets, **or anything you can't undo with `git revert`** → follow agent-skills:doubt-driven-development and get explicit sign-off before continuing
 
-   After the user resolves a blocker, they re-invoke `/build auto` — it resumes from the next pending task.
+   After the user resolves a blocker, they re-invoke `/s-build auto` — it resumes from the next pending task.
 7. **Summarize at the end:** tasks completed, tests added, commits made, and anything skipped, flagged, or left for the user.
 
 If any step fails, follow the agent-skills:debugging-and-error-recovery skill.

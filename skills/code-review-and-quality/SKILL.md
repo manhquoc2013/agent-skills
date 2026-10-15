@@ -19,6 +19,8 @@ Multi-dimensional code review with quality gates. Every change gets reviewed bef
 - When refactoring existing code
 - After any bug fix (review both the fix and the regression test)
 
+**When NOT to use:** Prose-only changes (docs, changelogs) that touch no code — give those a light accuracy pass instead of the five-axis review.
+
 ## The Five-Axis Review
 
 Every review evaluates code across these dimensions:
@@ -204,6 +206,8 @@ Check the author's verification story:
 - Is there a before/after comparison?
 ```
 
+**Treat the author's verification story as unverified claims.** For everything the verdict depends on, produce the evidence yourself: re-run the changed tests, execute the build, open the changed screen. A stated rationale never downgrades a finding's severity, and "I left it out per YAGNI" is the implementer grading its own work — you decide that.
+
 ## Multi-Model Review Pattern
 
 Use different models for different review perspectives:
@@ -344,9 +348,12 @@ For triaging `npm audit` findings and supply-chain risk (typosquatting, compromi
 - [ ] Build succeeds
 - [ ] Manual verification done (if applicable)
 
-### Verdict
+### Verdict (choose exactly one)
 - [ ] **Approve** — Ready to merge
 - [ ] **Request changes** — Issues must be addressed
+- [ ] **Escalate** — The decision is not the reviewer's to make: conflicting requirements, risk that spans beyond the diff, or acceptance criteria too unclear to judge against
+
+Default stance: reject until proven otherwise — reject until verification evidence exists, not until the change is perfect; the approval standard at the top still applies. Approval rests on evidence generated *in this review* — tests re-run, a build executed, a screen opened — never on the author's word that it passed.
 ```
 ## See Also
 

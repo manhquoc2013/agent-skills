@@ -193,7 +193,7 @@ description: Break work into small verifiable tasks
 Invoke the planning-and-task-breakdown skill. Read the spec and create tasks with acceptance criteria.
 ```
 
-Save it as `.opencode/commands/plan.md` to enable `/plan` in OpenCode.
+Save it as `.opencode/commands/s-plan.md` to enable `/s-plan` in OpenCode.
 
 ## Usage Examples
 

@@ -117,7 +117,7 @@ The `agents/` directory contains pre-configured agent personas:
 | `code-reviewer.md` | Five-axis code review |
 | `test-engineer.md` | Test strategy and writing |
 | `security-auditor.md` | Vulnerability detection |
-| `web-performance-auditor.md` | Core Web Vitals & performance audit (via `/webperf`) |
+| `web-performance-auditor.md` | Core Web Vitals & performance audit (via `/s-webperf`) |
 
 Load an agent definition when you need specialized review. For example, ask your coding agent to "review this change using the code-reviewer agent persona" and provide the agent definition.
 
@@ -127,16 +127,16 @@ The `.claude/commands/` directory contains slash commands for Claude Code:
 
 | Command | Skill Invoked |
 |---------|---------------|
-| `/spec` | spec-driven-development |
-| `/constraints` | constraint-driven-development |
-| `/plan` | planning-and-task-breakdown |
-| `/build` | incremental-implementation + test-driven-development |
-| `/build auto` | planning-and-task-breakdown → incremental-implementation + test-driven-development (whole plan, one approval) |
-| `/test` | test-driven-development |
-| `/review` | code-review-and-quality |
-| `/code-simplify` | code-simplification |
-| `/ship` | shipping-and-launch |
-| `/webperf` | web-performance-auditor (specialist agent, web apps only) |
+| `/s-spec` | spec-driven-development |
+| `/s-constraints` | constraint-driven-development |
+| `/s-plan` | planning-and-task-breakdown |
+| `/s-build` | incremental-implementation + test-driven-development |
+| `/s-build auto` | planning-and-task-breakdown → incremental-implementation + test-driven-development (whole plan, one approval) |
+| `/s-test` | test-driven-development |
+| `/s-review` | code-review-and-quality |
+| `/s-code-simplify` | code-simplification |
+| `/s-ship` | shipping-and-launch |
+| `/s-webperf` | web-performance-auditor (specialist agent, web apps only) |
 
 > **Note:** When installed as a Claude Code plugin you may see a warning like
 > _"Default commands/ folder is ignored because the manifest sets 'commands'"_.
@@ -170,7 +170,7 @@ This portability gap is tracked in
 
 ## Spec and task artifacts
 
-The `/spec` and `/plan` commands create working artifacts (`SPEC.md`, `tasks/plan.md`, `tasks/todo.md`). Treat them as **living documents** while the work is in progress:
+The `/s-spec` and `/s-plan` commands create working artifacts (`SPEC.md`, `tasks/plan.md`, `tasks/todo.md`). Treat them as **living documents** while the work is in progress:
 
 - Keep them in version control during development so the human and the agent have a shared source of truth.
 - Update them when scope or decisions change.
@@ -189,11 +189,11 @@ The same artifacts are the handoff between sessions. For a small task, run the w
 
 #### Task-boundary restarts and Ralph loops
 
-`/build auto` can run the whole approved plan in one session. It does not require or perform a fresh process per task. Its per-task status updates, verification results, and commits make each completed task a restartable boundary, so a capable external harness may exit and resume there without depending on chat history.
+`/s-build auto` can run the whole approved plan in one session. It does not require or perform a fresh process per task. Its per-task status updates, verification results, and commits make each completed task a restartable boundary, so a capable external harness may exit and resume there without depending on chat history.
 
 A shell-level "Ralph loop" is harness behavior, not a separate skill workflow. If you use one, restart only after the current task has reached a recorded boundary; on re-entry, read the durable artifacts and repository state before selecting the next pending task. A process exit is not evidence that a task passed, and a restart must not bypass an approval gate. See the `context-engineering` skill's **Restartable Session Boundaries** section for the handoff checklist.
 
-This doesn't need the `/spec` and `/plan` wrappers — plain requests work in any agent, including a `npx skills add` install that only has the skills:
+This doesn't need the `/s-spec` and `/s-plan` wrappers — plain requests work in any agent, including a `npx skills add` install that only has the skills:
 
 > Read SPEC.md, then break it into small verifiable tasks with acceptance criteria and dependency order. Save them to tasks/plan.md and tasks/todo.md. No product code yet — show me the plan first.
 

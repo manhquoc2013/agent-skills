@@ -18,6 +18,8 @@ Systematic debugging with structured triage. When something breaks, stop adding 
 - An error appears in logs or console
 - Something worked before and stopped working
 
+**When NOT to use:** Slow-but-correct behavior (use `performance-optimization`). Ambiguous requirements without an observed failure (use `spec-driven-development`).
+
 ## The Stop-the-Line Rule
 
 When anything unexpected happens:
@@ -49,6 +51,8 @@ Can you reproduce the failure?
     ├── Try reproducing in a minimal environment
     └── If truly non-reproducible, document conditions and monitor
 ```
+
+**The feedback loop is the gate.** Step 1 is not complete until you hold one failing command — already run, deterministic, fast, and red. Every later step (localize, fix, guard) is a loop around that command; without it you are guessing, not debugging. If no red-capable command exists, either build one (a focused test, a repro script, a minimal curl) or take the non-reproducible branch above — but never proceed to Step 2 on a hunch. A flake that fails sometimes is not a red command: measure its reproduction rate, then raise it (tighten timing, add load, narrow the environment) until it fails on demand.
 
 **When a bug is non-reproducible:**
 

@@ -21,6 +21,8 @@ Automate quality gates so that no change reaches production without passing test
 - When a change should trigger automated verification
 - Debugging CI failures
 
+**When NOT to use:** Debugging a test failure on your own machine — feed that to `debugging-and-error-recovery` first. CI work begins where local verification ends.
+
 ## The Quality Gate Pipeline
 
 Every change goes through these gates before merge:
@@ -190,6 +192,17 @@ Test failure → Agent follows debugging-and-error-recovery skill
 Build error → Agent checks config and dependencies
 ```
 
+**Classify every CI failure before feeding it back.** The right response depends on which class the failure belongs to — treat an environment failure as a code bug and the agent will "fix" what isn't broken:
+
+| Class | Signature | Agent response |
+|-------|-----------|----------------|
+| Flake | Same commit, different result | Re-run first; investigate only if it repeats |
+| Regression | A change in the diff plausibly caused it | Reproduce locally, fix, guard with a test |
+| Environment | Credentials, secrets, service outage, infrastructure | Escalate to a human — do not "fix" with code changes |
+| Config | Pipeline, dependency, or script definition changed | Fix the config, not the product code |
+
+**Missing signals are not passing signals.** Zero checks on a PR means `absent/unknown`, not `passing`. A `mergeable` label says nothing about readiness. When policy cannot be established from the available signals, report the PR as not ready and escalate rather than guessing.
+
 ## Deployment Strategies
 
 ### Preview Deployments
@@ -209,64 +222,15 @@ deploy-preview:
 
 ### Feature Flags
 
-Feature flags decouple deployment from release. Deploy incomplete or risky features behind flags so you can:
-
-- **Ship code without enabling it.** Merge to main early, enable when ready.
-- **Roll back without redeploying.** Disable the flag instead of reverting code.
-- **Canary new features.** Enable for 1% of users, then 10%, then 100%.
-- **Run A/B tests.** Compare behavior with and without the feature.
-
-```typescript
-// Simple feature flag pattern
-if (featureFlags.isEnabled('new-checkout-flow', { userId })) {
-  return renderNewCheckout();
-}
-return renderLegacyCheckout();
-```
-
-**Flag lifecycle:** Create → Enable for testing → Canary → Full rollout → Remove the flag and dead code. Flags that live forever become technical debt — set a cleanup date when you create them.
+Feature flags decouple deployment from release: code merges early and is enabled later, and disabling the flag rolls the feature back without a redeploy. Flag lifecycle, ownership, and cleanup rules live in the `shipping-and-launch` skill.
 
 ### Staged Rollouts
 
-```
-PR merged to main
-    │
-    ▼
-  Staging deployment (auto)
-    │ Manual verification
-    ▼
-  Production deployment (manual trigger or auto after staging)
-    │
-    ▼
-  Monitor for errors (15-minute window)
-    │
-    ├── Errors detected → Rollback
-    └── Clean → Done
-```
+Deploy to staging, verify manually, then release to production in stages with a monitoring window before each advance. The full rollout sequence and the advance/hold/roll-back thresholds live in the `shipping-and-launch` skill.
 
 ### Rollback Plan
 
-Every deployment should be reversible:
-
-```yaml
-# Manual rollback workflow
-name: Rollback
-on:
-  workflow_dispatch:
-    inputs:
-      version:
-        description: 'Version to rollback to'
-        required: true
-
-jobs:
-  rollback:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Rollback deployment
-        run: |
-          # Deploy the specified previous version
-          npx vercel rollback ${{ inputs.version }}
-```
+Every deployment must be reversible — agree the trigger conditions and the exact command that undoes the release before deploying it. The rollback plan template and time-to-rollback expectations live in the `shipping-and-launch` skill.
 
 ## Environment Management
 

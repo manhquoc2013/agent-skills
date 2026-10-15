@@ -41,6 +41,8 @@ maintained in this repository.
 
 **Why this matters:** Agents discover skills by reading descriptions. The description is injected into the system prompt, so it must tell the agent both what the skill provides and when to activate it. Do not summarize the workflow — if the description contains process steps, the agent may follow the summary instead of reading the full skill.
 
+Keep the *what* clause thin — one clause naming the outcome, not the method. The *when* clauses carry the load: an agent reads the description to decide whether to load the skill, so each trigger must fire exactly when the skill applies and stay silent otherwise. A trigger that over-fires wastes context on every session; one that under-fires leaves the workflow unrun.
+
 ### Standard Sections (Recommended Pattern)
 
 The frontmatter contract above is required. The section layout below is a recommended pattern, not a rigid template: equivalent headings are acceptable when they serve the same purpose clearly.
@@ -98,11 +100,19 @@ The most distinctive feature of well-crafted skills. These are excuses agents us
 
 Think of every time an agent has said "I'll add tests later" or "This is simple enough to skip the spec" — those go here with a factual counter-argument.
 
+Two authoring rules raise the bar:
+
+- **Harvest, don't invent.** The strongest tables come from observed runs: every time an agent actually skips a step in practice, add that exact excuse and the rebuttal that would have stopped it. Tables authored in advance drift toward hypothetical excuses the agent never makes.
+- **Match the form to the failure.** A rationalization table counters *skipped steps*. A wrong-shaped output is fixed by a positive recipe — show the correct shape with an example, since restating the bad shape in a prohibition can anchor the agent on it. When wording matters, compare both wordings against a no-guidance control and keep the one that measurably helps.
+
 ### Red Flags
 Observable signs that the skill is being violated. Useful during code review and self-monitoring.
 
 ### Verification
 The exit criteria. A checklist the agent uses to confirm the skill's process is complete. Every checkbox should be verifiable with evidence (test output, build result, screenshot, etc.).
+
+### See Also
+Pointers to related skills and shared reference documents, so an agent that finishes this skill knows where the adjacent work is owned. Keep it to names and paths — never restate the referenced content here.
 
 ## Supporting Files
 

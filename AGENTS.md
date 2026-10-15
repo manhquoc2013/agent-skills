@@ -25,6 +25,7 @@ The agent should automatically map user intent to skills:
 
 - Feature / new functionality → `spec-driven-development`, then `incremental-implementation`, `test-driven-development`
 - Planning / breakdown → `planning-and-task-breakdown`
+- Unclear/open points in a spec or PRD → `document-clarification`
 - Bug / failure / unexpected behavior → `debugging-and-error-recovery`
 - Code review → `code-review-and-quality`
 - Refactoring / simplification → `code-simplification`
@@ -33,7 +34,7 @@ The agent should automatically map user intent to skills:
 
 ### Lifecycle Mapping (Implicit Commands)
 
-OpenCode does not support slash commands like `/spec` or `/plan`.
+OpenCode does not support slash commands like `/s-spec` or `/s-plan`.
 
 Instead, the agent must internally follow this lifecycle:
 
@@ -77,7 +78,7 @@ This repo has three composable layers. They have different jobs and should not b
 
 Composition rule: **the user (or a slash command) is the orchestrator. Personas do not invoke other personas.** A persona may invoke skills.
 
-The only multi-persona orchestration pattern this repo endorses is **parallel fan-out with a merge step** — used by `/ship` to run `code-reviewer`, `security-auditor`, and `test-engineer` concurrently and synthesize their reports. Do not build a "router" persona that decides which other persona to call; that's the job of slash commands and intent mapping.
+The only multi-persona orchestration pattern this repo endorses is **parallel fan-out with a merge step** — used by `/s-ship` to run `code-reviewer`, `security-auditor`, and `test-engineer` concurrently and synthesize their reports. Do not build a "router" persona that decides which other persona to call; that's the job of slash commands and intent mapping.
 
 See [docs/agents.md](docs/agents.md) for the decision matrix and [references/orchestration-patterns.md](references/orchestration-patterns.md) for the full pattern catalog.
 

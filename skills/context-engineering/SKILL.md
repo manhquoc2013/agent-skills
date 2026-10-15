@@ -17,6 +17,8 @@ Feed agents the right information at the right time. Context is the single bigge
 - Setting up a new project for AI-assisted development
 - The agent is not following project conventions
 
+**When NOT to use:** The output is wrong because the requirements are wrong, not because the agent lacked context — fix the target with `spec-driven-development` first.
+
 ## The Context Hierarchy
 
 Structure context from most persistent to most transient:

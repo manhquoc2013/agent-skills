@@ -44,7 +44,7 @@ const DIRS = {
 // Commands where the file stem differs between Claude and the TOML dirs.
 // Key = Claude stem, value = TOML stem.
 const NAME_MAP = {
-  plan: 'planning',
+  's-plan': 's-planning',
 };
 const NAME_MAP_REVERSE = Object.fromEntries(
   Object.entries(NAME_MAP).map(([k, v]) => [v, k])

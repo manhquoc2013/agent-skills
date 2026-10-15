@@ -33,10 +33,10 @@ const ROOT = path.resolve(__dirname, '..');
 // file paths the pipeline files may reference. To change the convention, edit
 // this list and update every guarded file to match — CI enforces the pairing.
 const ARTIFACT_ALLOWLIST = new Set([
-  'SPEC.md',        // spec, project root (produced by /spec, read by /build)
-  'docs/SPEC.md',   // spec, alternate location accepted by /build
-  'tasks/plan.md',  // plan (produced by /plan, read by /build)
-  'tasks/todo.md',  // task list (produced by /plan)
+  'SPEC.md',        // spec, project root (produced by /s-spec, read by /s-build)
+  'docs/SPEC.md',   // spec, alternate location accepted by /s-build
+  'tasks/plan.md',  // plan (produced by /s-plan, read by /s-build)
+  'tasks/todo.md',  // task list (produced by /s-plan)
 ]);
 
 // The files that make up the spec -> plan -> build pipeline. Absent files are
@@ -48,17 +48,17 @@ const ARTIFACT_ALLOWLIST = new Set([
 // while the Claude Code copy stays correct. Every surface is guarded here.
 const GUARDED_FILES = [
   // Claude Code commands
-  '.claude/commands/spec.md',
-  '.claude/commands/plan.md',
-  '.claude/commands/build.md',
+  '.claude/commands/s-spec.md',
+  '.claude/commands/s-plan.md',
+  '.claude/commands/s-build.md',
   // Gemini CLI commands
-  '.gemini/commands/spec.toml',
-  '.gemini/commands/planning.toml',
-  '.gemini/commands/build.toml',
+  '.gemini/commands/s-spec.toml',
+  '.gemini/commands/s-planning.toml',
+  '.gemini/commands/s-build.toml',
   // Root command set (Antigravity, Codex, and other TOML-based hosts)
-  'commands/spec.toml',
-  'commands/planning.toml',
-  'commands/build.toml',
+  'commands/s-spec.toml',
+  'commands/s-planning.toml',
+  'commands/s-build.toml',
   // Skills the commands invoke
   'skills/spec-driven-development/SKILL.md',
   'skills/planning-and-task-breakdown/SKILL.md',

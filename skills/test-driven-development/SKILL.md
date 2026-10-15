@@ -308,6 +308,7 @@ describe('TaskService', () => {
 | Snapshot abuse | Large snapshots nobody reviews, break on any change | Use snapshots sparingly and review every change |
 | No test isolation | Tests pass individually but fail together | Each test sets up and tears down its own state |
 | Mocking everything | Tests pass but production breaks | Prefer real implementations > fakes > stubs > mocks. Mock only at boundaries where real deps are slow or non-deterministic |
+| Tautological tests | Expected values are recomputed the same way the code computes them, so the test can only fail when the implementation changes, never when it is wrong | Assert against concrete expected values derived from the spec, not from the implementation |
 
 ## Browser Testing with DevTools
 
@@ -342,10 +343,10 @@ For detailed DevTools setup instructions and workflows, see `browser-testing-wit
 
 ## When to Use Subagents for Testing
 
-For complex bug fixes, spawn a subagent to write the reproduction test:
+For complex bug fixes, have the reproduction test written in a fresh context — a subagent, where your harness supports one:
 
 ```
-Main agent: "Spawn a subagent to write a test that reproduces this bug:
+Main agent: "In a fresh context, write a test that reproduces this bug:
 [bug description]. The test should fail with the current code."
 
 Subagent: Writes the reproduction test

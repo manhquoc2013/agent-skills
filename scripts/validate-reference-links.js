@@ -29,6 +29,13 @@
  * slugged the way GitHub renders anchors. The file existing is not enough:
  * renaming a heading breaks every link to it while the path still resolves.
  *
+ * The reverse direction is checked too: every markdown file in the repo-root
+ * `references/` must be reachable from at least one skill. A checklist nothing
+ * links to is dead weight — it stays in the tree looking authoritative while no
+ * agent ever opens it — and, unlike a broken link, nothing else reports it.
+ * Only a link that resolves to that file clears it: a mention inside a fence,
+ * or a same-named file in a skill's own references/, does not reference it.
+ *
  * Scope is deliberately narrow: only `references/*.md` links, only SKILL.md
  * and `skills/<name>/references/*.md` files. It is not a general markdown
  * path linter — skills legitimately mention paths that do not exist yet
@@ -41,7 +48,7 @@
  * `../../references/<file>.md` rather than `references/<file>.md`, which no
  * skill could show as an example without failing the very check explaining it.
  *
- * Exit codes: 0 = all clear, 1 = one or more unresolvable links.
+ * Exit codes: 0 = all clear, 1 = at least one unresolvable link or orphan checklist.
  */
 
 'use strict';
@@ -52,6 +59,7 @@ const { stripFencedCodeBlocks } = require('./lib/skill-lint');
 
 const ROOT = path.resolve(__dirname, '..');
 const SKILLS_DIR = path.join(ROOT, 'skills');
+const SHARED_REFERENCES_DIR = path.join(ROOT, 'references');
 
 // Matches a link to a references/ markdown file, with any number of leading
 // `../` segments: `references/x.md`, `../../references/x.md`. Anchored on a
@@ -86,37 +94,59 @@ function headingAnchors(file) {
   return anchors;
 }
 
-// A link is resolved from the directory of the file that contains it.
-function findViolations(file) {
-  const violations = [];
+// Every `references/*.md` link in a file, with the absolute path it resolves
+// to. A link is resolved from the directory of the file that contains it.
+function referenceLinks(file) {
   const baseDir = path.dirname(file);
   // Share the linter's fence rules; blanked lines preserve diagnostic positions.
   const lines = stripFencedCodeBlocks(fs.readFileSync(file, 'utf8')).split('\n');
+  const links = [];
 
   lines.forEach((line, i) => {
     for (const match of line.matchAll(REFERENCE_LINK_RE)) {
       const [, link, anchor] = match;
-      const target = path.resolve(baseDir, link);
-      if (!fs.existsSync(target)) {
-        violations.push({ line: i + 1, link, target });
-      } else if (anchor && !headingAnchors(target).has(anchor)) {
-        violations.push({ line: i + 1, link, target, anchor });
-      }
+      links.push({ line: i + 1, link, anchor, target: path.resolve(baseDir, link) });
     }
   });
+
+  return links;
+}
+
+// A link is a violation when it points at nothing, or when its `#fragment`
+// matches no heading the target file produces.
+function violationsIn(links) {
+  const violations = [];
+
+  for (const { line, link, anchor, target } of links) {
+    if (!fs.existsSync(target)) {
+      violations.push({ line, link, target });
+    } else if (anchor && !headingAnchors(target).has(anchor)) {
+      violations.push({ line, link, target, anchor });
+    }
+  }
 
   return violations;
 }
 
-// The markdown files directly inside a skill's own references/ directory.
-function skillReferenceFiles(skillDir) {
-  const dir = path.join(skillDir, 'references');
+// The markdown files directly inside a directory — a skill's own references/,
+// or the shared repo-root references/.
+function markdownFilesIn(dir) {
   if (!fs.existsSync(dir) || !fs.statSync(dir).isDirectory()) return [];
   return fs.readdirSync(dir)
     .filter((name) => name.endsWith('.md'))
     .sort()
     .map((name) => path.join(dir, name))
     .filter((file) => fs.statSync(file).isFile());
+}
+
+// The markdown files directly inside a skill's own references/ directory.
+function skillReferenceFiles(skillDir) {
+  return markdownFilesIn(path.join(skillDir, 'references'));
+}
+
+// The shared checklists every skill is expected to be able to reach.
+function sharedReferenceFiles() {
+  return markdownFilesIn(SHARED_REFERENCES_DIR);
 }
 
 function toPosix(file) {
@@ -132,9 +162,16 @@ function main() {
   }
 
   let checked = 0;
-  let errors = 0;
+  let linkErrors = 0;
+  let orphanErrors = 0;
   let referenceFileErrors = 0;
   let anchorErrors = 0;
+
+  // Every shared checklist starts out assumed unreachable, and only a link that
+  // resolves to it clears it. This is the reverse of the check below, and the
+  // reason it exists: a checklist nothing reaches is invisible to the link
+  // check, to every other validator, and to review.
+  const unreferenced = new Set(sharedReferenceFiles());
 
   const skillNames = fs.readdirSync(SKILLS_DIR).sort();
   for (const name of skillNames) {
@@ -144,7 +181,10 @@ function main() {
 
     checked++;
     for (const file of [skillFile, ...skillReferenceFiles(skillDir)]) {
-      const violations = findViolations(file);
+      const links = referenceLinks(file);
+      for (const { target } of links) unreferenced.delete(target);
+
+      const violations = violationsIn(links);
 
       if (violations.length === 0) {
         console.log(`  ✓  ${toPosix(file)}`);
@@ -153,7 +193,7 @@ function main() {
 
       console.log(`  ✗  ${toPosix(file)}`);
       for (const { line, link, target, anchor } of violations) {
-        errors++;
+        linkErrors++;
         if (anchor) {
           console.log(`       L${line}: ${link}#${anchor} — no heading in ${toPosix(target)} produces #${anchor}`);
           anchorErrors++;
@@ -165,11 +205,20 @@ function main() {
     }
   }
 
+  if (unreferenced.size > 0) {
+    console.log('\nShared checklists no skill links to:');
+    for (const file of [...unreferenced].sort()) {
+      orphanErrors++;
+      console.log(`  ✗  ${toPosix(file)} — no SKILL.md or skill reference file links it`);
+    }
+  }
+
+  const errors = linkErrors + orphanErrors;
   const status = errors > 0 ? 'FAILED' : 'PASSED';
   console.log(`\n${checked} skills checked — ${errors} error(s) — ${status}`);
 
   if (errors > 0) {
-    if (errors > anchorErrors) {
+    if (linkErrors > anchorErrors) {
       console.log('\nLinks to references/ are resolved from the directory of the file that contains them.');
       console.log('Shared checklists live in the repo-root references/, two levels up from a SKILL.md:');
       console.log('use `../../references/<file>.md`, not `references/<file>.md`.');
@@ -181,6 +230,10 @@ function main() {
     if (anchorErrors > 0) {
       console.log("\nAnchors are matched against GitHub's heading slugs: the heading text lowercased,");
       console.log('punctuation dropped, spaces turned to hyphens, and -1, -2, ... for repeated headings.');
+    }
+    if (orphanErrors > 0) {
+      console.log('\nA checklist in references/ that no skill links to cannot be reached by an agent.');
+      console.log('Link it from the skill that needs it, or move it out of references/.');
     }
     process.exit(1);
   }

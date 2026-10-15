@@ -17,6 +17,8 @@ Ship with confidence. The goal is not just to deploy — it's to deploy safely, 
 - Opening a beta or early access program
 - Any deployment that carries risk (all of them)
 
+**When NOT to use:** The change is still being built — `incremental-implementation` and `git-workflow-and-versioning` own that. This skill starts when the code is ready to face production.
+
 ## The Pre-Launch Checklist
 
 ### Code Quality

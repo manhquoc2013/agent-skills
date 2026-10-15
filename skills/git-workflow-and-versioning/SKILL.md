@@ -1,6 +1,6 @@
 ---
 name: git-workflow-and-versioning
-description: Structures git workflow practices. Use when making any code change. Use when committing, branching, resolving conflicts, splitting uncommitted work in a messy working tree into clean atomic commits, opening or reviewing a pull request (PR), pushing to a remote, or when you need to organize work across multiple parallel streams. Use when cutting a release, choosing a semantic version bump, tagging, or writing a changelog.
+description: Structures git workflow practices. Use when committing, branching, resolving conflicts, opening or reviewing a pull request (PR), or cutting a release. Use when splitting uncommitted work in a messy working tree into clean atomic commits, pushing to a remote, or organizing work across multiple parallel streams. Use when choosing a semantic version bump, tagging, or writing a changelog.
 ---
 
 # Git Workflow and Versioning
@@ -11,7 +11,9 @@ Git is your safety net. Treat commits as save points, branches as sandboxes, and
 
 ## When to Use
 
-Always. Every code change flows through git.
+Every code change flows through git — commits, branches, tags, and the history they leave behind.
+
+**When NOT to use:** Deciding *what* to build or *how* to structure it — `spec-driven-development` and `incremental-implementation` own that. This skill covers only how a change is recorded and reviewed.
 
 ## Core Principles
 
@@ -110,13 +112,7 @@ git commit -m "refactor validation and add phone number field"
 
 ### 5. Size Your Changes
 
-Target ~100 lines per commit/PR. Changes over ~1000 lines should be split. See the splitting strategies in `code-review-and-quality` for how to break down large changes.
-
-```
-~100 lines  → Easy to review, easy to revert
-~300 lines  → Acceptable for a single logical change
-~1000 lines → Split into smaller changes
-```
+Keep each commit/PR reviewable in one sitting. The size targets and the splitting strategies for large changes live in the `code-review-and-quality` skill.
 
 ## Branching Strategy
 
@@ -145,6 +141,15 @@ refactor/<short-description>  → refactor/auth-module
 ```
 
 ## Working with Worktrees
+
+**Before creating any worktree, detect existing isolation.** Worktrees fail confusingly when the repository is already a linked worktree or sits inside a submodule. Check first:
+
+```bash
+git rev-parse --git-dir        # a FILE means you are inside a linked worktree; a DIRECTORY means a main checkout
+git rev-parse --git-common-dir # where the shared object store lives
+```
+
+If `.git` is a file, add new worktrees from the main checkout, and prefer commands that read `git rev-parse` themselves over hand-built paths. Adding worktrees changes the layout of the working directory — name the target directories and get confirmation before creating them.
 
 For parallel AI agent work, use git worktrees to run multiple branches simultaneously:
 

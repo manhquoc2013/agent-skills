@@ -36,6 +36,13 @@ function run(root) {
   });
 }
 
+// A skill that reaches a shared checklist correctly. A fixture that isolates a
+// link failure adds one of these, so the checklist it writes is not reported as
+// unreferenced as well — this validator checks both directions.
+function linkSharedChecklist(root, skill, file) {
+  writeFile(root, `skills/${skill}/SKILL.md`, `See \`../../references/${file}\`.\n`);
+}
+
 afterEach(() => {
   for (const root of sandboxes.splice(0)) {
     fs.rmSync(root, { recursive: true, force: true });
@@ -67,11 +74,13 @@ test('fails when a skill links the shared checklist as if it were colocated', ()
     'skills/using-agent-skills/SKILL.md',
     'See `references/definition-of-done.md`.\n'
   );
+  // Reached correctly from another skill, so the only failure here is the link.
+  linkSharedChecklist(root, 'shipping-and-launch', 'definition-of-done.md');
 
   const result = run(root);
 
   assert.equal(result.status, 1, result.stdout + result.stderr);
-  assert.match(result.stdout, /1 skills checked — 1 error\(s\) — FAILED/);
+  assert.match(result.stdout, /2 skills checked — 1 error\(s\) — FAILED/);
   assert.match(
     result.stdout,
     /L1: references\/definition-of-done\.md — resolves to skills\/using-agent-skills\/references\/definition-of-done\.md/
@@ -83,11 +92,13 @@ test('checks markdown link syntax, not just backtick mentions', () => {
   const root = makeSandbox();
   writeFile(root, 'references/definition-of-done.md', '# Definition of Done\n');
   writeFile(root, 'skills/using-agent-skills/SKILL.md', 'See [DoD](references/definition-of-done.md).\n');
+  linkSharedChecklist(root, 'shipping-and-launch', 'definition-of-done.md');
 
   const result = run(root);
 
   assert.equal(result.status, 1, result.stdout + result.stderr);
   assert.match(result.stdout, /L1: references\/definition-of-done\.md/);
+  assert.match(result.stdout, /2 skills checked — 1 error\(s\) — FAILED/);
 });
 
 test('passes when a skill colocates its own references directory', () => {
@@ -134,6 +145,12 @@ test('fails when a skill reference file links the shared checklist with the SKIL
     'skills/hardening/references/patterns.md',
     ['# Patterns', '', 'See `../../references/security-checklist.md`.', ''].join('\n')
   );
+  // Referenced correctly from a sibling file, so the only failure is the above.
+  writeFile(
+    root,
+    'skills/hardening/references/other-patterns.md',
+    'See `../../../references/security-checklist.md`.\n'
+  );
 
   const result = run(root);
 
@@ -153,7 +170,9 @@ test('keeps the same narrow rule inside a skill reference file', () => {
   // a references/ prefix, and artifacts that do not exist yet.
   const root = makeSandbox();
   writeFile(root, 'references/security-checklist.md', '# Security\n');
-  writeFile(root, 'skills/hardening/SKILL.md', 'See [patterns](references/patterns.md).\n');
+  // Linked correctly from SKILL.md: patterns.md below names the checklist only
+  // inside a fence, which is an example, not a reference.
+  writeFile(root, 'skills/hardening/SKILL.md', 'See [patterns](references/patterns.md) and `../../references/security-checklist.md`.\n');
   writeFile(
     root,
     'skills/hardening/references/patterns.md',
@@ -194,12 +213,15 @@ test('fails when a link points at a checklist that no longer exists', () => {
   const root = makeSandbox();
   writeFile(root, 'references/definition-of-done.md', '# Definition of Done\n');
   writeFile(root, 'skills/shipping-and-launch/SKILL.md', 'See `../../references/renamed.md`.\n');
+  // The checklist itself still exists and is linked from elsewhere: the failure
+  // is the stale name, not an unreferenced file.
+  linkSharedChecklist(root, 'using-agent-skills', 'definition-of-done.md');
 
   const result = run(root);
 
   assert.equal(result.status, 1, result.stdout + result.stderr);
   assert.match(result.stdout, /L1: \.\.\/\.\.\/references\/renamed\.md/);
-  assert.match(result.stdout, /1 skills checked — 1 error\(s\) — FAILED/);
+  assert.match(result.stdout, /2 skills checked — 1 error\(s\) — FAILED/);
 });
 
 test('ignores paths that are not references/ links', () => {
@@ -234,11 +256,15 @@ test('reports every unresolvable link, not just the first per skill', () => {
     'skills/code-review-and-quality/SKILL.md',
     ['See `references/security-checklist.md`.', 'And `references/performance-checklist.md`.', ''].join('\n')
   );
+  // Both checklists are reachable from other skills, so the two broken links
+  // above are the only failures this test is about.
+  linkSharedChecklist(root, 'security-and-hardening', 'security-checklist.md');
+  linkSharedChecklist(root, 'performance-optimization', 'performance-checklist.md');
 
   const result = run(root);
 
   assert.equal(result.status, 1, result.stdout + result.stderr);
-  assert.match(result.stdout, /1 skills checked — 2 error\(s\) — FAILED/);
+  assert.match(result.stdout, /3 skills checked — 2 error\(s\) — FAILED/);
 });
 
 test('a link inside a fenced block is an example, not a link to resolve', () => {
@@ -510,4 +536,119 @@ test('a duplicate skips a slug occupied by an earlier literal heading', () => {
   writeFile(root, 'skills/hardening/references/patterns.md', '## Example\n\n## Example-1\n\n## Example\n');
   const result = run(root);
   assert.equal(result.status, 0, result.stdout + result.stderr);
+});
+
+
+// The reverse direction: a shared checklist nothing links to. It resolves fine
+// from nowhere, so no link check can find it — only this check can.
+
+test('fails when a shared checklist is referenced by no skill', () => {
+  const root = makeSandbox();
+  writeFile(root, 'references/definition-of-done.md', '# Definition of Done\n');
+  writeFile(root, 'references/orphaned-checklist.md', '# Orphaned\n');
+  linkSharedChecklist(root, 'using-agent-skills', 'definition-of-done.md');
+
+  const result = run(root);
+
+  assert.equal(result.status, 1, result.stdout + result.stderr);
+  assert.match(
+    result.stdout,
+    /✗ {2}references\/orphaned-checklist\.md — no SKILL\.md or skill reference file links it/
+  );
+  assert.match(result.stdout, /1 skills checked — 1 error\(s\) — FAILED/);
+});
+
+test('a skill reference file counts as referencing a shared checklist', () => {
+  const root = makeSandbox();
+  writeFile(root, 'references/security-checklist.md', '# Security\n');
+  writeFile(root, 'skills/hardening/SKILL.md', 'See [patterns](references/patterns.md).\n');
+  writeFile(
+    root,
+    'skills/hardening/references/patterns.md',
+    'See `../../../references/security-checklist.md`.\n'
+  );
+
+  const result = run(root);
+
+  assert.equal(result.status, 0, result.stdout + result.stderr);
+  assert.match(result.stdout, /1 skills checked — 0 error\(s\) — PASSED/);
+});
+
+test('a fenced mention does not clear an orphaned checklist', () => {
+  // The fence exemption says an example is not a link an agent will follow —
+  // which is why an example cannot be the only thing pointing at a checklist.
+  const root = makeSandbox();
+  writeFile(root, 'references/security-checklist.md', '# Security\n');
+  writeFile(
+    root,
+    'skills/hardening/SKILL.md',
+    ['# Hardening', '', '```markdown', 'See `../../references/security-checklist.md`.', '```', ''].join('\n')
+  );
+
+  const result = run(root);
+
+  assert.equal(result.status, 1, result.stdout + result.stderr);
+  assert.doesNotMatch(result.stdout, /L\d+: .*security-checklist/);
+  assert.match(
+    result.stdout,
+    /✗ {2}references\/security-checklist\.md — no SKILL\.md or skill reference file links it/
+  );
+  assert.match(result.stdout, /1 skills checked — 1 error\(s\) — FAILED/);
+});
+
+test('a colocated file of the same name does not clear the shared checklist', () => {
+  // `references/security-checklist.md` from a SKILL.md resolves to the skill's
+  // own copy, so the shared checklist is still unreachable.
+  const root = makeSandbox();
+  writeFile(root, 'references/security-checklist.md', '# Shared\n');
+  writeFile(root, 'skills/hardening/references/security-checklist.md', '# Local\n');
+  writeFile(root, 'skills/hardening/SKILL.md', 'See `references/security-checklist.md`.\n');
+
+  const result = run(root);
+
+  assert.equal(result.status, 1, result.stdout + result.stderr);
+  assert.match(
+    result.stdout,
+    /✗ {2}references\/security-checklist\.md — no SKILL\.md or skill reference file links it/
+  );
+  assert.match(result.stdout, /1 skills checked — 1 error\(s\) — FAILED/);
+});
+
+test('reports every orphaned checklist, not just the first', () => {
+  const root = makeSandbox();
+  writeFile(root, 'references/alpha-checklist.md', '# Alpha\n');
+  writeFile(root, 'references/beta-checklist.md', '# Beta\n');
+  writeFile(root, 'skills/using-agent-skills/SKILL.md', 'No checklist links here.\n');
+
+  const result = run(root);
+
+  assert.equal(result.status, 1, result.stdout + result.stderr);
+  assert.match(result.stdout, /✗ {2}references\/alpha-checklist\.md/);
+  assert.match(result.stdout, /✗ {2}references\/beta-checklist\.md/);
+  assert.match(result.stdout, /1 skills checked — 2 error\(s\) — FAILED/);
+});
+
+test('a non-markdown file in references/ is not a checklist to reference', () => {
+  const root = makeSandbox();
+  writeFile(root, 'references/notes.txt', 'scratch\n');
+  writeFile(root, 'skills/using-agent-skills/SKILL.md', 'Nothing to link.\n');
+
+  const result = run(root);
+
+  assert.equal(result.status, 0, result.stdout + result.stderr);
+  assert.match(result.stdout, /1 skills checked — 0 error\(s\) — PASSED/);
+});
+
+test('reports an orphan without the unresolvable-link guidance', () => {
+  // The path advice is for links that do not resolve; an orphan has no link to
+  // fix, so printing it would be noise.
+  const root = makeSandbox();
+  writeFile(root, 'references/orphaned-checklist.md', '# Orphaned\n');
+  writeFile(root, 'skills/using-agent-skills/SKILL.md', 'Nothing to link.\n');
+
+  const result = run(root);
+
+  assert.equal(result.status, 1, result.stdout + result.stderr);
+  assert.doesNotMatch(result.stdout, /use `\.\.\/\.\.\/references\/<file>\.md`/);
+  assert.match(result.stdout, /cannot be reached by an agent/);
 });

@@ -13,7 +13,7 @@
   "interface": {
     "displayName": "Agent Skills",
     "shortDescription": "Senior-engineer workflows for AI coding agents: spec, plan, build, test, review, ship.",
-    "longDescription": "Agent Skills bundles 25 production engineering workflows from Addy Osmani, covering requirements, planning, implementation, testing, review, and shipping.",
+    "longDescription": "Agent Skills bundles 26 production engineering workflows from Addy Osmani, covering requirements, planning, implementation, testing, review, and shipping.",
     "developerName": "Addy Osmani",
     "category": "Productivity",
     "capabilities": [

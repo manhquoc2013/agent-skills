@@ -17,6 +17,8 @@ Build production-quality user interfaces that are accessible, performant, and vi
 - Adding interactivity or state management
 - Fixing visual or UX issues
 
+**When NOT to use:** Backend-only changes with no user-facing surface. Changes that don't render a screen or affect how one looks, feels, or behaves.
+
 ## Component Architecture
 
 ### File Structure
@@ -338,3 +340,5 @@ After building UI:
 - [ ] Follows the project's design system (spacing, colors, typography)
 - [ ] The rendered result passes a final UI-specific finish-gate review
 - [ ] No accessibility warnings in dev tools or axe-core
+
+**The SEE IT gate.** A UI change you have not *looked at* is not finished — tests and review cannot prove a screen renders correctly. Before declaring done, run the app and look at the changed screen at desktop and mobile widths, in every state the change touches (loading, empty, error, success, permission). Fix what you actually see, then re-verify.

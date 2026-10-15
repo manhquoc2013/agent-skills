@@ -17,7 +17,7 @@ Three layers, each with a distinct job:
 |-------|-----------|---------|------------------|
 | **Skill** | A workflow with steps and exit criteria | `code-review-and-quality` | The *how* — invoked from inside a persona or command |
 | **Persona** | A role with a perspective and an output format | `code-reviewer` | The *who* — adopts a viewpoint, produces a report |
-| **Command** | A user-facing entry point | `/review`, `/ship` | The *when* — composes personas and skills |
+| **Command** | A user-facing entry point | `/s-review`, `/s-ship` | The *when* — composes personas and skills |
 
 The user (or a slash command) is the orchestrator. **Personas do not call other personas.** Skills are mandatory hops inside a persona's workflow.
 
@@ -34,14 +34,14 @@ Pick this when you want one perspective on the current change and the user is in
 ### Slash command (single persona behind it)
 Pick this when there's a repeatable workflow you'd otherwise re-explain every time.
 
-- `/webperf` → wraps `web-performance-auditor` for performance-focused audits on web apps
+- `/s-webperf` → wraps `web-performance-auditor` for performance-focused audits on web apps
 
-`/review` and `/test` are not persona wrappers. They run the `code-review-and-quality` and `test-driven-development` skills in the main session, where the conversation's context is. To get `code-reviewer` or `test-engineer` in a fresh context, invoke the persona directly or run `/ship`.
+`/s-review` and `/s-test` are not persona wrappers. They run the `code-review-and-quality` and `test-driven-development` skills in the main session, where the conversation's context is. To get `code-reviewer` or `test-engineer` in a fresh context, invoke the persona directly or run `/s-ship`.
 
 ### Slash command (orchestrator — fan-out)
 Pick this only when **independent** investigations can run in parallel and produce reports that a single agent then merges.
 
-- `/ship` → fans out to `code-reviewer` + `security-auditor` + `test-engineer` in parallel, then synthesizes their reports into a go/no-go decision
+- `/s-ship` → fans out to `code-reviewer` + `security-auditor` + `test-engineer` in parallel, then synthesizes their reports into a go/no-go decision
 
 This is the only orchestration pattern this repo endorses. See [references/orchestration-patterns.md](../references/orchestration-patterns.md) for the full pattern catalog and anti-patterns.
 
@@ -57,7 +57,7 @@ Is the work a single perspective on a single artifact?
 
 ## Worked example: valid orchestration
 
-`/ship` is the canonical fan-out orchestrator in this repo:
+`/s-ship` is the canonical fan-out orchestrator in this repo:
 
 ```
 /ship
@@ -93,7 +93,7 @@ A `meta-orchestrator` persona whose job is "decide which other persona to call":
 Why this fails:
 - Pure routing layer with no domain value
 - Adds two paraphrasing hops → information loss + 2× token cost
-- The user already knows they want a review; let them call `/review` directly
+- The user already knows they want a review; let them call `/s-review` directly
 - Replicates work that slash commands and `AGENTS.md` intent-mapping already do
 
 ## Rules for personas
@@ -107,7 +107,7 @@ Why this fails:
 
 The personas in this repo are designed to work as Claude Code subagents and as Agent Teams teammates without modification:
 
-- **As subagents:** auto-discovered when this plugin is enabled (no path config needed). Use the Agent tool with `subagent_type: code-reviewer` (or `security-auditor`, `test-engineer`). `/ship` is the canonical example.
+- **As subagents:** auto-discovered when this plugin is enabled (no path config needed). Use the Agent tool with `subagent_type: code-reviewer` (or `security-auditor`, `test-engineer`). `/s-ship` is the canonical example.
 - **As Agent Teams teammates** (experimental, requires `CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS=1`): reference the same persona name when spawning a teammate. The persona's body is **appended to** the teammate's system prompt as additional instructions (not a replacement), so your persona text sits on top of the team-coordination instructions the lead installs (SendMessage, task-list tools, etc.).
 
 Subagents only report results back to the main agent. Agent Teams let teammates message each other directly. Use subagents when reports are enough; use Agent Teams when sub-agents need to challenge each other's findings (e.g. competing-hypothesis debugging). See [references/orchestration-patterns.md](../references/orchestration-patterns.md) for the full mapping.

@@ -1,0 +1,43 @@
+{
+  "skill_name": "document-clarification",
+  "trigger": {
+    "positive": [
+      {
+        "prompt": "Read this spec and list what's unclear",
+        "top_k": 3
+      },
+      {
+        "prompt": "Turn this PRD's gaps into questions",
+        "top_k": 3
+      },
+      {
+        "prompt": "What questions does this requirements doc still leave open",
+        "top_k": 3
+      }
+    ],
+    "negative": [
+      {
+        "prompt": "Write a spec from these vague requirements",
+        "owner": "spec-driven-development"
+      },
+      {
+        "prompt": "Ask me directly what I want",
+        "owner": "interview-me"
+      }
+    ]
+  },
+  "evals": [
+    {
+      "id": 1,
+      "kind": "dialogue",
+      "prompt": "Here is our checkout PRD: 'Checkout must be fast and support guest users. Payment goes through our provider.' Tell me what it still leaves open before we plan.",
+      "expected_output": "A structured clarification list of questions grouped by severity, each citing where the document does or does not address the point and carrying a suggested default",
+      "expectations": [
+        "Every question cites what the document says, or states that the point is not addressed anywhere",
+        "Each question carries a severity and a suggested default the user can accept",
+        "Blockers are listed before minor questions",
+        "No plan, spec, or code is produced — the list is the deliverable"
+      ]
+    }
+  ]
+}

@@ -17,6 +17,8 @@ Design stable, well-documented interfaces that are hard to misuse. Good interfac
 - Establishing database schema that informs API shape
 - Changing existing public interfaces
 
+**When NOT to use:** Internal-only changes with no consumer-visible surface — a private refactor is `code-simplification`'s job, not a contract decision.
+
 ## Core Principles
 
 ### Hyrum's Law

@@ -180,5 +180,5 @@ Identify the framework and rendering model (React, Vue, Svelte, Angular, Next.js
 ## Composition
 
 - **Invoke directly when:** the user wants a performance-focused pass on a web application, a specific component, a route, or a live URL.
-- **Invoke via:** `/webperf` (dedicated performance audit command). Not included in `/ship` fan-out — performance audits apply to web applications only, not to utility libraries or CLI tools, so adding it to a global pre-launch fan-out would create noise in non-web projects.
+- **Invoke via:** `/s-webperf` (dedicated performance audit command). Not included in `/s-ship` fan-out — performance audits apply to web applications only, not to utility libraries or CLI tools, so adding it to a global pre-launch fan-out would create noise in non-web projects.
 - **Do not invoke from another persona.** If `code-reviewer` flags a performance concern that warrants a deeper pass, surface that recommendation in the report; the user or a slash command initiates the deeper pass. See [docs/agents.md](../docs/agents.md).
