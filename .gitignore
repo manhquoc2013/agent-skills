@@ -5,6 +5,7 @@ node_modules/
 *.log
 .claude/.simplify-ignore-cache/
 .claude/sdd-cache/
+.ai-kit/
 evals/results/
 evals/plugin/results/
 __pycache__/
