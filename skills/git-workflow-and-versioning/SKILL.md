@@ -151,6 +151,8 @@ git rev-parse --git-common-dir # where the shared object store lives
 
 If `.git` is a file, add new worktrees from the main checkout, and prefer commands that read `git rev-parse` themselves over hand-built paths. Adding worktrees changes the layout of the working directory — name the target directories and get confirmation before creating them.
 
+**Submodule guard.** Worktrees created inside or above a submodule confuse both tools. Confirm `git rev-parse --show-toplevel` resolves to the repository you mean, and verify the target directory sits outside tracked paths before creating it (`git check-ignore -v <target-dir>` should match, or the directory lives outside the repository). A worktree inside an ignored-but-tracked path is how two worktrees end up committing each other's files.
+
 For parallel AI agent work, use git worktrees to run multiple branches simultaneously:
 
 ```bash
@@ -192,6 +194,17 @@ Agent starts work
 ```
 
 This pattern means you never lose more than one increment of work. If an agent goes off the rails, `git reset --hard HEAD` takes you back to the last successful state.
+
+## Finishing a Branch
+
+Implementation done is not integration done. Before integrating, run the decision menu and get explicit confirmation on the option:
+
+- **Merge** — the change is complete and reviewed. Merge into `main`, delete the branch and its worktree, and move on.
+- **Open a PR** — the change needs human review. Push, open the PR, and stop; do not proceed to merge without the review.
+- **Keep the branch** — the change is not ready to integrate (waiting on a decision or another change). Leave it untouched and state what unblocks it.
+- **Discard** — the experiment failed. Delete the worktree and branch only after confirming the branch contains nothing you need; a discarded branch with unsaved work in its worktree is data loss.
+
+Cleanup after integration: remove the worktree (`git worktree remove`), prune with `git worktree prune`, and delete the merged branch. Never force-push to a shared branch on your own initiative — rewriting shared history is the other person's call.
 
 ## Change Summaries
 

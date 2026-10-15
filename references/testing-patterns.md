@@ -221,6 +221,36 @@ test('user can create and complete a task', async ({ page }) => {
 });
 ```
 
+## Deterministic Concurrency Testing
+
+Concurrency tests flake when they race the clock. Two rules keep them deterministic:
+
+- **Inject the clock.** Never assert on elapsed real time. Take a clock seam — injectable timers, mock timers, a fake scheduler — and advance it deterministically. A test that sleeps is a test that flakes.
+- **Wait on conditions, not delays.** In async tests, wait for the state you care about (see `condition-based-waiting` in the `debugging-and-error-recovery` skill), never a guess about how long it takes.
+
+```typescript
+// Bad: races the real clock
+await sleep(100);
+expect(retries).toBe(3);
+
+// Good: fake timers, no real time
+vi.useFakeTimers();
+const promise = retryOperation(op);
+await vi.advanceTimersByTimeAsync(100);
+expect(retries).toBe(3);
+```
+
+## Property-Based Testing
+
+For pure logic — parsing, serialization, validation, transforms — property tests check invariants across many generated inputs, catching edge cases example-based tests miss. Invariants worth pinning:
+
+- **Round-trip:** `parse(serialize(x)) === x`
+- **Idempotency:** `f(f(x)) === f(x)`
+- **Monotonicity:** sorting never changes the multiset of items
+- **Boundaries:** outputs stay inside declared limits for every input
+
+In JS/TS, `fast-check` provides the generator framework (`fc.property(fc.string(), (s) => ...)`). Run property tests with the same focused-test command as the rest of the suite, and treat a failing shrink as the bug's minimal reproduction.
+
 ## Test Anti-Patterns
 
 | Anti-Pattern | Problem | Better Approach |

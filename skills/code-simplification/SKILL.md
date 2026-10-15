@@ -26,6 +26,7 @@ Simplify code by reducing complexity while preserving exact behavior. The goal i
 - You don't understand what the code does yet — comprehend before you simplify
 - The code is performance-critical and the "simpler" version would be measurably slower
 - You're about to rewrite the module entirely — simplifying throwaway code wastes effort
+- You're hunting a bug — a "simplification" that also changes behavior is a bug fix wearing a refactor costume. Use `debugging-and-error-recovery`, and keep the two changes in separate commits
 
 ## The Five Principles
 
@@ -315,6 +316,7 @@ function UserBadge({ user }: Props) {
 - Simplifying code you don't fully understand
 - Batching many simplifications into one large, hard-to-review commit
 - Refactoring code outside the scope of the current task without being asked
+- A simplification that changes behavior "because the behavior was wrong" — that's a bug fix, separate it
 
 ## Verification
 

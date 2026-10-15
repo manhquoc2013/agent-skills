@@ -143,6 +143,23 @@ AI-generated UI has recognizable patterns. Avoid all of them:
 | Stock card grids | Uniform grids are a layout shortcut that ignores information priority and scanning patterns | Purpose-driven layouts |
 | Shadow-heavy design | Layered shadows add depth that competes with content and slows rendering on low-end devices | Subtle or no shadows unless the design system specifies |
 
+### Priority Rules (Impact-Ordered)
+
+When the design isn't final or the "AI look" persists, work down this table and fix higher rows first:
+
+| Priority | Rule | Anti-Pattern |
+|---|---|---|
+| 1 | Accessibility: contrast ≥ 4.5:1 (3:1 large text), alt text, keyboard nav | Decorative-only color, unlabeled icon buttons |
+| 2 | Touch & interaction: ≥ 44×44px targets, pressed feedback, no layout shift on press | Tiny icon-only hit areas, hover-only interactions |
+| 3 | Typography: one hierarchy, consistent scale | Random sizes, heading styles on non-headings |
+| 4 | Spacing: 4/8px rhythm, consistent gutters | Arbitrary 13px/23px values |
+| 5 | Color: semantic tokens, dual-theme | Raw hex, light-only palette |
+| 6 | Layout: content-first, safe areas respected | Stock grids, hero-then-everything |
+
+**Dual-theme contrast is tested, not inferred.** Text that passes contrast in light mode does not automatically pass in dark mode — the dark palette has its own surface colors. Verify 4.5:1 in BOTH themes before delivery; a single-theme check is half a check.
+
+**Mobile polish bar.** On phone-sized screens: fixed headers, tab bars, and CTA bars respect safe areas; scroll content is not hidden behind fixed bars (add inset padding); the spacing rhythm holds at 4/8px; long-form text keeps a readable measure. Reduced-motion and large-text settings must not break the layout.
+
 ### Spacing and Layout
 
 Use a consistent spacing scale. Don't invent values:

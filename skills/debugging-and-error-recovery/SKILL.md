@@ -139,6 +139,13 @@ Root cause fix (good):
 
 Ask: "Why does this happen?" until you reach the actual cause, not just where it manifests.
 
+**The three-failure stop rule.** Count attempted fixes against one failure:
+
+- Fixes 1–2 that don't hold → return to Step 1 and re-analyze with the new information each attempt produced.
+- Fix 3 that doesn't hold → STOP. A third failed fix is evidence about the architecture, not about your effort — each failed fix that reveals a new problem in a different place, or needs a "massive refactor" to land, strengthens that signal. Question the fundamental pattern with a fresh perspective (another engineer, a fresh agent context, or your human partner) before attempting a fourth.
+
+Never stack fixes: change one variable at a time, or you cannot learn which change mattered.
+
 ### Step 5: Guard Against Recurrence
 
 Write a test that catches this specific failure:
@@ -302,3 +309,8 @@ After fixing a bug:
 - [ ] All existing tests pass
 - [ ] Build succeeds
 - [ ] The original bug scenario is verified end-to-end
+
+## See Also
+
+- [Condition-based waiting](references/condition-based-waiting.md) — replace arbitrary sleeps with condition polling
+- [Root-cause tracing](references/root-cause-tracing.md) — trace a bad value backward through the call stack to its source

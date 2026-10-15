@@ -163,6 +163,16 @@ Calling an LLM — chatbots, summarizers, agents, RAG — adds a new attack surf
 
 Pattern: [LLM output handling](references/hardening-patterns.md#llm-output-handling).
 
+### Verify prior mitigations
+
+Hardening an existing system is as much audit as build. When a `SECURITY.md` (or the project's security posture doc) already documents mitigations, verify each one against the code before relying on it, and record one of three states:
+
+- **Verified** — the mitigation exists in code and behaves as documented.
+- **Stale** — documented but absent or ineffective in code. Fix it or update the document; silently trusting it is a false assurance.
+- **Not covered** — the document has no entry for a surface the change touches. Add one, or note the gap explicitly.
+
+A threat list that only documents *known* threats is a hint, not a boundary: every new trust boundary (a new endpoint, an integration, an AI feature) re-opens the question.
+
 ## Review Checklist
 
 Before sign-off, walk `../../references/security-checklist.md`: it covers authentication, authorization, input, data protection and privacy, headers and CORS, dependencies and supply chain, AI/LLM, and error handling, plus the OWASP quick-reference tables.

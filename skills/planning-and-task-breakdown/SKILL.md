@@ -100,6 +100,10 @@ Each task follows this structure, whether it lands in the markdown task list or 
 - `src/path/to/file.ts`
 - `tests/path/to/test.ts`
 
+**Interfaces:**
+- Consumes: [exact names and signatures from earlier tasks this task uses]
+- Produces: [exact function names, parameter and return types later tasks rely on]
+
 **Estimated scope:** [Small: 1-2 files | Medium: 3-5 files | Large: 5+ files]
 ```
 
@@ -121,6 +125,17 @@ Add explicit checkpoints to the task list target:
 - [ ] Core user flow works end-to-end
 - [ ] Review with human before proceeding
 ```
+
+### Step 6: Self-Review the Plan
+
+Before handing the plan off, check it yourself — this is a checklist you run, not a subagent dispatch:
+
+1. **Spec coverage:** point at a task for every requirement in the spec; list gaps and add tasks for them.
+2. **Step scan:** every task must let an implementer write exactly one reasonable thing — a task that decides nothing is a gap; one that prescribes the whole body is a transcript.
+3. **Type consistency:** names and signatures used in later tasks match what earlier tasks define — `clearLayers()` in one task and `clearFullLayers()` in the next is a bug.
+4. **Proportion:** a plan several times longer than the spec is a transcript of the program. Replace bodies with signatures, test names, and assertions.
+
+Fix what you find inline. A spec requirement with no task gets a task.
 
 ## Task Sizing Guidelines
 

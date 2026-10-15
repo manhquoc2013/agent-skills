@@ -141,6 +141,18 @@ Every change needs a description that stands alone in version control history.
 
 ## Review Process
 
+### Review Depth
+
+Match the depth to what the change can break — a config tweak does not deserve the same pass as a new auth flow:
+
+| Depth | Scope | When |
+|-------|-------|------|
+| **Quick** | Pattern scan: obvious bugs, security anti-patterns, convention breaks | Trivial or mechanical changes, renames, config |
+| **Standard** | Full five-axis per-file analysis | The default for feature and bugfix changes |
+| **Deep** | Cross-file analysis: call chains, data flow, migration impact, mutation testing of the changed tests | New subsystems, auth/security, schema or contract changes |
+
+State the depth you used in the verdict. If the diff's real risk outgrows the depth you planned, escalate the depth rather than proceeding.
+
 ### Step 1: Understand the Context
 
 Before looking at code, understand the intent:
@@ -207,6 +219,14 @@ Check the author's verification story:
 ```
 
 **Treat the author's verification story as unverified claims.** For everything the verdict depends on, produce the evidence yourself: re-run the changed tests, execute the build, open the changed screen. A stated rationale never downgrades a finding's severity, and "I left it out per YAGNI" is the implementer grading its own work — you decide that.
+
+### The Re-Review Loop
+
+A review that ends at "Request changes" is half done. Track the loop until the verdict changes:
+
+1. The author addresses the findings — each fix its own commit, no unrelated changes bundled in.
+2. The reviewer re-checks the changed parts and what they touch, with fresh verification evidence (re-run the gates — never trust "fixed" without it).
+3. If the third round still ends at "Request changes," stop and escalate: three rounds of rework means the change's premise or its spec is the problem, not the execution.
 
 ## Multi-Model Review Pattern
 

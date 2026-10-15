@@ -64,6 +64,14 @@ describe('TaskService', () => {
 });
 ```
 
+**Verify RED — watch it fail. Never skip this step.** Run the test with the repository's focused-test command and confirm it fails *for the right reason*:
+
+- It fails as an assertion, not a compile/import error
+- The failure message names the missing behavior, not a typo
+- If the test passes immediately, it is not a failing test — you are testing existing behavior. Fix the test.
+
+Watching the failure is the proof the test can catch the bug. A test you never saw fail proves nothing.
+
 ### Step 2: GREEN — Make It Pass
 
 Write the minimum code to make the test pass. Don't over-engineer:
@@ -81,6 +89,10 @@ export async function createTask(input: { title: string }): Promise<Task> {
   return task;
 }
 ```
+
+**Verify GREEN — watch it pass.** Run the same command and confirm the new test passes and the output is clean (no errors, no warnings).
+
+**"Other tests" means the project's suite, not just your file.** Before you call the change done, run the repository's full-suite command — even when the task named only one test file. A scope statement bounds the deliverable, not the verification; a red test you watched scroll past and didn't report is a report falsified by omission.
 
 ### Step 3: REFACTOR — Clean Up
 

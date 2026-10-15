@@ -58,6 +58,14 @@ The depth behind these items lives in `code-review-and-quality` (the five-axis r
 
 Tailor the list to the project once, then reuse it unchanged. A Definition of Done that is renegotiated every sprint is not a Definition of Done.
 
+## Independent Verification
+
+The implementer may not mark its own work done — "done" is a verdict, and a verdict comes from someone who did not produce the evidence:
+
+- The verifier re-runs the checks itself: a green test reported by the implementer is a claim, not evidence. Trust the re-run and the diff, never the report.
+- The verifier reviews what the change actually does against the acceptance criteria, in a context fresh enough not to inherit the implementer's assumptions.
+- The implementer's own verification is a working check, never the closing one.
+
 ## Red Flags
 
 - "It's done, I just haven't run it yet": unverified work is not done.
