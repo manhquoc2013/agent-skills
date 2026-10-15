@@ -37,7 +37,7 @@ A slash command that wraps one persona with the project's skills. Saves the user
 
 **Use when:** the same single-persona invocation happens repeatedly with the same setup.
 
-**Examples in this repo:** `/s-review`, `/s-test`, `/s-code-simplify`.
+**Examples in this repo:** `/s-review`, `/s-test`, `/s-simplify`.
 
 **Cost:** same as direct invocation. The slash command is just a saved prompt.
 

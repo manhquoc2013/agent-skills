@@ -142,9 +142,9 @@ Dùng khi: mọi thay đổi code — commit, branch, giải quyết conflict, t
 | `/s-test` | test-driven-development | Vòng đỏ-xanh-refactor; với bug dùng Prove-It pattern (test tái hiện bug phải ĐỎ trước) |
 | `/s-review` | code-review-and-quality | Review 5 trục với file:line cụ thể |
 | `/s-ship` | shipping-and-launch | Fan-out song song 3 persona (code-reviewer, security-auditor, test-engineer) → quyết định GO/NO-GO + rollback plan |
-| `/s-webperf` | web-performance-auditor (persona) | Audit hiệu năng web; chế độ Deep (có dữ liệu Lighthouse/PSI/CrUX) hoặc Quick (soi cấu trúc code) |
-| `/s-code-simplify` | code-simplification | Đơn giản hóa code, giữ nguyên hành vi |
-| `/s-constraints` | constraint-driven-development | Thiết lập thanh chất lượng; sub-command: `check`, `guard`, `ratchet` |
+| `/s-perf` | web-performance-auditor (persona) | Audit hiệu năng web; chế độ Deep (có dữ liệu Lighthouse/PSI/CrUX) hoặc Quick (soi cấu trúc code) |
+| `/s-simplify` | code-simplification | Đơn giản hóa code, giữ nguyên hành vi |
+| `/s-guard` | constraint-driven-development | Thiết lập thanh chất lượng; sub-command: `check`, `diff`, `ratchet` |
 
 ## 6. Personas (4 vai trò)
 
@@ -153,7 +153,7 @@ Dùng khi: mọi thay đổi code — commit, branch, giải quyết conflict, t
 | `code-reviewer` | Review 5 trục: correctness, readability, architecture, security, performance | Fan-out của `/s-ship`, hoặc review độc lập |
 | `security-auditor` | Audit lỗ hổng: OWASP Top 10, secrets, auth/authz, CVE dependency | Fan-out của `/s-ship`, hoặc audit bảo mật riêng |
 | `test-engineer` | Phân tích độ phủ test: happy path, edge case, error path, concurrency | Fan-out của `/s-ship`, hoặc đánh giá bộ test |
-| `web-performance-auditor` | Audit hiệu năng web với scorecard chỉ ghi giá trị có nguồn | `/s-webperf` |
+| `web-performance-auditor` | Audit hiệu năng web với scorecard chỉ ghi giá trị có nguồn | `/s-perf` |
 
 **Quy tắc phối hợp:** người dùng (hoặc slash command) là người điều phối. Persona không gọi persona khác. Mẫu phối hợp duy nhất là **fan-out song song + merge** — đúng như `/s-ship`: ba persona chạy đồng thời, kết quả được tổng hợp ở phiên chính. Có thể bỏ qua fan-out chỉ khi: thay đổi ≤ 2 tệp, diff < 50 dòng, và không đụng auth, payments, data access, config/env.
 
@@ -172,7 +172,7 @@ Dùng khi: mọi thay đổi code — commit, branch, giải quyết conflict, t
 2. `test-driven-development` — Prove-It: test tái hiện bug phải đỏ trước, sửa, xanh
 3. `code-review-and-quality` — review cả fix lẫn regression test
 
-**Refactor:** `code-simplification` (hoặc `/s-code-simplify`) — từng bước một, chạy test sau mỗi bước, revert bước nào làm test đỏ.
+**Refactor:** `code-simplification` (hoặc `/s-simplify`) — từng bước một, chạy test sau mỗi bước, revert bước nào làm test đỏ.
 
 **Làm UI:** `frontend-ui-engineering` — design system trước, rồi component; kết thúc bằng cổng SEE IT: mở app nhìn ở desktop + mobile, mọi trạng thái.
 

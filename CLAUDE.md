@@ -10,7 +10,7 @@ This is the agent-skills project — a collection of production-grade engineerin
 skills/       → Core skills (SKILL.md per directory)
 agents/       → Reusable agent personas (code-reviewer, test-engineer, security-auditor, web-performance-auditor)
 hooks/        → Session lifecycle hooks
-.claude/commands/ → Slash commands (/s-spec, /s-plan, /s-constraints, /s-build, /s-test, /s-review, /s-code-simplify, /s-ship; plus /s-webperf specialist audit)
+.claude/commands/ → Slash commands (/s-spec, /s-plan, /s-guard, /s-build, /s-test, /s-review, /s-simplify, /s-ship; plus /s-perf specialist audit)
 references/   → Supplementary checklists and shared contracts (testing, performance, security, accessibility, observability, definition-of-done, orchestration-patterns)
 evals/        → Skill eval cases + framework (see evals/README.md)
 docs/         → Setup guides for different tools

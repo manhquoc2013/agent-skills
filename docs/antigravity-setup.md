@@ -52,14 +52,14 @@ Use the native plugin skills directly while that importer limitation applies:
 | Intended wrapper | Direct Antigravity invocation | Notes |
 |------------------|-------------------------------|-------|
 | `/s-spec` | `/agent-skills:spec-driven-development` | Writes a structured spec before code |
-| `/s-constraints` | `/agent-skills:constraint-driven-development` | Defines and enforces the project's quality bar |
+| `/s-guard` | `/agent-skills:constraint-driven-development` | Defines and enforces the project's quality bar |
 | `/s-planning` | `/agent-skills:planning-and-task-breakdown` | Antigravity's built-in `/s-planning` command is a separate plan-mode control |
 | `/s-build` | `/agent-skills:incremental-implementation` | Also invoke `/agent-skills:test-driven-development`; wrapper-only `/s-build auto` orchestration is unavailable |
 | `/s-test` | `/agent-skills:test-driven-development` | Runs the red-green-refactor workflow |
 | `/s-review` | `/agent-skills:code-review-and-quality` | Runs the five-axis review workflow |
-| `/s-code-simplify` | `/agent-skills:code-simplification` | Simplifies without changing behavior |
+| `/s-simplify` | `/agent-skills:code-simplification` | Simplifies without changing behavior |
 | `/s-ship` | `/agent-skills:shipping-and-launch` | The wrapper's automatic persona fan-out is unavailable; invoke specialist agents separately |
-| `/s-webperf` | Select `web-performance-auditor` from `/agents` | This workflow is a persona, not a skill |
+| `/s-perf` | Select `web-performance-auditor` from `/agents` | This workflow is a persona, not a skill |
 
 Do not add YAML frontmatter to the TOML files as a workaround. Gemini CLI reads the parallel TOML command format with a strict parser, and `---` frontmatter makes those files invalid TOML without changing Antigravity's conversion behavior.
 

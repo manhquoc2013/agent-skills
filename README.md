@@ -29,10 +29,10 @@ Skills encode the workflows, quality gates, and best practices that senior engin
 | Plan how to build it | `/s-plan` | Small, atomic tasks |
 | Build incrementally | `/s-build` | One slice at a time |
 | Prove it works | `/s-test` | Tests are proof |
-| Set the quality bar | `/s-constraints` | Decide it once, enforce it everywhere |
+| Set the quality bar | `/s-guard` | Decide it once, enforce it everywhere |
 | Review before merge | `/s-review` | Improve code health |
-| Audit web performance | `/s-webperf` | Measure before you optimize |
-| Simplify the code | `/s-code-simplify` | Clarity over cleverness |
+| Audit web performance | `/s-perf` | Measure before you optimize |
+| Simplify the code | `/s-simplify` | Clarity over cleverness |
 | Ship to production | `/s-ship` | Faster is safer |
 
 In Claude Code these install as plugin commands.
@@ -221,9 +221,9 @@ Already installed? How you roll the pack out depends on your codebase. The **[Ad
 
 ---
 
-## All 26 Skills
+## All 29 Skills
 
-The commands above are entry points. The pack includes 26 skills total — 25 lifecycle skills plus the `using-agent-skills` meta-skill. Each skill is a structured workflow with steps, verification gates, and anti-rationalization tables. You can also reference any skill directly.
+The commands above are entry points. The pack includes 29 skills total — 28 lifecycle skills plus the `using-agent-skills` meta-skill. Each skill is a structured workflow with steps, verification gates, and anti-rationalization tables. You can also reference any skill directly.
 
 ### Meta - Discover which skill applies
 
@@ -258,6 +258,7 @@ The commands above are entry points. The pack includes 26 skills total — 25 li
 | [doubt-driven-development](skills/doubt-driven-development/SKILL.md) | Adversarial fresh-context review of every non-trivial decision in-flight - CLAIM → EXTRACT → DOUBT → RECONCILE → STOP, with optional user-authorized cross-model escalation | Stakes are high (production, security, irreversible), working in unfamiliar code, or a confident output is cheaper to verify now than to debug later |
 | [frontend-ui-engineering](skills/frontend-ui-engineering/SKILL.md) | Component architecture, design systems, state management, responsive design, WCAG 2.1 AA accessibility | Building or modifying user-facing interfaces |
 | [api-and-interface-design](skills/api-and-interface-design/SKILL.md) | Contract-first design, Hyrum's Law, One-Version Rule, error semantics, boundary validation | Designing APIs, module boundaries, or public interfaces |
+| [dispatching-parallel-agents](skills/dispatching-parallel-agents/SKILL.md) | One agent per independent problem domain, parallel dispatch, hand-built briefs, coordinator integrates and verifies | Two or more independent tasks or failures that share no state or dependency |
 
 ### Verify - Prove it works
 
@@ -265,12 +266,14 @@ The commands above are entry points. The pack includes 26 skills total — 25 li
 |-------|-------------|----------|
 | [browser-testing-with-devtools](skills/browser-testing-with-devtools/SKILL.md) | Chrome DevTools MCP for live runtime data - DOM inspection, console logs, network traces, performance profiling | Building or debugging anything that runs in a browser |
 | [debugging-and-error-recovery](skills/debugging-and-error-recovery/SKILL.md) | Five-step triage: reproduce, localize, reduce, fix, guard. Stop-the-line rule, safe fallbacks | Tests fail, builds break, or behavior is unexpected |
+| [verification-before-completion](skills/verification-before-completion/SKILL.md) | Evidence before claims - run the check, read the output, cite it, only then report status | About to mark work done, commit, or open a PR without a fresh verification run |
 
 ### Review - Quality gates before merge
 
 | Skill | What It Does | Use When |
 |-------|-------------|----------|
 | [code-review-and-quality](skills/code-review-and-quality/SKILL.md) | Five-axis review, change sizing (~100 lines), severity labels (Nit/Optional/FYI), review speed norms, splitting strategies | Before merging any change |
+| [receiving-code-review](skills/receiving-code-review/SKILL.md) | Verify feedback before implementing, reasoned pushback over performative agreement, clarify-then-fix ordering | Responding to review comments or implementing reviewer suggestions |
 | [code-simplification](skills/code-simplification/SKILL.md) | Chesterton's Fence, Rule of 500, reduce complexity while preserving exact behavior | Code works but is harder to read or maintain than it should be |
 | [security-and-hardening](skills/security-and-hardening/SKILL.md) | OWASP Top 10 prevention, auth patterns, secrets management, dependency auditing, three-tier boundary system | Handling user input, auth, data storage, or external integrations |
 | [performance-optimization](skills/performance-optimization/SKILL.md) | Measure-first approach - Core Web Vitals targets, profiling workflows, bundle analysis, anti-pattern detection | Performance requirements exist or you suspect regressions |
@@ -297,7 +300,7 @@ Pre-configured specialist personas for targeted reviews:
 | [code-reviewer](agents/code-reviewer.md) | Senior Staff Engineer | Five-axis code review with "would a staff engineer approve this?" standard |
 | [test-engineer](agents/test-engineer.md) | QA Specialist | Test strategy, coverage analysis, and the Prove-It pattern |
 | [security-auditor](agents/security-auditor.md) | Security Engineer | Vulnerability detection, threat modeling, OWASP assessment |
-| [web-performance-auditor](agents/web-performance-auditor.md) | Web Performance Engineer | Core Web Vitals audit with Quick/Deep modes and a metric-honesty rule; run it via `/s-webperf` |
+| [web-performance-auditor](agents/web-performance-auditor.md) | Web Performance Engineer | Core Web Vitals audit with Quick/Deep modes and a metric-honesty rule; run it via `/s-perf` |
 
 See [docs/agents.md](docs/agents.md) for the decision matrix, orchestration rules, and how personas compose with skills and slash commands.
 

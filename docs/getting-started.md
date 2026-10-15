@@ -117,7 +117,7 @@ The `agents/` directory contains pre-configured agent personas:
 | `code-reviewer.md` | Five-axis code review |
 | `test-engineer.md` | Test strategy and writing |
 | `security-auditor.md` | Vulnerability detection |
-| `web-performance-auditor.md` | Core Web Vitals & performance audit (via `/s-webperf`) |
+| `web-performance-auditor.md` | Core Web Vitals & performance audit (via `/s-perf`) |
 
 Load an agent definition when you need specialized review. For example, ask your coding agent to "review this change using the code-reviewer agent persona" and provide the agent definition.
 
@@ -128,15 +128,15 @@ The `.claude/commands/` directory contains slash commands for Claude Code:
 | Command | Skill Invoked |
 |---------|---------------|
 | `/s-spec` | spec-driven-development |
-| `/s-constraints` | constraint-driven-development |
+| `/s-guard` | constraint-driven-development |
 | `/s-plan` | planning-and-task-breakdown |
 | `/s-build` | incremental-implementation + test-driven-development |
 | `/s-build auto` | planning-and-task-breakdown → incremental-implementation + test-driven-development (whole plan, one approval) |
 | `/s-test` | test-driven-development |
 | `/s-review` | code-review-and-quality |
-| `/s-code-simplify` | code-simplification |
+| `/s-simplify` | code-simplification |
 | `/s-ship` | shipping-and-launch |
-| `/s-webperf` | web-performance-auditor (specialist agent, web apps only) |
+| `/s-perf` | web-performance-auditor (specialist agent, web apps only) |
 
 > **Note:** When installed as a Claude Code plugin you may see a warning like
 > _"Default commands/ folder is ignored because the manifest sets 'commands'"_.

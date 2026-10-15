@@ -34,7 +34,7 @@ Pick this when you want one perspective on the current change and the user is in
 ### Slash command (single persona behind it)
 Pick this when there's a repeatable workflow you'd otherwise re-explain every time.
 
-- `/s-webperf` → wraps `web-performance-auditor` for performance-focused audits on web apps
+- `/s-perf` → wraps `web-performance-auditor` for performance-focused audits on web apps
 
 `/s-review` and `/s-test` are not persona wrappers. They run the `code-review-and-quality` and `test-driven-development` skills in the main session, where the conversation's context is. To get `code-reviewer` or `test-engineer` in a fresh context, invoke the persona directly or run `/s-ship`.
 
