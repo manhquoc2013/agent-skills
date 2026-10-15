@@ -1,0 +1,54 @@
+{
+  "name": "@cobusgreyling/loop-drill",
+  "version": "1.0.0",
+  "description": "Fire drills for loop guardrails. Injects a known fault and asserts the guardrail actually fires — turning L3 readiness from \"the files exist\" into \"the guardrails demonstrably work\".",
+  "type": "module",
+  "main": "dist/drill.js",
+  "exports": {
+    ".": "./dist/drill.js"
+  },
+  "bin": {
+    "loop-drill": "dist/cli.js"
+  },
+  "files": [
+    "dist",
+    "README.md"
+  ],
+  "scripts": {
+    "build": "tsc",
+    "test": "npm run build && node --test test/*.test.mjs",
+    "prepublishOnly": "npm test",
+    "start": "node dist/cli.js"
+  },
+  "engines": {
+    "node": ">=18"
+  },
+  "keywords": [
+    "loop-engineering",
+    "ai-agents",
+    "mutation-testing",
+    "chaos-engineering",
+    "verifier",
+    "guardrails",
+    "safety"
+  ],
+  "author": "Cobus Greyling",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/cobusgreyling/loop-engineering.git",
+    "directory": "tools/loop-drill"
+  },
+  "homepage": "https://github.com/cobusgreyling/loop-engineering/tree/main/tools/loop-drill#readme",
+  "bugs": {
+    "url": "https://github.com/cobusgreyling/loop-engineering/issues"
+  },
+  "dependencies": {
+    "@cobusgreyling/loop-context": "file:../loop-context",
+    "@cobusgreyling/loop-gate": "file:../loop-gate"
+  },
+  "devDependencies": {
+    "@types/node": "^20.0.0",
+    "typescript": "^5.0.0"
+  }
+}
