@@ -10,10 +10,7 @@
     {
       "name": "agent-skills",
       "version": "0.6.13",
-      "source": {
-        "source": "github",
-        "repo": "addyosmani/agent-skills"
-      },
+      "source": "./",
       "description": "Production-grade engineering skills covering every phase of software development: spec, plan, build, verify, review, and ship.",
       "homepage": "https://github.com/addyosmani/agent-skills",
       "license": "MIT",
