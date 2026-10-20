@@ -453,7 +453,7 @@ install_plugin() {
         return 1
       fi
       run_cli claude plugin marketplace add "$REPO_ROOT" --scope "$scope_flag" || return 1
-      run_cli claude plugin install agent-skills@addy-agent-skills --scope "$scope_flag" -y || return 1
+      run_cli claude plugin install agent-skills@addy-agent-skills --scope "$scope_flag" || return 1
       ;;
     codex)
       if ! have_command codex; then

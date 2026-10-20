@@ -653,7 +653,7 @@ function Invoke-MarketplaceInstall {
         'claude' {
             $command = 'claude'
             $steps.Add(@('plugin', 'marketplace', 'add', $Script:RepoRoot, '--scope', $claudeScope))
-            $steps.Add(@('plugin', 'install', 'agent-skills@addy-agent-skills', '--scope', $claudeScope, '-y'))
+            $steps.Add(@('plugin', 'install', 'agent-skills@addy-agent-skills', '--scope', $claudeScope))
         }
         'codex' {
             $command = 'codex'
