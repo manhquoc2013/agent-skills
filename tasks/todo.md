@@ -1,130 +1,127 @@
-# Task List: Upgrading agent-skills with Ponytail Engineering Patterns
+# Task List: Upgrading agent-skills with UI/UX Pro Max Design Intelligence
 
-## Phase 1: Core Ladder & Debt Skill (Foundation)
+## Phase 1: Data & Intelligence Engine (Foundation)
 
-- [x] **Task 1: Update code-simplification with 6-Rung Ladder & Modes**
-  - **Description**: Enhance `skills/code-simplification/SKILL.md` to introduce Ponytail's 6-Rung Ladder, 3 operating modes (`lite`, `full`, `ultra`), automatic mode switching, and invariant protections.
+- [ ] **Task 1.1: Populate Canonical Datasets into frontend-ui-engineering**
+  - **Description**: Copy and organize canonical CSV and JSON datasets from `docs/references/ui-ux-pro-max-skill-main/src/ui-ux-pro-max/data/` into `skills/frontend-ui-engineering/data/` (styles, products, colors, typography, ux-guidelines, ui-reasoning, charts, icons, motion, and 22 stacks).
   - **Acceptance Criteria**:
-    - [x] 6-Rung Ladder documented clearly with code examples.
-    - [x] `lite`, `full`, and `ultra` modes defined with trigger keywords and automatic detection guidelines.
-    - [x] Invariants (security, validation, accessibility, data-loss safeguards) marked as non-negotiable.
-  - **Verification**: `node scripts/validate-skills.js`
-  - **Files**: `skills/code-simplification/SKILL.md`
+    - [ ] `skills/frontend-ui-engineering/data/` contains all 17 canonical data files + `stacks/` directory with 22 stack files.
+    - [ ] All CSV files are intact, properly encoded in UTF-8 without corruption.
+  - **Verification**: `python scripts/validate-ui-data.py` (or directory file count check)
+  - **Files**: `skills/frontend-ui-engineering/data/*`
 
-- [x] **Task 2: Create technical-debt-and-shortcuts Skill**
-  - **Description**: Add `skills/technical-debt-and-shortcuts/SKILL.md` defining the `shortcut: <ceiling>, <upgrade-trigger>` comment convention, debt ledger format, and rot prevention (`no-trigger` warnings).
+- [ ] **Task 1.2: Implement Python BM25/Regex Search Engine & Design System Generator**
+  - **Description**: Implement zero-dependency search engine in `skills/frontend-ui-engineering/scripts/` (`core.py`, `design_system.py`, `reasoning_contract.py`, `search.py`, `validate_data.py`, and unit tests). Update default persistence directory in `design_system.py` to `.agents/design-system/` per user approval.
   - **Acceptance Criteria**:
-    - [x] Follows all sections of `docs/skill-anatomy.md`.
-    - [x] Explains comment format, scanning mechanics, and ledger output structure.
-    - [x] Defines boundaries (read-only scan vs. generating `DEBT.md`).
-  - **Verification**: `node scripts/validate-skills.js`
-  - **Files**: `skills/technical-debt-and-shortcuts/SKILL.md`
+    - [ ] Zero external dependencies (runs with python3 standard library).
+    - [ ] Domain search (`--domain <domain>`) returns accurate BM25-ranked results.
+    - [ ] `--design-system` produces complete design system (layout, style, color, typography, anti-patterns).
+    - [ ] `--variance`, `--motion`, `--density` dials adjust output deterministically.
+    - [ ] `--persist` writes to `.agents/design-system/MASTER.md` without overwriting unless `--force`.
+  - **Verification**: `python skills/frontend-ui-engineering/scripts/search.py "fintech" --domain color && python -m unittest discover -s skills/frontend-ui-engineering/scripts/tests`
+  - **Files**: `skills/frontend-ui-engineering/scripts/*`
 
-- [x] **Task 3: Implement /s-debt Command and Scanner Script**
-  - **Description**: Create `.claude/commands/s-debt.md` and implement fast debt scanner utility in Node.js and Bash.
-  - **Acceptance Criteria**:
-    - [x] `.claude/commands/s-debt.md` created and conforms to command standards.
-    - [x] `scripts/scan-debt.js` and `scripts/scan-debt.sh` created, correctly scanning git-tracked files (respecting `.gitignore`) for `shortcut:` markers.
-    - [x] Reports ceiling, upgrade trigger, and flags `no-trigger` risks.
-  - **Verification**: `node scripts/validate-commands.js && bash scripts/scan-debt.sh`
-  - **Files**: `.claude/commands/s-debt.md`, `scripts/scan-debt.js`, `scripts/scan-debt.sh`
-
-### Checkpoint 1: Foundation
-- [x] `node scripts/validate-skills.js` passes with 0 errors
-- [x] `node scripts/validate-commands.js` passes with 0 errors
-- [x] Debt scanner successfully detects test markers
+### Checkpoint 1: Engine Foundation
+- [ ] Datasets present and valid
+- [ ] Search engine unit tests pass 100%
 
 ---
 
-## Phase 2: Review & Audit Overhaul
+## Phase 2: Skill Overhaul & CLI Shortcut
 
-- [x] **Task 4: Upgrade code-review-and-quality & code-reviewer Persona**
-  - **Description**: Upgrade `skills/code-review-and-quality/SKILL.md` and `agents/code-reviewer.md` with Ponytail's 4-part finding structure, out-of-diff caller tracing, assumed load profiling, and 3-tier numbered triage.
+- [ ] **Task 2.1: Overhaul skills/frontend-ui-engineering/SKILL.md & References**
+  - **Description**: Update `skills/frontend-ui-engineering/SKILL.md` to integrate the Query Contract, 10-tier rule priority matrix, stack search guidelines, anti-patterns, and the Pre-Delivery UI Checklist. Add `references/quick-reference.md` and `references/pro-rules.md`.
   - **Acceptance Criteria**:
-    - [x] Enforces 4-part finding structure: *What this is*, *Problem* (with concrete reproduction case), *Fix* (minimal diff), *If we skip it*.
-    - [x] Mandates out-of-diff caller impact analysis across untouched files.
-    - [x] Categorizes findings into *Must fix*, *Should fix*, and *Nice to have* with contiguous global numbering.
+    - [ ] Frontmatter conforms to `docs/skill-anatomy.md`.
+    - [ ] Detailed workflow covering when to use domain search vs design-system generator.
+    - [ ] Standard sections included: Overview, When to Use, Process, Common Rationalizations, Red Flags, Verification.
+    - [ ] References `references/quick-reference.md` and `references/pro-rules.md` exist and are linked.
   - **Verification**: `node scripts/validate-skills.js && node scripts/validate-reference-links.js`
-  - **Files**: `skills/code-review-and-quality/SKILL.md`, `agents/code-reviewer.md`
+  - **Files**: `skills/frontend-ui-engineering/SKILL.md`, `skills/frontend-ui-engineering/references/quick-reference.md`, `skills/frontend-ui-engineering/references/pro-rules.md`
 
-### Checkpoint 2: Review Engine
-- [x] `node scripts/validate-skills.js` passes
-- [x] `node scripts/validate-reference-links.js` passes
+- [ ] **Task 2.2: Implement Root CLI Shortcut scripts/ui-search.sh**
+  - **Description**: Create root-level executable wrapper `scripts/ui-search.sh` that delegates to `skills/frontend-ui-engineering/scripts/search.py` with automatic python3 detection and friendly error reporting.
+  - **Acceptance Criteria**:
+    - [ ] `scripts/ui-search.sh` is executable (`chmod +x`).
+    - [ ] Supports all arguments passed to `search.py`.
+    - [ ] Handles python/python3 path resolution gracefully.
+  - **Verification**: `./scripts/ui-search.sh --help && ./scripts/ui-search.sh "saas" --domain style`
+  - **Files**: `scripts/ui-search.sh`
+
+### Checkpoint 2: Skill & CLI Shortcut
+- [ ] `node scripts/validate-skills.js` passes with 0 errors
+- [ ] `./scripts/ui-search.sh` runs cleanly from workspace root
 
 ---
 
-## Phase 3: Universal Multi-Agent Packaging & Distribution
+## Phase 3: Lifecycle Hooks & Command Integration
 
-- [x] **Task 5: Implement build-agent-dist.js Generator**
-  - **Description**: Create `scripts/build-agent-dist.js` to parse `skills/`, `agents/`, and `references/` and generate native configurations and rule files for 20+ agents.
+- [ ] **Task 3.1: Integrate Design System Generation into /s-spec & spec-driven-development**
+  - **Description**: Update `skills/spec-driven-development/SKILL.md` to trigger `--design-system` generation during Phase 1 (Specify) whenever requirements involve user interfaces, web applications, or mobile screens, persisting to `.agents/design-system/MASTER.md`.
   - **Acceptance Criteria**:
-    - [x] Script runs without external dependencies.
-    - [x] Generates valid markdown and json descriptors for each target IDE/agent.
-  - **Verification**: `node scripts/build-agent-dist.js`
-  - **Files**: `scripts/build-agent-dist.js`
+    - [ ] Workflow explicitly instructs agent to run design system generation for UI features.
+    - [ ] `MASTER.md` created in `.agents/design-system/` before writing frontend code.
+  - **Verification**: `node scripts/validate-skills.js`
+  - **Files**: `skills/spec-driven-development/SKILL.md`
 
-- [x] **Task 6: Populate Multi-Agent Configurations**
-  - **Description**: Generate and check in configurations for Cursor, OpenCode, Codex, Gemini CLI, Copilot, Windsurf, Cline, Antigravity, Devin, Grok, Kimi, Kiro, OpenClaw, Qoder, Pi agent, Hermes.
+- [ ] **Task 3.2: Integrate Pre-Delivery UI Checklist into /s-review and /s-ship**
+  - **Description**: Update `skills/code-review-and-quality/SKILL.md` and `agents/code-reviewer.md` to evaluate UI diffs against the Pre-Delivery Checklist (contrast 4.5:1, touch target 44px, no emoji icons, prefers-reduced-motion).
   - **Acceptance Criteria**:
-    - [x] `.cursor/rules/`, `.cursor/hooks.json`, `scripts/cursor-hooks.js` present.
-    - [x] `.opencode/`, `opencode.json`, `package.json` configured.
-    - [x] `.codex-plugin/`, `gemini-extension.json`, `.github/copilot-instructions.md`, `.windsurf/rules/`, `.clinerules/` present.
-    - [x] Unified `AGENTS.md` updated and synchronized across all environments.
-  - **Verification**: `node scripts/validate-artifact-paths.js`
-  - **Files**: Multiple directories under root (`.cursor/`, `.opencode/`, `.codex-plugin/`, etc.)
+    - [ ] UI review criteria included in 4-part finding structure.
+    - [ ] Pre-delivery checklist verified during `/s-ship` pre-launch gate.
+  - **Verification**: `node scripts/validate-skills.js`
+  - **Files**: `skills/code-review-and-quality/SKILL.md`, `agents/code-reviewer.md`, `skills/shipping-and-launch/SKILL.md`
 
-- [x] **Task 7: Update Documentation (INSTALL.md & README.md)**
-  - **Description**: Provide comprehensive installation, configuration, and uninstallation guides for all 20+ supported agents.
-  - **Acceptance Criteria**:
-    - [x] `INSTALL.md` has dedicated sections for each agent.
-    - [x] `README.md` updated with multi-agent compatibility badges and table.
-  - **Verification**: `node scripts/validate-reference-links.js`
-  - **Files**: `INSTALL.md`, `README.md`
-
-### Checkpoint 3: Multi-Agent Packaging
-- [x] All 20+ agent configurations present and synchronized
-- [x] `node scripts/validate-reference-links.js` passes with 0 broken links
+### Checkpoint 3: Lifecycle Integration
+- [ ] Lifecycle skills validate cleanly
+- [ ] Spec and review steps explicitly enforce design intelligence standards
 
 ---
 
-## Phase 4: Statusline & Lifecycle Hooks
+## Phase 4: Asset Sync & Multi-Platform Distribution
 
-- [x] **Task 8: Implement Dynamic Statusline Utility**
-  - **Description**: Create `scripts/statusline.sh` and `scripts/statusline.ps1` providing prompt/status bar integration that reflects current lifecycle stage (`[SPEC]`, `[BUILD]`, `[REVIEW]`, etc.), active mode (`lite`/`full`/`ultra`), and active shortcut debt.
+- [ ] **Task 4.1: Implement scripts/sync-assets.js**
+  - **Description**: Create `scripts/sync-assets.js` to mirror datasets and scripts cleanly without symlinks, guaranteeing standalone skill portability for Issue #361.
   - **Acceptance Criteria**:
-    - [x] `scripts/statusline.sh` runs in POSIX bash/zsh.
-    - [x] `scripts/statusline.ps1` runs in PowerShell.
-    - [x] Fast execution (<20ms) suitable for shell prompt or agent statusline.
-  - **Verification**: `bash scripts/statusline.sh`
-  - **Files**: `scripts/statusline.sh`, `scripts/statusline.ps1`
+    - [ ] Validates that all mirrored copies match source files byte-for-byte.
+    - [ ] Flags any drift or missing assets.
+    - [ ] Never generates symlinks.
+  - **Verification**: `node scripts/sync-assets.js`
+  - **Files**: `scripts/sync-assets.js`
 
-- [x] **Task 9: Add Lifecycle Hook Adapters**
-  - **Description**: Configure session lifecycle hooks for Claude Code, Codex, and Cursor to automatically inject active mode and lifecycle phase context.
+- [ ] **Task 4.2: Update scripts/install-local.sh and scripts/build-agent-dist.js**
+  - **Description**: Update local installation script to ensure Python search scripts and data directories are properly copied and marked executable across all 20+ supported tools (Claude Code, Cursor, Codex, Gemini CLI, Antigravity CLI, Windsurf, OpenCode, Copilot, etc.).
   - **Acceptance Criteria**:
-    - [x] Hooks cleanly set and track active mode without blocking.
-    - [x] Mode persists across turns or sessions as configured.
-  - **Verification**: Inspect hook definitions in `hooks/`
-  - **Files**: `hooks/agent-mode-hook.js`, `hooks/claude-hooks.json`, `hooks/cursor-hooks.json`
+    - [ ] `./scripts/install-local.sh --list` detects and lists updated frontend skill assets.
+    - [ ] `scripts/build-agent-dist.js` generates correct multi-agent distribution artifacts.
+  - **Verification**: `./scripts/install-local.sh --list && node scripts/build-agent-dist.js`
+  - **Files**: `scripts/install-local.sh`, `scripts/build-agent-dist.js`
 
-### Checkpoint 4: Hooks & Statusline
-- [x] Statusline renders cleanly in terminal
-- [x] Hooks register and pass validation
+### Checkpoint 4: Multi-Agent Distribution
+- [ ] Installer functions properly on test directories
+- [ ] Assets sync cleanly with zero drift
 
 ---
 
-## Phase 5: Verification & Evals
+## Phase 5: Validation, Tests & Documentation
 
-- [x] **Task 10: Add Evals and Execute Complete Test Suite**
-  - **Description**: Add test eval scenarios for debt tracking and anti-bloat in `evals/`, and run the complete validation suite.
+- [ ] **Task 5.1: Implement scripts/validate-ui-data.py & Run Evals**
+  - **Description**: Provide `scripts/validate-ui-data.py` to continuously validate dataset schemas, column headers, and Google Fonts references. Run full Python and Node test suites.
   - **Acceptance Criteria**:
-    - [x] `evals/` includes trigger evals for `technical-debt-and-shortcuts`.
-    - [x] `node scripts/run-evals.js` passes 100%.
-    - [x] `node scripts/validate-skills.js` passes 100%.
-    - [x] `node scripts/validate-commands.js` passes 100%.
-    - [x] `node scripts/validate-reference-links.js` passes 100%.
-  - **Verification**: Run all scripts sequentially.
-  - **Files**: `evals/cases/technical-debt.json`, test scripts
+    - [ ] Validates all CSV/JSON datasets.
+    - [ ] Python unit tests pass 100%.
+  - **Verification**: `python scripts/validate-ui-data.py && python -m unittest discover -s skills/frontend-ui-engineering/scripts/tests`
+  - **Files**: `scripts/validate-ui-data.py`
 
-### Final Checkpoint: Complete Upgrade
-- [x] All tasks checked off
-- [x] Repository in healthy, production-ready state
+- [ ] **Task 5.2: Update Documentation & Run Final Verification**
+  - **Description**: Update `README.md`, `docs/skill-anatomy.md`, and references. Run full repository verification suite (`validate-skills.js`, `validate-reference-links.js`, `validate-commands.js`).
+  - **Acceptance Criteria**:
+    - [ ] `README.md` documents UI design intelligence capabilities and `./scripts/ui-search.sh`.
+    - [ ] Zero broken links or validation errors.
+  - **Verification**: `node scripts/validate-skills.js && node scripts/validate-reference-links.js && node scripts/validate-commands.js`
+  - **Files**: `README.md`, `docs/skill-anatomy.md`
+
+### Final Checkpoint: Complete Upgrade Ready
+- [ ] All tasks checked
+- [ ] All validation commands pass
+- [ ] Git commit ready
