@@ -1,28 +1,25 @@
-# Implementation Plan: Token Efficiency & Installer Resilience
+# Implementation Plan: S-Review Token Optimization
 
 ## Overview
-
-Execute token-reduction enhancements across core skills and fix the PowerShell installer's cross-platform environment variable resolution.
+Optimize token consumption for the `/s-review` slash command, `code-review-and-quality` skill, and `code-reviewer` persona by enforcing scoped diff inspection, lockfile filtering, quiet test verification, bounded caller greps, and concise 4-part findings.
 
 ---
 
 ## Phase Breakdown
 
-### Phase 1: Test Log Pruning & Context Protection
-- **Components**:
-  - Update `skills/test-driven-development/SKILL.md` with log pruning directives (quiet/focused reporters, failure-only stack traces).
-  - Update `skills/debugging-and-error-recovery/SKILL.md` with concise failure capture guidelines.
-- **Verification**: `node scripts/validate-skills.js`.
+### Phase 1: Core Skill & Persona Directives
+- Equip `skills/code-review-and-quality/SKILL.md` with:
+  - Scoped diff ingestion (`git diff --stat` first).
+  - Noise/lockfile filtering (`':!*lock*'`, `':!dist/*'`).
+  - Targeted line slices instead of whole-file reads.
+  - Quiet test runner execution during review verification.
+  - Rationalization, red flags, and verification checklist updates.
+- Equip `agents/code-reviewer.md` with scoped diff inspection and bounded caller tracing.
 
-### Phase 2: Lean Task Formatting in Planning
-- **Components**:
-  - Update `skills/planning-and-task-breakdown/SKILL.md` to document the 3-line compact format for XS/S tasks to keep `tasks/todo.md` token-efficient.
-- **Verification**: `node scripts/validate-skills.js`.
+### Phase 2: Command Synchronization
+- Update `.claude/commands/s-review.md`, `commands/s-review.toml`, and `.gemini/commands/s-review.toml` with the token-optimized review workflow.
+- Ensure strict parity across command descriptions and schema definitions.
 
-### Phase 3: Cross-Platform Fix for install-local.ps1
-- **Components**:
-  - Update `scripts/install-local.ps1` to fall back to `$env:HOME` when `$env:USERPROFILE` is undefined.
-- **Verification**: Run `pwsh ./scripts/install-local.ps1 -List` or syntax validation.
-
-### Phase 4: Full Validation & Git Commit
-- **Verification**: `npm test` passes cleanly.
+### Phase 3: Alias Re-sync & Test Suite Verification
+- Re-sync installed IDE alias wrappers (`./scripts/install-aliases.sh --all`).
+- Run `npm test` to verify 100% compliance across all 31 skills, 4 personas, and 12 commands.

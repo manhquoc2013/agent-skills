@@ -164,6 +164,24 @@ Match the depth to what the change can break — a config tweak does not deserve
 
 State the depth you used in the verdict. If the diff's real risk outgrows the depth you planned, escalate the depth rather than proceeding.
 
+### Token Efficiency: Scoped Diff Ingestion & Quiet Verification
+
+Diff inspection and test verification can consume massive amounts of context tokens if handled naively:
+
+- **Assess Scope First (`git diff --stat`):**
+  Never dump raw, unconstrained diffs into the session. Always run `git status` and `git diff --stat` (or `--cached --stat`) first to identify modified files, line additions, and deletions.
+- **Filter Out Noise & Lockfiles:**
+  Exclude noisy auto-generated lockfiles (`package-lock.json`, `pnpm-lock.yaml`, `yarn.lock`, `Cargo.lock`) and compiled assets (`dist/`, `build/`) from diff queries. Review dependency intent via `package.json` diff and verify lockfiles via `git diff --stat <lockfile>`.
+  Pattern: `git diff --stat` followed by `git diff -- . ':(exclude)*lock*' ':(exclude)dist/*'`
+- **Targeted Line Hunks over Entire Files:**
+  Do not load entire multi-hundred-line files when reviewing localized edits. Read targeted line slices (`view_file` with `StartLine`/`EndLine`) or examine compact diff hunks (`git diff -U3 -- <file>`).
+- **Bounded Grep for Ripple Impact:**
+  When checking callers across untouched files (`git grep -n "<symbol>"`), check the count first. If a symbol is widely used (50+ call sites), inspect only direct module callers or rely on compiler/typechecker diagnostics rather than reading dozens of files into context.
+- **Run Quiet Test Verification:**
+  During test inspection and mutation checks (Step 2 & Step 5), pass quiet/focused test runner flags (`-q`, `--reporter=dot`, `--tb=short`) to avoid polluting the context window with hundreds of passing test logs.
+- **Concise 4-Part Output:**
+  Do not repeat or echo unchanged code blocks or large diffs in the review summary. Provide the exact file:line reference and a concise 1-2 line code fix suggestion.
+
 ### Step 1: Understand Context & Profile Expected Load
 
 Before looking at code, establish the operating baseline:
@@ -421,12 +439,15 @@ Default stance: reject until proven otherwise — reject until verification evid
 | "It's only a small addition to this file" | Small diffs still push files past a healthy size and bolt branches onto unrelated flows. Judge the resulting structure, not the diff size. |
 | "It's just a version bump" | A bump is a behavior change you didn't write. Read the changelog; semver doesn't guarantee no breakage. |
 | "I'll upgrade everything in one PR to save time" | A bulk bump that breaks the build hides which package did it. One dependency per change keeps the cause and the revert clean. |
+| "I should dump the entire git diff into context" | Dumping thousands of lines of raw diff (especially lockfiles and dist assets) floods context. Run git diff --stat first, filter noisy lockfiles, and inspect targeted hunks. |
 
 ## Red Flags
 
 - PRs merged without any review
 - Review that only checks if tests pass (ignoring other axes)
 - "LGTM" without evidence of actual review
+- Dumping massive diffs or raw lockfiles directly into context
+- Verbose review output echoing full code blocks instead of concise 4-part findings
 - Security-sensitive changes without security-focused review
 - Large PRs that are "too big to review properly" (split them)
 - No regression tests with bug fix PRs
@@ -443,9 +464,10 @@ Default stance: reject until proven otherwise — reject until verification evid
 
 After review is complete:
 
-- [ ] All Critical issues are resolved
-- [ ] All Required (no-prefix) changes are resolved or explicitly deferred with justification
-- [ ] Tests pass
+- [ ] Diff was scoped efficiently (stat first, lockfiles filtered) without flooding context
+- [ ] All Must fix issues are resolved
+- [ ] All Should fix changes are resolved or explicitly deferred with justification
+- [ ] Tests pass (verified with quiet reporters to preserve context)
 - [ ] Build succeeds
 - [ ] The verification story is documented (what changed, how it was verified)
 - [ ] Dependency upgrades were reviewed against their changelog, isolated per package, and verified by a green suite with the lockfile diff reviewed

@@ -52,10 +52,10 @@ Evaluate every change across these five dimensions:
 
 ## Review Process
 
-1. **Profile Expected Load**: State the assumed workload upfront.
-2. **Review Tests First**: Confirm behavior coverage and run mutation spot-checks.
-3. **Trace Beyond the Diff**: Grep all callers of modified functions and types across untouched files to prevent broken downstream callers.
-4. **Enforce 4-Part Finding Structure**: Every finding must state a concrete failure case ("Input X leads to wrong outcome Y"). No hypothetical style nits.
+1. **Profile Expected Load & Scope Diff:** State the assumed workload upfront. Run `git diff --stat` first to assess change magnitude without dumping noisy lockfiles or compiled bundles into context.
+2. **Review Tests First (Quietly):** Confirm behavior coverage and run mutation spot-checks using quiet test runners (`-q`, `--reporter=dot`) to avoid dumping verbose logs.
+3. **Trace Beyond the Diff:** Grep callers of modified functions and types across untouched files (`git grep -n "<symbol>"`). Check call-site counts before loading full files.
+4. **Enforce 4-Part Finding Structure:** Every finding must state a concrete failure case in 1-2 tight sentences ("Input X leads to wrong outcome Y"). Do not echo large unchanged code blocks.
 
 ## Finding Triage
 
