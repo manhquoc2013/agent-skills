@@ -10,20 +10,20 @@
   - **Verification**: `python scripts/validate-ui-data.py` (or directory file count check)
   - **Files**: `skills/frontend-ui-engineering/data/*`
 
-- [ ] **Task 1.2: Implement Python BM25/Regex Search Engine & Design System Generator**
+- [x] **Task 1.2: Implement Python BM25/Regex Search Engine & Design System Generator**
   - **Description**: Implement zero-dependency search engine in `skills/frontend-ui-engineering/scripts/` (`core.py`, `design_system.py`, `reasoning_contract.py`, `search.py`, `validate_data.py`, and unit tests). Update default persistence directory in `design_system.py` to `.agents/design-system/` per user approval.
   - **Acceptance Criteria**:
-    - [ ] Zero external dependencies (runs with python3 standard library).
-    - [ ] Domain search (`--domain <domain>`) returns accurate BM25-ranked results.
-    - [ ] `--design-system` produces complete design system (layout, style, color, typography, anti-patterns).
-    - [ ] `--variance`, `--motion`, `--density` dials adjust output deterministically.
-    - [ ] `--persist` writes to `.agents/design-system/MASTER.md` without overwriting unless `--force`.
+    - [x] Zero external dependencies (runs with python3 standard library).
+    - [x] Domain search (`--domain <domain>`) returns accurate BM25-ranked results.
+    - [x] `--design-system` produces complete design system (layout, style, color, typography, anti-patterns).
+    - [x] `--variance`, `--motion`, `--density` dials adjust output deterministically.
+    - [x] `--persist` writes to `.agents/design-system/MASTER.md` without overwriting unless `--force`.
   - **Verification**: `python skills/frontend-ui-engineering/scripts/search.py "fintech" --domain color && python -m unittest discover -s skills/frontend-ui-engineering/scripts/tests`
   - **Files**: `skills/frontend-ui-engineering/scripts/*`
 
 ### Checkpoint 1: Engine Foundation
-- [ ] Datasets present and valid
-- [ ] Search engine unit tests pass 100%
+- [x] Datasets present and valid
+- [x] Search engine unit tests pass 100%
 
 ---
 
