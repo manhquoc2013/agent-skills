@@ -21,7 +21,7 @@ Skills encode the workflows, quality gates, and best practices that senior engin
 
 ## Commands
 
-11 slash commands that map to the development lifecycle. Each one activates the right skills automatically.
+12 slash commands that map to the development lifecycle. Each one activates the right skills automatically.
 
 | What you're doing | Command | Key principle |
 |-------------------|---------|---------------|
@@ -30,6 +30,7 @@ Skills encode the workflows, quality gates, and best practices that senior engin
 | Plan how to build it | `/s-plan` | Small, atomic tasks |
 | Build incrementally | `/s-build` | One slice at a time |
 | Prove it works | `/s-test` | Tests are proof |
+| Debug & root cause | `/s-debug` | Fix root causes, not symptoms (use `--find` to diagnose only) |
 | Set the quality bar | `/s-guard` | Decide it once, enforce it everywhere |
 | Track technical debt | `/s-debt` | Deliberate shortcuts, zero rot |
 | Review before merge | `/s-review` | Improve code health |

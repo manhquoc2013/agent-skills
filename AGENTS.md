@@ -26,7 +26,7 @@ The agent should automatically map user intent to skills:
 - Feature / new functionality → `spec-driven-development`, then `incremental-implementation`, `test-driven-development`
 - Planning / breakdown → `planning-and-task-breakdown`
 - Unclear/open points in a spec or PRD → `document-clarification`
-- Bug / failure / unexpected behavior → `debugging-and-error-recovery`
+- Bug / failure / unexpected behavior → `debugging-and-error-recovery` (`/s-debug`)
 - Code review → `code-review-and-quality`
 - Refactoring / simplification → `code-simplification`
 - Technical debt / deliberate shortcuts / deferrals → `technical-debt-and-shortcuts`

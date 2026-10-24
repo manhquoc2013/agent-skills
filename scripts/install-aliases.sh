@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # install-aliases.sh — installs short /s-* lifecycle skill wrappers into IDE/CLI skill directories.
-# Makes /s-spec, /s-plan, /s-build, /s-test, /s-review, /s-simplify, /s-ship, /s-guard, /s-perf
+# Makes /s-spec, /s-plan, /s-build, /s-test, /s-debug, /s-review, /s-simplify, /s-ship, /s-guard, /s-perf
 # appear as slash commands across Cursor, Antigravity, OpenCode, Codex, Windsurf, Copilot, etc.
 #
 # Usage:
@@ -148,8 +148,36 @@ project_destinations_for() {
   esac
 }
 
-# The 9 slash commands to generate
-ALIAS_COMMANDS=(s-spec s-plan s-build s-test s-review s-simplify s-ship s-guard s-perf)
+# Auto-discover all slash command definitions dynamically from $COMMANDS_DIR (.claude/commands/*.md)
+# Any new command file added to .claude/commands/ will automatically be discovered and installed.
+discover_commands() {
+  local cmds=()
+  if [[ -d "$COMMANDS_DIR" ]]; then
+    for cmd_file in "$COMMANDS_DIR"/*.md; do
+      [[ -f "$cmd_file" ]] || continue
+      local stem
+      stem="$(basename "$cmd_file" .md)"
+      cmds+=("$stem")
+    done
+  fi
+
+  if [[ ${#cmds[@]} -eq 0 ]]; then
+    # Fallback if directory is missing
+    cmds=(s-agent s-build s-debt s-debug s-guard s-perf s-plan s-review s-ship s-simplify s-spec s-test)
+  else
+    # Sort alphabetically
+    IFS=$'\n' sorted=($(sort <<<"${cmds[*]}"))
+    unset IFS
+    cmds=("${sorted[@]}")
+  fi
+
+  printf '%s\n' "${cmds[@]}"
+}
+
+ALIAS_COMMANDS=()
+while IFS= read -r cmd; do
+  [[ -n "$cmd" ]] && ALIAS_COMMANDS+=("$cmd")
+done < <(discover_commands)
 
 create_alias_skill() {
   local cmd_name="$1"
@@ -285,13 +313,13 @@ for id in "${SELECTED[@]}"; do
     while IFS= read -r dest; do
       [[ -n "$dest" ]] || continue
       install_to_destination "$dest"
-      echo "  ✓ Installed 9 /s-* commands -> $dest"
+      echo "  ✓ Installed ${#ALIAS_COMMANDS[@]} /s-* commands -> $dest"
     done < <(project_destinations_for "$id")
   else
     while IFS= read -r dest; do
       [[ -n "$dest" ]] || continue
       install_to_destination "$dest"
-      echo "  ✓ Installed 9 /s-* commands -> $dest"
+      echo "  ✓ Installed ${#ALIAS_COMMANDS[@]} /s-* commands -> $dest"
     done < <(user_destinations_for "$id")
   fi
 done
