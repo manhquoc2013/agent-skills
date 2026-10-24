@@ -127,3 +127,41 @@ To install the skill files into any of 70+ supported tools with a single command
 ```bash
 npx skills add manhquoc2013/agent-skills
 ```
+
+---
+
+## Uninstallation & Selective Skill Removal
+
+When you no longer need agent skills or want to remove specific ones:
+
+### 1. Interactive Uninstallation
+```bash
+./scripts/uninstall-local.sh
+# Or via npm
+npm run uninstall
+```
+
+### 2. Full Uninstallation Across All Detected Tools
+```bash
+# macOS / Linux
+./scripts/uninstall-local.sh --all
+
+# Or via install-local.sh
+./scripts/install-local.sh --uninstall --all
+
+# Windows PowerShell
+powershell -ExecutionPolicy Bypass -File .\scripts\uninstall-local.ps1 -All
+```
+
+### 3. Selective Skill Removal
+Remove only specific skills (e.g. `s-perf`, `s-debug`) while keeping the rest:
+```bash
+./scripts/uninstall-local.sh --skills s-perf,s-debug
+```
+
+### 4. Project-Level Removal
+Clean up skills installed inside a repository:
+```bash
+./scripts/uninstall-local.sh --scope project --project /path/to/repo
+```
+

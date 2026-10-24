@@ -51,6 +51,8 @@ install-local.sh — copy this clone's skills into detected IDE/CLI folders.
   --scope user|project   user = home config (default); project = one repo
   --project <path>       Project root for --scope project
   --no-aliases           Skip installing short /s-* slash command aliases
+  --uninstall, -u        Uninstall skills from detected target(s)
+  --skills s1[,s2...]    Selectively remove only specified skills (used with --uninstall)
   --help                 Show this text
 
 Ids: cursor, claude, codex, gemini, antigravity, windsurf, opencode,
@@ -256,6 +258,17 @@ copy_skill_pack() {
 EOF
   echo "$count"
 }
+
+# If --uninstall / -u is passed, delegate to uninstall-local.sh
+for arg in "$@"; do
+  if [[ "$arg" == "--uninstall" || "$arg" == "-u" ]]; then
+    forward_args=()
+    for a in "$@"; do
+      [[ "$a" == "--uninstall" || "$a" == "-u" ]] || forward_args+=("$a")
+    done
+    exec "$REPO_ROOT/scripts/uninstall-local.sh" "${forward_args[@]}"
+  fi
+done
 
 while [[ $# -gt 0 ]]; do
   case "$1" in

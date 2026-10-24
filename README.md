@@ -38,7 +38,7 @@ Skills encode the workflows, quality gates, and best practices that senior engin
 | Simplify the code | `/s-simplify` | Clarity over cleverness |
 | Ship to production | `/s-ship` | Faster is safer |
 
-Works across 20+ environments (Claude Code, Cursor, OpenCode, Codex, Antigravity, Copilot, Windsurf, Cline, Gemini CLI). See [INSTALL.md](INSTALL.md) for full setup guides.
+Works across 20+ environments (Claude Code, Cursor, OpenCode, Codex, Antigravity, Copilot, Windsurf, Cline, Gemini CLI). See [INSTALL.md](INSTALL.md) for full setup guides and uninstallation instructions.
 
 Want fewer manual steps once the spec exists? **`/s-build auto`** generates the plan and implements every task in a single approved pass — you approve the plan once, then it runs autonomously. It removes the human stepping *between* tasks, not the verification: every task is still test-driven and committed individually, and it pauses on failures or risky steps.
 

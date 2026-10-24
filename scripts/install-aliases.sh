@@ -29,19 +29,21 @@ LABELS=(
 
 LIST_ONLY=0
 INSTALL_ALL=0
+UNINSTALL=0
 ONLY_RAW=""
 SCOPE="user"
 PROJECT=""
 
 usage() {
   cat <<'EOF'
-install-aliases.sh — install short /s-* slash commands into detected IDE/CLI skill directories.
+install-aliases.sh — install or remove short /s-* slash commands in detected IDE/CLI skill directories.
 
   --list                 Show detection and destinations, then exit
   --all                  Install every detected target (no prompt)
   --only id[,id...]      Install specific targets (e.g. --only cursor,antigravity)
   --scope user|project   user = home config (default); project = one repo
   --project <path>       Project root for --scope project
+  --uninstall, -u        Uninstall and remove /s-* slash commands from target(s)
   --help                 Show this help
 
 Supported IDEs: cursor, antigravity, claude, codex, gemini, windsurf, opencode, copilot, copilot-cli
@@ -63,6 +65,7 @@ while [[ $# -gt 0 ]]; do
     --only) ONLY_RAW="$2"; shift 2 ;;
     --scope) SCOPE="$2"; shift 2 ;;
     --project) PROJECT="$2"; shift 2 ;;
+    --uninstall|-u) UNINSTALL=1; shift ;;
     --help|-h) usage; exit 0 ;;
     *) echo "Unknown option: $1" >&2; usage; exit 1 ;;
   esac
@@ -254,6 +257,24 @@ install_to_destination() {
   done
 }
 
+uninstall_from_destination() {
+  local dest="$1" count=0
+  [[ -d "$dest" ]] || { echo 0; return; }
+  local cmd
+  for cmd in "${ALIAS_COMMANDS[@]}"; do
+    if [[ -d "$dest/$cmd" ]]; then
+      rm -rf "$dest/$cmd"
+      count=$((count + 1))
+    fi
+    if [[ -f "$dest/$cmd.prompt.md" ]]; then
+      rm -f "$dest/$cmd.prompt.md"
+      count=$((count + 1))
+    fi
+  done
+  rmdir "$dest" 2>/dev/null || true
+  echo "$count"
+}
+
 # Determine selected targets
 SELECTED=()
 if [[ -n "$ONLY_RAW" ]]; then
@@ -296,6 +317,37 @@ if [[ "$LIST_ONLY" -eq 1 ]]; then
     printf "%-4d %-14s %-10s %s\n" "$i" "$id" "$detected" "$dests"
     i=$((i+1))
   done
+  exit 0
+fi
+
+if [[ "$UNINSTALL" -eq 1 ]]; then
+  echo "=========================================================="
+  echo "Uninstalling /s-* Slash Command Wrappers"
+  echo "Commands: ${ALIAS_COMMANDS[*]}"
+  echo "Scope:    $SCOPE"
+  [[ "$SCOPE" == "project" ]] && echo "Project:  $PROJECT"
+  echo "=========================================================="
+  echo
+
+  for id in "${SELECTED[@]}"; do
+    echo "Target: $id"
+    if [[ "$SCOPE" == "project" ]]; then
+      while IFS= read -r dest; do
+        [[ -n "$dest" ]] || continue
+        removed="$(uninstall_from_destination "$dest")"
+        echo "  ✓ Removed $removed /s-* command wrapper(s) from $dest"
+      done < <(project_destinations_for "$id")
+    else
+      while IFS= read -r dest; do
+        [[ -n "$dest" ]] || continue
+        removed="$(uninstall_from_destination "$dest")"
+        echo "  ✓ Removed $removed /s-* command wrapper(s) from $dest"
+      done < <(user_destinations_for "$id")
+    fi
+  done
+
+  echo
+  echo "Uninstallation of /s-* slash commands complete."
   exit 0
 fi
 

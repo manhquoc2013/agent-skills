@@ -1,41 +1,67 @@
-# Specification: Skill Catalog Reconciliation, Meta-Skill Discovery Completeness & Plugin Synchronization
+# Specification: Multi-Agent Skill Uninstallation & Selective Removal
 
 ## Objective
 
-Remediate the documentation drift and meta-skill discovery gaps identified during the multi-axis review:
-1. **Catalog Inventory Reconciliation in `README.md`**: Update total skill count from 29 to 31 (30 lifecycle skills + 1 `using-agent-skills` meta-skill), and integrate `technical-debt-and-shortcuts` into the catalog table.
-2. **Meta-Skill Discovery Completeness in `skills/using-agent-skills/SKILL.md`**: Expand the ASCII Skill Discovery decision tree and Quick Reference table to encompass all 31 skills (adding `technical-debt-and-shortcuts`, `autonomous-agent-workflow`, `dispatching-parallel-agents`, `receiving-code-review`, and `verification-before-completion`).
-3. **Multi-Agent Distribution Build & Local Plugin Sync**: Rebuild all multi-agent manifests via `scripts/build-agent-dist.js` and synchronize the local Antigravity plugin and slash commands via `scripts/install-local.sh` and `scripts/install-aliases.sh`.
+Deliver a comprehensive, safe, and cross-platform uninstallation capability for `agent-skills`, enabling users and agents to uninstall skills and slash command aliases when they are no longer needed.
+
+Key Requirements:
+1. **Dedicated Uninstaller Scripts**: Provide `scripts/uninstall-local.sh` and `scripts/uninstall-local.ps1`.
+2. **Flag Integration**: Support `--uninstall` / `-u` in `scripts/install-local.sh` and `scripts/install-aliases.sh`.
+3. **Selective & Clean-All Modes**:
+   - Ability to remove all installed skills across all detected targets or specific IDE/CLI targets.
+   - Ability to selectively remove specific skills (e.g. `--skills <name1,name2>`) without affecting others.
+4. **Lifecycle Command & Alias Cleanup**: Automatically clean up corresponding `/s-*` command aliases and prompts unless `--keep-aliases` is passed.
+5. **Dual Scoping**: Full support for both `--scope user` (global/home directories) and `--scope project` (repository-level).
+6. **Documentation & npm Script**: Add npm script `npm run uninstall` and document uninstallation steps in `INSTALL.md` and `README.md`.
 
 ---
 
-## Architectural Changes & Feature Set
+## Architectural Design
 
-### 1. Catalog Reconciliation (`README.md` & `AGENTS.md`)
-- Update `README.md` heading `## All 29 Skills` to `## All 31 Skills`.
-- In `README.md`, add `technical-debt-and-shortcuts` to the Review / Quality table with proper anchor, description, and "Use When" guidance.
-- Align `AGENTS.md` intent-to-skill and lifecycle mapping to reflect full orchestration capabilities (`autonomous-agent-workflow` for end-to-end features, `dispatching-parallel-agents` for parallel sub-agents).
+### 1. Targets and Destinations
+The uninstaller tracks the exact same canonical targets as `install-local.sh`:
+- `cursor`: `$HOME/.cursor/skills` (user) / `.cursor/skills` (project)
+- `claude`: `$HOME/.claude/skills` (user) / `.claude/skills` (project)
+- `codex`: `$HOME/.codex/skills` (user) / `.agents/skills` (project)
+- `gemini`: `$HOME/.gemini/skills` (user) / `.gemini/skills` (project)
+- `antigravity`: `$HOME/.gemini/config/plugins/agent-skills/skills` and `$HOME/.gemini/config/skills` (user) / `.agent/skills` (project)
+- `windsurf`: `$HOME/.codeium/windsurf/skills` (user) / `.windsurf/skills` (project)
+- `opencode`: `$HOME/.config/opencode/skills` (user) / `.opencode/skills` (project)
+- `copilot`: `$HOME/.agents/skills` and `$HOME/.github/skills` (user) / `.github/skills` (project)
+- `copilot-cli`: `$HOME/.copilot/skills` (user) / `.github/skills` (project)
+- `kiro`: `$HOME/.kiro/skills` (user) / `.kiro/skills` (project)
+- `commandcode`: `$HOME/.commandcode/skills` (user) / `.commandcode/skills` (project)
 
-### 2. Meta-Skill Routing Completeness (`skills/using-agent-skills/SKILL.md`)
-- In the **Skill Discovery** decision tree:
-  - Add `Autonomous end-to-end development? ──→ autonomous-agent-workflow`
-  - Add `Multiple independent sub-problems? ──→ dispatching-parallel-agents`
-  - Add `Receiving / addressing review feedback? ──→ receiving-code-review`
-  - Add `Pre-commit / marking work done? ──→ verification-before-completion`
-  - Add `Deliberate shortcuts / technical debt? ──→ technical-debt-and-shortcuts`
-- In the **Quick Reference** table:
-  - Add missing skills mapped to their canonical lifecycle phases (Meta, Build, Verify, Review).
-- Maintain skill line budget strictly under the 500-line ceiling.
+### 2. Selective vs All Uninstallation
+- When `--skills <comma-separated-list>` is specified:
+  - Validates skill names against the repo catalog or installed names.
+  - Deletes only those specific skill subdirectories within the target destination.
+  - Updates `.agent-skills-install.json` skill count if present.
+- When no specific skills are passed (or `--all-skills`):
+  - Enumerates all skills defined in `skills/` and removes each from the destination.
+  - Removes `.agent-skills-install.json`.
+  - Removes `references/` if installed alongside the skills.
+  - If target directory is empty, cleans up the directory.
 
-### 3. Distribution Rebuild & Local Sync
-- Run `node scripts/build-agent-dist.js` to regenerate manifests.
-- Re-sync local Antigravity plugin directory and aliases.
-- Execute full test suite: `npm test` and node test suites.
+### 3. Alias / Slash Command Cleanup
+- Integrates with `scripts/install-aliases.sh --uninstall`:
+  - Iterates through discovered `/s-*` commands (`s-agent`, `s-build`, `s-debt`, `s-debug`, `s-guard`, `s-perf`, `s-plan`, `s-review`, `s-ship`, `s-simplify`, `s-spec`, `s-test`).
+  - Removes wrapper directories (`<dest>/<cmd>`) and prompts (`<dest>/<cmd>.prompt.md`).
+
+### 4. Interactive & Non-Interactive CLI Interface
+- Flags:
+  - `--list`: Display installed skills and status across detected targets.
+  - `--all`: Uninstall from all detected targets without prompting.
+  - `--only <id[,id...]>`: Uninstall only from specified IDE targets.
+  - `--skills <skill[,skill...]>`: Selective uninstallation of specific skills.
+  - `--scope user|project`: user config vs repo project config.
+  - `--project <path>`: project directory root.
+  - `--keep-aliases`: Skip removing `/s-*` slash command wrappers.
+  - `--help`: Print usage instructions.
 
 ---
 
 ## Validation Strategy
-- `node scripts/validate-skills.js`: 31 skills conform to anatomy rules and line budget.
-- `node scripts/validate-commands.js`: 12 commands conform to parity.
-- `node scripts/validate-reference-links.js`: 0 broken links.
-- `npm test`: Clean pass with 0 errors.
+1. Unit testing with temporary dummy install directory in `scripts/uninstall-test.js`.
+2. Execution of `--list`, selective `--skills`, and full `--all` runs in dry/isolated modes.
+3. Regression check with `npm test` ensuring existing validators pass.

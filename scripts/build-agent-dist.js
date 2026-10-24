@@ -213,7 +213,8 @@ function generateOpenCode() {
         scripts: {
           build: "node scripts/build-agent-dist.js",
           prepare: "node scripts/build-agent-dist.js",
-          test: "node scripts/validate-skills.js && node scripts/validate-commands.js && node scripts/validate-reference-links.js"
+          uninstall: "bash scripts/uninstall-local.sh",
+          test: "node scripts/validate-skills.js && node scripts/validate-commands.js && node scripts/validate-reference-links.js && node scripts/uninstall-test.js"
         },
         publishConfig: {
           access: "public"
