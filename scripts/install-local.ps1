@@ -116,8 +116,8 @@ function Test-MarkerInstalled {
 }
 
 function Get-HostCatalog {
-    $homeDir = $env:USERPROFILE
-    $local = $env:LOCALAPPDATA
+    $homeDir = if ($env:USERPROFILE) { $env:USERPROFILE } elseif ($env:HOME) { $env:HOME } else { '' }
+    $local = if ($env:LOCALAPPDATA) { $env:LOCALAPPDATA } elseif ($homeDir) { $homeDir } else { '' }
     return @(
         @{
             Id = 'cursor'
@@ -254,9 +254,11 @@ function Test-CopilotExtension {
         $codeCommand = 'code'
     }
     else {
-        $codeExe = Join-Path $env:LOCALAPPDATA 'Programs\Microsoft VS Code\Code.exe'
-        if (Test-Path -LiteralPath $codeExe) {
-            $codeCommand = $codeExe
+        if ($env:LOCALAPPDATA) {
+            $codeExe = Join-Path $env:LOCALAPPDATA 'Programs\Microsoft VS Code\Code.exe'
+            if (Test-Path -LiteralPath $codeExe) {
+                $codeCommand = $codeExe
+            }
         }
     }
     if (-not $codeCommand) {

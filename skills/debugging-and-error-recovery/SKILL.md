@@ -78,10 +78,11 @@ Cannot reproduce on demand:
 
 For test failures (npm shown — substitute the repository's own test command, per the test-driven-development skill's Discover the Stack First section):
 ```bash
-# Run the specific failing test
-npm test -- --grep "test name"
+# Run the specific failing test (prefer quiet/focused flags to save tokens)
+npm test -- --grep "test name" --reporter=dot
+pytest -q --tb=short tests/test_file.py -k "test_name"
 
-# Run with verbose output
+# Run with verbose output ONLY if initial output lacks stack trace or error context
 npm test -- --verbose
 
 # Run in isolation (rules out test pollution)

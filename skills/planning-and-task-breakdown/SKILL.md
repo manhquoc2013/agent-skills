@@ -130,6 +130,19 @@ Each task follows this structure, whether it lands in the markdown task list or 
 **Estimated scope:** [Small: 1-2 files | Medium: 3-5 files | Large: 5+ files]
 ```
 
+#### Compact Format for XS/S Tasks (Token Efficiency)
+
+To keep `tasks/todo.md` concise (<100 lines) and avoid burning tokens re-reading boilerplate across turns, small tasks (single function, minor config, simple component) can use this streamlined 3-4 line checklist format:
+
+```markdown
+- [ ] **Task [N]: [Title]** ([XS/S])
+  - **Scope**: [One sentence explaining behavior and changes]
+  - **Verify**: [Focused test command or verification step]
+  - **Files**: `path/to/source.ts`, `path/to/test.ts`
+```
+
+Reserve the detailed block structure above for M/L architectural tasks or multi-module wave boundaries.
+
 ### Step 5: Order, Checkpoint, and Group into Waves
 
 Arrange tasks so that dependencies are satisfied, high-risk items fail fast, and parallelization opportunities are explicit:

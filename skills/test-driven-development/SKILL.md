@@ -33,6 +33,18 @@ The TDD cycle is universal; the commands are not. Before writing the first test,
 
 Run the repository's focused-test command during the loop and its full-suite command before completion. Never assume a default like `npm test` — a Gradle, Cargo, or pytest project has its own equivalent.
 
+### Token Efficiency: Prune Test Runner Output
+
+Test outputs can consume thousands of tokens if verbose reporters or full coverage tables are dumped into context on every loop iteration:
+
+- **Use Focused, Quiet Runners during TDD Loops:**
+  - Jest / Vitest: `npx vitest run path/to/test.ts --reporter=dot` or `npm test -- path/to/test.ts --bail=1`
+  - Pytest: `pytest path/to/test.py -q --tb=short`
+  - Cargo: `cargo test test_name`
+  - Go: `go test -run TestName ./... -short`
+- **Capture only failure diffs and stack traces:** Do not dump passing test lists or hundreds of lines of progress dots into the session.
+- **Reserve full verbose logs** for the final pre-ship suite run or intermittent race condition investigations.
+
 The examples below use TypeScript for illustration; the workflow is identical in any language once you've discovered the project's own tooling.
 
 ## The TDD Cycle
