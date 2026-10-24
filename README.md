@@ -42,6 +42,11 @@ Want fewer manual steps once the spec exists? **`/s-build auto`** generates the 
 
 Skills also activate automatically based on what you're doing — designing an API triggers `api-and-interface-design`, building UI triggers `frontend-ui-engineering`, and so on.
 
+Need instant, deterministic design intelligence? Query the embedded zero-dependency UI search engine at any time:
+```bash
+./scripts/ui-search.sh "fintech crypto dashboard" --design-system --persist -p "MyFintech"
+```
+
 ---
 
 ## Quick Start
@@ -257,7 +262,7 @@ The commands above are entry points. The pack includes 29 skills total — 28 li
 | [context-engineering](skills/context-engineering/SKILL.md) | Feed agents the right information at the right time - rules files, context packing, MCP integrations | Starting a session, switching tasks, or when output quality drops |
 | [source-driven-development](skills/source-driven-development/SKILL.md) | Ground every framework decision in official documentation - verify, cite sources, flag what's unverified | You want authoritative, source-cited code for any framework or library |
 | [doubt-driven-development](skills/doubt-driven-development/SKILL.md) | Adversarial fresh-context review of every non-trivial decision in-flight - CLAIM → EXTRACT → DOUBT → RECONCILE → STOP, with optional user-authorized cross-model escalation | Stakes are high (production, security, irreversible), working in unfamiliar code, or a confident output is cheaper to verify now than to debug later |
-| [frontend-ui-engineering](skills/frontend-ui-engineering/SKILL.md) | Component architecture, design systems, state management, responsive design, WCAG 2.1 AA accessibility | Building or modifying user-facing interfaces |
+| [frontend-ui-engineering](skills/frontend-ui-engineering/SKILL.md) | Component architecture, deterministic design intelligence (79 styles, 192 reasoning profiles, 192 palettes, 74 typography pairings, 22 stacks), state management, responsive design, WCAG 2.1 AA | Building or modifying user-facing interfaces |
 | [api-and-interface-design](skills/api-and-interface-design/SKILL.md) | Contract-first design, Hyrum's Law, One-Version Rule, error semantics, boundary validation | Designing APIs, module boundaries, or public interfaces |
 | [dispatching-parallel-agents](skills/dispatching-parallel-agents/SKILL.md) | One agent per independent problem domain, parallel dispatch, hand-built briefs, coordinator integrates and verifies | Two or more independent tasks or failures that share no state or dependency |
 

@@ -113,15 +113,15 @@
   - **Verification**: `python scripts/validate-ui-data.py && python -m unittest discover -s skills/frontend-ui-engineering/scripts/tests`
   - **Files**: `scripts/validate-ui-data.py`
 
-- [ ] **Task 5.2: Update Documentation & Run Final Verification**
+- [x] **Task 5.2: Update Documentation & Run Final Verification**
   - **Description**: Update `README.md`, `docs/skill-anatomy.md`, and references. Run full repository verification suite (`validate-skills.js`, `validate-reference-links.js`, `validate-commands.js`).
   - **Acceptance Criteria**:
-    - [ ] `README.md` documents UI design intelligence capabilities and `./scripts/ui-search.sh`.
-    - [ ] Zero broken links or validation errors.
+    - [x] `README.md` documents UI design intelligence capabilities and `./scripts/ui-search.sh`.
+    - [x] Zero broken links or validation errors.
   - **Verification**: `node scripts/validate-skills.js && node scripts/validate-reference-links.js && node scripts/validate-commands.js`
   - **Files**: `README.md`, `docs/skill-anatomy.md`
 
 ### Final Checkpoint: Complete Upgrade Ready
-- [ ] All tasks checked
-- [ ] All validation commands pass
-- [ ] Git commit ready
+- [x] All tasks checked
+- [x] All validation commands pass
+- [x] Git commit ready
