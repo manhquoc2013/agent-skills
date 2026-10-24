@@ -42,6 +42,14 @@ Evaluate every change across these five dimensions:
 - Any synchronous operations that should be async?
 - Scale tested against the declared expected workload (CLI vs. multi-tenant web service)?
 
+### 6. UI/UX Polish (For frontend / user-facing changes)
+- Contrast ≥ 4.5:1 verified across both light and dark themes
+- Touch targets ≥ 44×44px with adequate spacing
+- No horizontal overflow at 375px mobile viewport
+- Focus rings visible for keyboard users
+- Vector SVGs used instead of emojis for system/UI icons
+- `prefers-reduced-motion` respected
+
 ## Review Process
 
 1. **Profile Expected Load**: State the assumed workload upfront.

@@ -50,11 +50,15 @@ Ship with confidence. The goal is not just to deploy — it's to deploy safely, 
 - [ ] Database queries have appropriate indexes
 - [ ] Caching configured for static assets and repeated queries
 
-### Accessibility
+### Accessibility & UI Polish
 
-- [ ] Keyboard navigation works for all interactive elements
+- [ ] Keyboard navigation works for all interactive elements with visible focus rings
 - [ ] Screen reader can convey page content and structure
-- [ ] Color contrast meets WCAG 2.1 AA (4.5:1 for text)
+- [ ] Color contrast meets WCAG 2.1 AA (4.5:1 for normal text) in **both** light and dark themes
+- [ ] Touch targets meet 44×44px minimum with ≥8px spacing
+- [ ] No horizontal overflow on mobile viewports (375px)
+- [ ] Vector SVGs used for all UI icons (no raw emojis)
+- [ ] All animations respect `prefers-reduced-motion`
 - [ ] Focus management correct for modals and dynamic content
 - [ ] Error messages are descriptive and associated with form fields
 - [ ] No accessibility warnings in axe-core or Lighthouse

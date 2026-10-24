@@ -64,17 +64,17 @@
   - **Verification**: `node scripts/validate-skills.js`
   - **Files**: `skills/spec-driven-development/SKILL.md`
 
-- [ ] **Task 3.2: Integrate Pre-Delivery UI Checklist into /s-review and /s-ship**
+- [x] **Task 3.2: Integrate Pre-Delivery UI Checklist into /s-review and /s-ship**
   - **Description**: Update `skills/code-review-and-quality/SKILL.md` and `agents/code-reviewer.md` to evaluate UI diffs against the Pre-Delivery Checklist (contrast 4.5:1, touch target 44px, no emoji icons, prefers-reduced-motion).
   - **Acceptance Criteria**:
-    - [ ] UI review criteria included in 4-part finding structure.
-    - [ ] Pre-delivery checklist verified during `/s-ship` pre-launch gate.
+    - [x] UI review criteria included in 4-part finding structure.
+    - [x] Pre-delivery checklist verified during `/s-ship` pre-launch gate.
   - **Verification**: `node scripts/validate-skills.js`
   - **Files**: `skills/code-review-and-quality/SKILL.md`, `agents/code-reviewer.md`, `skills/shipping-and-launch/SKILL.md`
 
 ### Checkpoint 3: Lifecycle Integration
-- [ ] Lifecycle skills validate cleanly
-- [ ] Spec and review steps explicitly enforce design intelligence standards
+- [x] Lifecycle skills validate cleanly
+- [x] Spec and review steps explicitly enforce design intelligence standards
 
 ---
 

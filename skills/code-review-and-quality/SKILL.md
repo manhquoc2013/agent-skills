@@ -87,6 +87,17 @@ For detailed profiling and optimization, see `performance-optimization`. Does th
 - Any missing pagination on list endpoints?
 - Any large objects created in hot paths?
 
+### 6. UI/UX & Accessibility Polish
+
+When the diff touches user-facing code or interfaces:
+
+- Are colors compliant with WCAG contrast (≥ 4.5:1 normal, 3:1 large text) in **both** light and dark themes?
+- Are interactive hitboxes at least 44×44px with adequate spacing?
+- Are focus rings visible for keyboard users (`:focus-visible`)?
+- Does the layout avoid horizontal scroll at 375px mobile viewport?
+- Are icons vector SVGs rather than emojis?
+- Do animations respect `prefers-reduced-motion`?
+
 ## Structural Remedies
 
 When you flag a structural problem, propose the move — not just the problem. A review that only says "this is complex" leaves the author guessing. Reach for a named restructuring:
