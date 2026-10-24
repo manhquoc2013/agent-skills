@@ -1,0 +1,50 @@
+{
+  "skill_name": "autonomous-agent-workflow",
+  "trigger": {
+    "positive": [
+      {
+        "prompt": "Run full autonomous end-to-end autopilot to interview me, spec, plan, and build this feature",
+        "top_k": 3
+      },
+      {
+        "prompt": "Take this high-level idea, ask me questions until there are no gaps, then build it completely with sub-agents",
+        "top_k": 3
+      },
+      {
+        "prompt": "Execute autonomous engineering workflow from requirements interview to final verification",
+        "top_k": 3
+      }
+    ],
+    "negative": [
+      {
+        "prompt": "Write a spec for the new billing feature before we write any code",
+        "owner": "spec-driven-development"
+      },
+      {
+        "prompt": "Trace this request across our services",
+        "owner": "observability-and-instrumentation"
+      },
+      {
+        "prompt": "Simplify this clever one-liner into readable code",
+        "owner": "code-simplification"
+      }
+    ]
+  },
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "Build a customer feedback collector on full autonomous autopilot.",
+      "expected_output": "Interactive interrogation to clarify gaps, followed by spec, plan, sub-agent dispatch, self-healing TDD, and multi-axis review",
+      "files": [
+        "autonomous-agent-workflow"
+      ],
+      "expectations": [
+        "Questions are asked to clarify requirements before implementation",
+        "A formal spec and task breakdown are synthesized",
+        "Tasks are implemented via test-driven development",
+        "Self-healing error recovery handles test failures autonomously",
+        "Final verification gates are verified before completion"
+      ]
+    }
+  ]
+}

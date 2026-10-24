@@ -21,10 +21,11 @@ Skills encode the workflows, quality gates, and best practices that senior engin
 
 ## Commands
 
-10 slash commands that map to the development lifecycle. Each one activates the right skills automatically.
+11 slash commands that map to the development lifecycle. Each one activates the right skills automatically.
 
 | What you're doing | Command | Key principle |
 |-------------------|---------|---------------|
+| Full autonomous autopilot | `/s-agent` | Interview popup, spec, plan, sub-agents & self-healing TDD |
 | Define what to build | `/s-spec` | Spec before code |
 | Plan how to build it | `/s-plan` | Small, atomic tasks |
 | Build incrementally | `/s-build` | One slice at a time |
@@ -236,6 +237,7 @@ The commands above are entry points. The pack includes 29 skills total — 28 li
 | Skill | What It Does | Use When |
 |-------|-------------|----------|
 | [using-agent-skills](skills/using-agent-skills/SKILL.md) | Maps incoming work to the right skill workflow and defines shared operating rules | Starting a session or deciding which skill applies |
+| [autonomous-agent-workflow](skills/autonomous-agent-workflow/SKILL.md) | End-to-end autonomous engineering — interactive interview modal, spec & plan generation, sub-agent dispatch, self-healing TDD, multi-specialist review | Running complex features or long-running tasks on full autopilot |
 
 ### Define - Clarify what to build
 
