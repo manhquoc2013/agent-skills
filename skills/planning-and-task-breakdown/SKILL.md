@@ -130,33 +130,35 @@ Each task follows this structure, whether it lands in the markdown task list or 
 **Estimated scope:** [Small: 1-2 files | Medium: 3-5 files | Large: 5+ files]
 ```
 
-### Step 5: Order and Checkpoint
+### Step 5: Order, Checkpoint, and Group into Waves
 
-Arrange tasks so that:
+Arrange tasks so that dependencies are satisfied, high-risk items fail fast, and parallelization opportunities are explicit:
 
-1. Dependencies are satisfied (build foundation first)
-2. Each task leaves the system in a working state
-3. Verification checkpoints occur after every 2-3 tasks
-4. High-risk tasks are early (fail fast)
+1. **Group into Execution Waves:**
+   - **Wave 1 (Foundation & Contracts):** Data models, interfaces, migrations, core schemas. Tasks here must complete first.
+   - **Wave 2 (Parallel Implementation):** Independent feature slices, components, services. Tasks within Wave 2 touch disjoint files and are safe for concurrent sub-agent dispatch without git merge conflicts.
+   - **Wave 3 (Integration & Verification):** End-to-end integration, consumer wiring, and final system validation.
+2. **Add Checkpoints between Waves:**
+   - Checkpoint after each wave verifying compilation, test passing, and contract adherence before dispatching subsequent waves.
 
 Add explicit checkpoints to the task list target:
 
 ```markdown
-## Checkpoint: After Tasks 1-3
+## Checkpoint: After Wave 1
 - [ ] All tests pass
 - [ ] Application builds without errors
-- [ ] Core user flow works end-to-end
-- [ ] Review with human before proceeding
+- [ ] Core interfaces verified before Wave 2 dispatch
 ```
 
-### Step 6: Self-Review the Plan
+### Step 6: Plan Convergence & Self-Review
 
-Before handing the plan off, check it yourself — this is a checklist you run, not a subagent dispatch:
+Before presenting the plan for human approval, run a convergence audit to eliminate planning flaws:
 
-1. **Spec coverage:** point at a task for every requirement in the spec; list gaps and add tasks for them.
-2. **Step scan:** every task must let an implementer write exactly one reasonable thing — a task that decides nothing is a gap; one that prescribes the whole body is a transcript.
-3. **Type consistency:** names and signatures used in later tasks match what earlier tasks define — `clearLayers()` in one task and `clearFullLayers()` in the next is a bug.
-4. **Proportion:** a plan several times longer than the spec is a transcript of the program. Replace bodies with signatures, test names, and assertions.
+1. **Spec coverage:** Every requirement in the spec maps directly to at least one task; list gaps and add tasks for them.
+2. **Disjoint file sets:** Confirm tasks scheduled within the same execution wave declare disjoint file sets to prevent sub-agent git collisions.
+3. **Step scan:** Every task must let an implementer write exactly one reasonable thing — a task that decides nothing is a gap; one that prescribes the whole body is a transcript.
+4. **Type consistency:** Names and signatures used in later tasks match what earlier tasks define — `clearLayers()` in one task and `clearFullLayers()` in the next is a bug.
+5. **Concrete verification:** Every task specifies exact test or validation commands rather than vague "verify it works".
 
 Fix what you find inline. A spec requirement with no task gets a task.
 
@@ -283,6 +285,8 @@ Before starting implementation, confirm:
 
 - [ ] Every task has acceptance criteria
 - [ ] Every task has a verification step
+- [ ] Tasks grouped into explicit Execution Waves (Wave 1: Foundation → Wave 2: Parallel → Wave 3: Integration)
+- [ ] Plan convergence self-critique completed: 100% spec coverage with disjoint file sets for parallel tasks
 - [ ] Task dependencies are identified and ordered correctly
 - [ ] Tasks are recorded in the task list target (default `tasks/todo.md`)
 - [ ] No pre-existing incomplete plan was overwritten without explicit user confirmation

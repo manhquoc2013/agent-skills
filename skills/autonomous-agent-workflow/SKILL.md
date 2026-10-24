@@ -68,25 +68,47 @@ When tasks cluster into independent problem domains (e.g., API backend vs fronte
 2. **Merge & Coordinate**:
    - The coordinator validates integration points and merges outputs sequentially without git race conditions.
 
-### Phase 4: Autonomous Self-Healing TDD Loop
+### Phase 4: Autonomous Self-Healing TDD Loop & Anti-Thrashing Guard
 
 Execute every task in dependency order using the strict Red-Green-Refactor loop:
 
 1. **RED**: Write a focused, failing test proving the new behavior.
 2. **GREEN**: Implement minimal code satisfying the test.
 3. **REGRESSION**: Run full test suite and compilation check.
-4. **SELF-HEALING ERROR RECOVERY**:
+4. **SELF-HEALING & ANTI-THRASHING GUARD**:
    - If a test fails or build breaks, **do not stop or ask the user immediately**.
    - Invoke `debugging-and-error-recovery`:
      - Inspect stack trace and localize the failure.
      - Formulate a root-cause hypothesis and apply minimal fix.
      - Re-run test suite. Retry the self-healing loop up to 3 times.
-   - Only pause and escalate if a fundamental architectural contradiction is detected.
+   - **Anti-Thrashing Detection**: Track file churn during self-healing. If the same file is modified >3 times without reaching green tests:
+     - **Halt patch churn immediately.** Do not keep applying speculative syntax edits.
+     - Trigger **Forensics Analysis**: Inspect recent git diffs (`git diff HEAD~3`) and verify whether the test assumptions or interface contracts contradict the underlying architecture.
+     - Only escalate to the user if a fundamental architectural contradiction is proven.
 5. **COMMIT & ADVANCE**:
    - Create one atomic git commit per completed task.
    - Mark task `[x]` in `tasks/todo.md` and advance to the next pending task.
 
-### Phase 5: Multi-Specialist Verification & Ship Gate
+### Session Checkpointing & Handoff (`tasks/handoff.md`)
+
+When long-running work must pause, when context token limits near exhaustion, or when external credentials are required, author a durable state checkpoint in `tasks/handoff.md`:
+
+```markdown
+# Session Handoff Checkpoint
+
+- **Timestamp**: YYYY-MM-DD HH:MM:SS
+- **Current Task**: [Task ID & Name]
+- **Status**: [Paused | Blocked | Awaiting Human Action]
+- **Completed Tasks**:
+  - [x] Task 1: [Name] (Commit: `hash`)
+- **Remaining Tasks**:
+  - [ ] Task 2: [Name]
+- **Uncommitted Changes**: [List of modified files]
+- **Blockers / Human Actions Needed**: [e.g. Set API key, approve migration]
+- **Resume Command**: `/s-agent continue` or `/s-build`
+```
+
+### Phase 5: Multi-Specialist Verification, Learnings & Ship Gate
 
 Before declaring the initiative finished, execute the parallel review fan-out:
 
@@ -96,7 +118,9 @@ Before declaring the initiative finished, execute the parallel review fan-out:
    - **Test Engineer**: Confirms edge-case coverage and mutation resistance.
 2. **UI Polish Gate** (if user-facing):
    - Contrast ≥ 4.5:1, touch targets ≥ 44×44px, visible focus, zero horizontal overflow at 375px.
-3. **Deliverable Summary**:
+3. **Institutional Learnings Extraction**:
+   - Summarize key technical decisions, architectural patterns established, and unexpected gotchas in `tasks/learnings.md` to preserve memory across future agent sessions.
+4. **Deliverable Summary**:
    - Present completed tasks, added tests, git commits, and verified success criteria.
 
 ---
@@ -109,6 +133,7 @@ Before declaring the initiative finished, execute the parallel review fan-out:
 | "A sub-agent can make architectural decisions" | Sub-agents execute focused workstreams; the coordinator owns architecture and spec boundaries. |
 | "A test failed, I should stop and ask the user" | Senior engineers debug and self-heal test failures before bothering stakeholders. |
 | "It's faster to skip writing a formal spec" | Without `SPEC.md`, autonomous loops drift and hallucinate off-track requirements. |
+| "I'll try one more small patch on this file" | If you've modified the same file 3+ times without passing tests, you are thrashing. Run forensics instead of guessing. |
 
 ## Red Flags
 
@@ -117,6 +142,7 @@ Before declaring the initiative finished, execute the parallel review fan-out:
 - Spawning nested sub-agents (sub-agents spawning other sub-agents is forbidden)
 - Silently ignoring failed tests or deleting assertions to make tests "pass"
 - Making git commits with `git add -A` instead of staging only task-specific files
+- Repeatedly patching the same file (>3 times) without checking test premises or git diff history (thrashing)
 
 ## Verification
 
@@ -128,3 +154,4 @@ Before marking the autonomous workflow complete, verify:
 - [ ] Full test suite and lint/build pass with zero errors
 - [ ] Git history contains atomic, descriptive commits for each vertical task
 - [ ] Multi-specialist verification passes without blocking issues
+- [ ] `tasks/handoff.md` written if work is paused or handed over across session boundaries

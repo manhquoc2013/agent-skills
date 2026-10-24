@@ -80,6 +80,32 @@ Ship with confidence. The goal is not just to deploy — it's to deploy safely, 
 - [ ] Changelog updated
 - [ ] User-facing documentation updated (if applicable)
 
+## Broken-Windows Audit Pass (No-Defer Gate)
+
+Operationalize the no-defer discipline before declaring a launch decision. Staged changes or release branches frequently accumulate "broken windows" — temporary stubs, skipped tests, suppressed errors, or mock fallbacks that silently degrade maintainability.
+
+### The Broken-Windows Scanner
+
+Before finalizing the review, execute a scan across staged files or branch diff (`git diff origin/main...HEAD`):
+
+1. **Stubs and Unresolved Markers:**
+   - Scan for markers: `TODO`, `FIXME`, `HACK`, `STUB`, `XXX`, `TEMP`
+   - Command: `git diff origin/main...HEAD | grep -E "^\+[[:space:]]*(//|#|/\*)[[:space:]]*(TODO|FIXME|HACK|STUB|XXX)"`
+2. **Skipped or Disabled Tests:**
+   - Scan for skipped tests: `it.skip`, `describe.skip`, `test.skip`, `@unittest.skip`, `#[ignore]`
+3. **Suppressed Quality Checks:**
+   - Scan for bypassed compiler or linter rules: `@ts-ignore`, `@ts-nocheck`, `eslint-disable`, `noqa`
+4. **Hardcoded Mock Fallbacks:**
+   - Scan for leftover mock/fake data in production paths: `mockData`, `dummyResult`, `placeholder`
+
+### The No-Defer Rule
+
+- **Default Action: Block Ship (NO-GO).** If any broken window is detected, the launch decision is blocked until the stub is implemented or cleaned up.
+- **Waiver Exception:** A broken window may be deferred ONLY IF it is explicitly cataloged in the `Acknowledged risks` section of the ship decision with:
+  1. Justification of why the deferral does not impact production safety or user experience.
+  2. An identified owner and follow-up tracking issue.
+  3. A mitigation plan in case the deferred stub causes an unexpected edge case.
+
 ## Feature Flag Strategy
 
 Ship behind feature flags to decouple deployment from release:
@@ -306,6 +332,7 @@ Every deployment needs a rollback plan before it happens:
 | "We'll add monitoring later" | Add it before launch. You can't debug what you can't see. |
 | "Rolling back is admitting failure" | Rolling back is responsible engineering. Shipping a broken feature is the failure. |
 | "The error rate looks fine, let's keep shipping" | Check the burn rate, not just the current error rate. Consuming budget faster than baseline is a hold signal even when individual thresholds are green. |
+| "We can leave this TODO and fix it next sprint" | Broken windows compound into silent regressions. Either implement it now, or document an explicit waiver with an owner and issue before shipping. |
 
 ## Red Flags
 
@@ -317,12 +344,14 @@ Every deployment needs a rollback plan before it happens:
 - Production environment configuration done by memory, not code
 - "It's Friday afternoon, let's ship it"
 - Error budget exhausted but feature work continues unchanged
+- Unresolved TODOs, disabled tests (`it.skip`), or suppressed compiler warnings in release diff without an explicit waiver
 
 ## Verification
 
 Before deploying:
 
 - [ ] Pre-launch checklist completed (all sections green)
+- [ ] Broken-windows audit clean: zero unhandled TODOs/stubs, skipped tests, or suppressed lint rules in the release diff
 - [ ] Feature flag configured (if applicable)
 - [ ] Rollback plan documented
 - [ ] Monitoring dashboards set up

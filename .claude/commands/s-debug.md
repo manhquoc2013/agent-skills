@@ -8,6 +8,7 @@ Invoke the agent-skills:debugging-and-error-recovery skill.
 
 Parse `$ARGUMENTS` for execution mode:
 - **`--find`** (or `--diagnose`, `--investigate`, `--root-cause`): **Diagnose Only Mode**. Find the root cause, gather concrete evidence, and propose fix options. **DO NOT modify any code**.
+- **`--forensics`** (or `--churn`, `--thrash`): **Git Forensics & Churn Analysis Mode**. Inspect recent commit history (`git log --name-only -15`), detect repeated file edits (thrashing signals), and analyze diff variance to diagnose stuck or recurring failure loops.
 - **Default (no flag or `--fix`)**: **Full Debug & Fix Mode**. Find the root cause, fix it, guard against recurrence with tests, and verify end-to-end.
 
 ---

@@ -1,127 +1,88 @@
-# Task List: Upgrading agent-skills with UI/UX Pro Max Design Intelligence
+# Task List: GSD-Inspired Quality & Orchestration Upgrades
 
-## Phase 1: Data & Intelligence Engine (Foundation)
+## Phase 1: Broken-Windows & Defect Ledger (s-ship & shipping-and-launch)
 
-- [x] **Task 1.1: Populate Canonical Datasets into frontend-ui-engineering**
-  - **Description**: Copy and organize canonical CSV and JSON datasets from `docs/references/ui-ux-pro-max-skill-main/src/ui-ux-pro-max/data/` into `skills/frontend-ui-engineering/data/` (styles, products, colors, typography, ux-guidelines, ui-reasoning, charts, icons, motion, and 22 stacks).
+- [x] **Task 1.1: Enhance skills/shipping-and-launch/SKILL.md with Broken-Windows Audit**
+  - **Description**: Add Broken-Windows Audit Pass section into `skills/shipping-and-launch/SKILL.md` (scanning for `TODO`, `FIXME`, stubs, skipped tests, mock fallbacks, requiring explicit waiver in acknowledged risks).
   - **Acceptance Criteria**:
-    - [x] `skills/frontend-ui-engineering/data/` contains all 17 canonical data files + `stacks/` directory with 22 stack files.
-    - [x] All CSV files are intact, properly encoded in UTF-8 without corruption.
-  - **Verification**: `python scripts/validate-ui-data.py` (or directory file count check)
-  - **Files**: `skills/frontend-ui-engineering/data/*`
-
-- [x] **Task 1.2: Implement Python BM25/Regex Search Engine & Design System Generator**
-  - **Description**: Implement zero-dependency search engine in `skills/frontend-ui-engineering/scripts/` (`core.py`, `design_system.py`, `reasoning_contract.py`, `search.py`, `validate_data.py`, and unit tests). Update default persistence directory in `design_system.py` to `.agents/design-system/` per user approval.
-  - **Acceptance Criteria**:
-    - [x] Zero external dependencies (runs with python3 standard library).
-    - [x] Domain search (`--domain <domain>`) returns accurate BM25-ranked results.
-    - [x] `--design-system` produces complete design system (layout, style, color, typography, anti-patterns).
-    - [x] `--variance`, `--motion`, `--density` dials adjust output deterministically.
-    - [x] `--persist` writes to `.agents/design-system/MASTER.md` without overwriting unless `--force`.
-  - **Verification**: `python skills/frontend-ui-engineering/scripts/search.py "fintech" --domain color && python -m unittest discover -s skills/frontend-ui-engineering/scripts/tests`
-  - **Files**: `skills/frontend-ui-engineering/scripts/*`
-
-### Checkpoint 1: Engine Foundation
-- [x] Datasets present and valid
-- [x] Search engine unit tests pass 100%
-
----
-
-## Phase 2: Skill Overhaul & CLI Shortcut
-
-- [x] **Task 2.1: Overhaul skills/frontend-ui-engineering/SKILL.md & References**
-  - **Description**: Update `skills/frontend-ui-engineering/SKILL.md` to integrate the Query Contract, 10-tier rule priority matrix, stack search guidelines, anti-patterns, and the Pre-Delivery UI Checklist. Add `references/quick-reference.md` and `references/pro-rules.md`.
-  - **Acceptance Criteria**:
-    - [x] Frontmatter conforms to `docs/skill-anatomy.md`.
-    - [x] Detailed workflow covering when to use domain search vs design-system generator.
-    - [x] Standard sections included: Overview, When to Use, Process, Common Rationalizations, Red Flags, Verification.
-    - [x] References `references/quick-reference.md` and `references/pro-rules.md` exist and are linked.
-  - **Verification**: `node scripts/validate-skills.js && node scripts/validate-reference-links.js`
-  - **Files**: `skills/frontend-ui-engineering/SKILL.md`, `skills/frontend-ui-engineering/references/quick-reference.md`, `skills/frontend-ui-engineering/references/pro-rules.md`
-
-- [x] **Task 2.2: Implement Root CLI Shortcut scripts/ui-search.sh**
-  - **Description**: Create root-level executable wrapper `scripts/ui-search.sh` that delegates to `skills/frontend-ui-engineering/scripts/search.py` with automatic python3 detection and friendly error reporting.
-  - **Acceptance Criteria**:
-    - [x] `scripts/ui-search.sh` is executable (`chmod +x`).
-    - [x] Supports all arguments passed to `search.py`.
-    - [x] Handles python/python3 path resolution gracefully.
-  - **Verification**: `./scripts/ui-search.sh --help && ./scripts/ui-search.sh "saas" --domain style`
-  - **Files**: `scripts/ui-search.sh`, `scripts/ui-search.ps1`
-
-### Checkpoint 2: Skill & CLI Shortcut
-- [x] `node scripts/validate-skills.js` passes with 0 errors
-- [x] `./scripts/ui-search.sh` runs cleanly from workspace root
-
----
-
-## Phase 3: Lifecycle Hooks & Command Integration
-
-- [x] **Task 3.1: Integrate Design System Generation into /s-spec & spec-driven-development**
-  - **Description**: Update `skills/spec-driven-development/SKILL.md` to trigger `--design-system` generation during Phase 1 (Specify) whenever requirements involve user interfaces, web applications, or mobile screens, persisting to `.agents/design-system/MASTER.md`.
-  - **Acceptance Criteria**:
-    - [x] Workflow explicitly instructs agent to run design system generation for UI features.
-    - [x] `MASTER.md` created in `.agents/design-system/` before writing frontend code.
+    - [x] Broken-Windows Audit Pass clearly documented with grep patterns and waiver requirements.
+    - [x] Red Flags and Verification sections updated accordingly.
+    - [x] Conforms 100% to `docs/skill-anatomy.md`.
   - **Verification**: `node scripts/validate-skills.js`
-  - **Files**: `skills/spec-driven-development/SKILL.md`
+  - **Files**: `skills/shipping-and-launch/SKILL.md`
 
-- [x] **Task 3.2: Integrate Pre-Delivery UI Checklist into /s-review and /s-ship**
-  - **Description**: Update `skills/code-review-and-quality/SKILL.md` and `agents/code-reviewer.md` to evaluate UI diffs against the Pre-Delivery Checklist (contrast 4.5:1, touch target 44px, no emoji icons, prefers-reduced-motion).
+- [x] **Task 1.2: Synchronize Broken-Windows Gate in /s-ship Command Files**
+  - **Description**: Add Broken-Windows & Stub Audit into Phase B in `commands/s-ship.toml`, `.claude/commands/s-ship.md`, `.gemini/commands/s-ship.toml`. Keep description synchronized across all files.
   - **Acceptance Criteria**:
-    - [x] UI review criteria included in 4-part finding structure.
-    - [x] Pre-delivery checklist verified during `/s-ship` pre-launch gate.
-  - **Verification**: `node scripts/validate-skills.js`
-  - **Files**: `skills/code-review-and-quality/SKILL.md`, `agents/code-reviewer.md`, `skills/shipping-and-launch/SKILL.md`
+    - [x] All three command files include Broken-Windows checking in Phase B.
+    - [x] `description` string matches exactly across `.claude/commands/s-ship.md`, `commands/s-ship.toml`, `.gemini/commands/s-ship.toml`.
+  - **Verification**: `node scripts/validate-commands.js`
+  - **Files**: `commands/s-ship.toml`, `.claude/commands/s-ship.md`, `.gemini/commands/s-ship.toml`
 
-### Checkpoint 3: Lifecycle Integration
-- [x] Lifecycle skills validate cleanly
-- [x] Spec and review steps explicitly enforce design intelligence standards
+### Checkpoint 1: Broken-Windows
+- [x] `npm test` passes for shipping-and-launch and s-ship.
 
 ---
 
-## Phase 4: Asset Sync & Multi-Platform Distribution
+## Phase 2: Anti-Thrashing Forensics & Session State Handoff
 
-- [x] **Task 4.1: Implement scripts/sync-assets.js**
-  - **Description**: Create `scripts/sync-assets.js` to mirror datasets and scripts cleanly without symlinks, guaranteeing standalone skill portability for Issue #361.
+- [x] **Task 2.1: Enhance skills/autonomous-agent-workflow/SKILL.md and s-agent Commands**
+  - **Description**: In `skills/autonomous-agent-workflow/SKILL.md`, add Thrashing Detection to Phase 4 (if file churn > 3 iterations without green tests, pause and run forensics) and add Session Checkpointing (`tasks/handoff.md`). Update `commands/s-agent.toml`, `.claude/commands/s-agent.md`, `.gemini/commands/s-agent.toml` with thrashing detection and checkpoint instructions.
   - **Acceptance Criteria**:
-    - [x] Validates that all mirrored copies match source files byte-for-byte.
-    - [x] Flags any drift or missing assets.
-    - [x] Never generates symlinks.
-  - **Verification**: `node scripts/sync-assets.js`
-  - **Files**: `scripts/sync-assets.js`
+    - [x] Thrashing threshold (>3 edits without green) explicitly defined with recovery steps.
+    - [x] Standard `tasks/handoff.md` structure documented.
+    - [x] `description` string matches exactly across Claude, toml, and Gemini s-agent command files.
+  - **Verification**: `node scripts/validate-skills.js && node scripts/validate-commands.js`
+  - **Files**: `skills/autonomous-agent-workflow/SKILL.md`, `commands/s-agent.toml`, `.claude/commands/s-agent.md`, `.gemini/commands/s-agent.toml`
 
-- [x] **Task 4.2: Update scripts/install-local.sh and scripts/build-agent-dist.js**
-  - **Description**: Update local installation script to ensure Python search scripts and data directories are properly copied and marked executable across all 20+ supported tools (Claude Code, Cursor, Codex, Gemini CLI, Antigravity CLI, Windsurf, OpenCode, Copilot, etc.).
+- [x] **Task 2.2: Add --forensics Mode to skills/debugging-and-error-recovery/SKILL.md and s-debug Commands**
+  - **Description**: Add git history forensics pass (`--forensics`) to `skills/debugging-and-error-recovery/SKILL.md` (analyzing commit churn, diff variance, repeated file edits) and update debug command files (`commands/s-debug.toml`, `.claude/commands/s-debug.md`, `.gemini/commands/s-debug.toml`).
   - **Acceptance Criteria**:
-    - [x] `./scripts/install-local.sh --list` detects and lists updated frontend skill assets.
-    - [x] `scripts/build-agent-dist.js` generates correct multi-agent distribution artifacts.
-  - **Verification**: `./scripts/install-local.sh --list && node scripts/build-agent-dist.js`
-  - **Files**: `scripts/install-local.sh`, `scripts/build-agent-dist.js`
+    - [x] `--forensics` documented for diagnosing stuck loops, regression gaps, and file churn.
+    - [x] Command parity and description match across Claude, toml, and Gemini debug command files.
+  - **Verification**: `node scripts/validate-skills.js && node scripts/validate-commands.js`
+  - **Files**: `skills/debugging-and-error-recovery/SKILL.md`, `commands/s-debug.toml`, `.claude/commands/s-debug.md`, `.gemini/commands/s-debug.toml`
 
-### Checkpoint 4: Multi-Agent Distribution
-- [x] Installer functions properly on test directories
-- [x] Assets sync cleanly with zero drift
+### Checkpoint 2: Anti-Thrashing & Forensics
+- [x] `npm test` passes for autonomous-agent-workflow, debugging, and commands.
 
 ---
 
-## Phase 5: Validation, Tests & Documentation
+## Phase 3: Wave-Based Execution Planning & Drift Pre-checks
 
-- [x] **Task 5.1: Implement scripts/validate-ui-data.py & Run Evals**
-  - **Description**: Provide `scripts/validate-ui-data.py` to continuously validate dataset schemas, column headers, and Google Fonts references. Run full Python and Node test suites.
+- [x] **Task 3.1: Enhance skills/planning-and-task-breakdown/SKILL.md and s-plan Commands**
+  - **Description**: Add Execution Wave decomposition (Wave 1: Foundation/Contracts → Wave 2: Parallel Components → Wave 3: Integration) and Plan Convergence self-critique pass into `skills/planning-and-task-breakdown/SKILL.md` and sync with `commands/s-planning.toml`, `.claude/commands/s-plan.md`, `.gemini/commands/s-planning.toml`.
   - **Acceptance Criteria**:
-    - [x] Validates all CSV/JSON datasets.
-    - [x] Python unit tests pass 100%.
-  - **Verification**: `python scripts/validate-ui-data.py && python -m unittest discover -s skills/frontend-ui-engineering/scripts/tests`
-  - **Files**: `scripts/validate-ui-data.py`
+    - [x] Wave-based breakdown guidelines added for safe sub-agent parallelism.
+    - [x] Plan critique check added to verify against acceptance criteria before human approval.
+    - [x] Command parity and description match across all plan command files.
+  - **Verification**: `node scripts/validate-skills.js && node scripts/validate-commands.js`
+  - **Files**: `skills/planning-and-task-breakdown/SKILL.md`, `commands/s-planning.toml`, `.claude/commands/s-plan.md`, `.gemini/commands/s-planning.toml`
 
-- [x] **Task 5.2: Update Documentation & Run Final Verification**
-  - **Description**: Update `README.md`, `docs/skill-anatomy.md`, and references. Run full repository verification suite (`validate-skills.js`, `validate-reference-links.js`, `validate-commands.js`).
+- [x] **Task 3.2: Enhance skills/spec-driven-development/SKILL.md and s-spec Commands**
+  - **Description**: Add Schema Drift & Context Drift pre-checks into `skills/spec-driven-development/SKILL.md` and update `commands/s-spec.toml`, `.claude/commands/s-spec.md`, `.gemini/commands/s-spec.toml`.
   - **Acceptance Criteria**:
-    - [x] `README.md` documents UI design intelligence capabilities and `./scripts/ui-search.sh`.
-    - [x] Zero broken links or validation errors.
-  - **Verification**: `node scripts/validate-skills.js && node scripts/validate-reference-links.js && node scripts/validate-commands.js`
-  - **Files**: `README.md`, `docs/skill-anatomy.md`
+    - [x] Schema drift check (schema vs migrations vs models) documented.
+    - [x] Context drift check (verifying upstream requirements have not diverged) documented.
+    - [x] Description match across all spec command files.
+  - **Verification**: `node scripts/validate-skills.js && node scripts/validate-commands.js`
+  - **Files**: `skills/spec-driven-development/SKILL.md`, `commands/s-spec.toml`, `.claude/commands/s-spec.md`, `.gemini/commands/s-spec.toml`
 
-### Final Checkpoint: Complete Upgrade Ready
-- [x] All tasks checked
-- [x] All validation commands pass
-- [x] Git commit ready
+### Checkpoint 3: Waves & Drift
+- [x] `npm test` passes 100% across all 31 skills, 4 personas, 12 commands, and reference links.
+
+---
+
+## Phase 4: Final Verification & Git Commit
+
+- [x] **Task 4.1: Run Full Test Suite & Sanity Audit**
+  - **Description**: Execute `npm test` and verify clean exit with 0 errors and 0 warnings.
+  - **Acceptance Criteria**:
+    - [x] `npm test` passes cleanly.
+  - **Verification**: `npm test`
+
+- [x] **Task 4.2: Create Clean Git Commit**
+  - **Description**: Stage all updated skill and command files and create an atomic git commit.
+  - **Acceptance Criteria**:
+    - [x] Clean git working tree with meaningful commit message.
+  - **Verification**: `git status && git log -1`

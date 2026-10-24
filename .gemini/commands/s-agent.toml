@@ -22,13 +22,16 @@ When invoked, execute the complete 5-phase engineering lifecycle without stoppin
    - For independent problem domains (e.g. API backend vs UI components vs test harnesses), invoke the dispatching-parallel-agents skill to spawn specialized sub-agents concurrently.
    - The coordinator agent oversees integration and serializes git commits.
 
-4. Self-Healing Test-Driven Implementation:
+4. Self-Healing Test-Driven Implementation & Anti-Thrashing Guard:
    - Execute each task following RED → GREEN → Refactor.
    - If tests fail or builds break, invoke the debugging-and-error-recovery skill to inspect stack traces, localize the root cause, and self-heal automatically rather than stopping prematurely.
+   - Guard against file thrashing: if the same file is modified >3 times without reaching green tests, halt speculative patching and run forensics on git diff history and test premises.
+   - If execution must pause or context nears exhaustion, write a durable checkpoint to tasks/handoff.md.
    - Create one atomic git commit per completed task.
 
 5. Multi-Specialist Verification & Final Review:
    - Fan-out evaluation across Code Reviewer, Security Auditor, and Test Engineer personas.
    - Verify Pre-Delivery UI Polish checklist (4.5:1 contrast, 44px touch targets, prefers-reduced-motion) for frontend changes.
+   - Extract institutional learnings into tasks/learnings.md to preserve architectural decisions across sessions.
    - Summarize completed tasks, tests added, and commits made.
 """
