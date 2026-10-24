@@ -92,6 +92,12 @@ Triage into: **Must fix** (bugs, security, data loss), **Should fix** (risky cod
 4. **DEBT** → \`technical-debt-and-shortcuts\` (/s-debt)
 5. **REVIEW** → \`code-review-and-quality\` (/s-review)
 6. **SHIP** → \`shipping-and-launch\` (/s-ship)
+
+## 6. UI & Design Intelligence
+When creating or modifying interfaces, pages, or components:
+- Query local design intelligence via \`python skills/frontend-ui-engineering/scripts/search.py "<query>" --domain <domain>\` or \`./scripts/ui-search.sh\`.
+- For new pages/projects, generate and follow \`.agents/design-system/<project>/MASTER.md\` via \`--design-system\`.
+- Strictly enforce WCAG contrast ≥ 4.5:1 (both light and dark themes), touch targets ≥ 44×44px, visible focus rings, and vector SVG icons (no raw emojis).
 `.trim();
 
 // ─── Generators ─────────────────────────────────────────────────────────────

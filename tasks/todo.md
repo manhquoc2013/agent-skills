@@ -89,17 +89,17 @@
   - **Verification**: `node scripts/sync-assets.js`
   - **Files**: `scripts/sync-assets.js`
 
-- [ ] **Task 4.2: Update scripts/install-local.sh and scripts/build-agent-dist.js**
+- [x] **Task 4.2: Update scripts/install-local.sh and scripts/build-agent-dist.js**
   - **Description**: Update local installation script to ensure Python search scripts and data directories are properly copied and marked executable across all 20+ supported tools (Claude Code, Cursor, Codex, Gemini CLI, Antigravity CLI, Windsurf, OpenCode, Copilot, etc.).
   - **Acceptance Criteria**:
-    - [ ] `./scripts/install-local.sh --list` detects and lists updated frontend skill assets.
-    - [ ] `scripts/build-agent-dist.js` generates correct multi-agent distribution artifacts.
+    - [x] `./scripts/install-local.sh --list` detects and lists updated frontend skill assets.
+    - [x] `scripts/build-agent-dist.js` generates correct multi-agent distribution artifacts.
   - **Verification**: `./scripts/install-local.sh --list && node scripts/build-agent-dist.js`
   - **Files**: `scripts/install-local.sh`, `scripts/build-agent-dist.js`
 
 ### Checkpoint 4: Multi-Agent Distribution
-- [ ] Installer functions properly on test directories
-- [ ] Assets sync cleanly with zero drift
+- [x] Installer functions properly on test directories
+- [x] Assets sync cleanly with zero drift
 
 ---
 

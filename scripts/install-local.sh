@@ -234,6 +234,10 @@ copy_skill_pack() {
     name="$(basename "$dir")"
     rm -rf "$dest/$name"
     cp -R "$dir" "$dest/$name"
+    if [[ -d "$dest/$name/scripts" ]]; then
+      chmod +x "$dest/$name/scripts"/*.py 2>/dev/null || true
+      chmod +x "$dest/$name/scripts"/*.sh 2>/dev/null || true
+    fi
     count=$((count + 1))
   done
   if [[ -d "$REFERENCES_ROOT" ]]; then
