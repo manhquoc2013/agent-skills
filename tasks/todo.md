@@ -56,11 +56,11 @@
 
 ## Phase 3: Lifecycle Hooks & Command Integration
 
-- [ ] **Task 3.1: Integrate Design System Generation into /s-spec & spec-driven-development**
+- [x] **Task 3.1: Integrate Design System Generation into /s-spec & spec-driven-development**
   - **Description**: Update `skills/spec-driven-development/SKILL.md` to trigger `--design-system` generation during Phase 1 (Specify) whenever requirements involve user interfaces, web applications, or mobile screens, persisting to `.agents/design-system/MASTER.md`.
   - **Acceptance Criteria**:
-    - [ ] Workflow explicitly instructs agent to run design system generation for UI features.
-    - [ ] `MASTER.md` created in `.agents/design-system/` before writing frontend code.
+    - [x] Workflow explicitly instructs agent to run design system generation for UI features.
+    - [x] `MASTER.md` created in `.agents/design-system/` before writing frontend code.
   - **Verification**: `node scripts/validate-skills.js`
   - **Files**: `skills/spec-driven-development/SKILL.md`
 

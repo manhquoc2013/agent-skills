@@ -147,6 +147,15 @@ Don't silently fill in ambiguous requirements. The spec's entire purpose is to s
 [Anything unresolved that needs human input]
 ```
 
+**UI & Frontend Requirements (Design System Gate):**
+If the specification touches user-facing screens, components, or visual layouts:
+1. Run design system generation before finalizing the spec:
+   ```bash
+   ./scripts/ui-search.sh "<product-type> <keywords>" --design-system --persist -p "<project-slug>" --output-dir .
+   ```
+2. Embed the resulting color tokens, typography pairing (with Google Fonts link), and anti-patterns into the spec's **Code Style / Design Tokens** section.
+3. Confirm that `.agents/design-system/<project-slug>/MASTER.md` is persisted as the binding design source of truth.
+
 **External spec tools:** This workflow is format-agnostic. If the project
 already uses OpenSpec or another specification system, keep that system's
 artifact format and storage conventions instead of creating a duplicate
