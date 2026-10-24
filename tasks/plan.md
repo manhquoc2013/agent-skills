@@ -1,25 +1,26 @@
-# Implementation Plan: S-Review Token Optimization
+# Implementation Plan: Catalog Reconciliation & Meta-Skill Completeness
 
 ## Overview
-Optimize token consumption for the `/s-review` slash command, `code-review-and-quality` skill, and `code-reviewer` persona by enforcing scoped diff inspection, lockfile filtering, quiet test verification, bounded caller greps, and concise 4-part findings.
+Implement the three-part optimization resulting from the multi-axis review: reconcile `README.md` and `AGENTS.md` to reflect all 31 skills, complete discovery routing in `skills/using-agent-skills/SKILL.md`, and synchronize local plugin and IDE distributions.
 
 ---
 
 ## Phase Breakdown
 
-### Phase 1: Core Skill & Persona Directives
-- Equip `skills/code-review-and-quality/SKILL.md` with:
-  - Scoped diff ingestion (`git diff --stat` first).
-  - Noise/lockfile filtering (`':!*lock*'`, `':!dist/*'`).
-  - Targeted line slices instead of whole-file reads.
-  - Quiet test runner execution during review verification.
-  - Rationalization, red flags, and verification checklist updates.
-- Equip `agents/code-reviewer.md` with scoped diff inspection and bounded caller tracing.
+### Wave 1: Catalog Inventory & Intent Alignment
+- Reconcile `README.md`:
+  - Change heading from `## All 29 Skills` to `## All 31 Skills`.
+  - Add `technical-debt-and-shortcuts` entry to the Review/Quality table.
+- Align `AGENTS.md`:
+  - Add `autonomous-agent-workflow` and `dispatching-parallel-agents` to the Intent → Skill Mapping.
 
-### Phase 2: Command Synchronization
-- Update `.claude/commands/s-review.md`, `commands/s-review.toml`, and `.gemini/commands/s-review.toml` with the token-optimized review workflow.
-- Ensure strict parity across command descriptions and schema definitions.
+### Wave 2: Meta-Skill Discovery Tree & Reference Table Expansion
+- In `skills/using-agent-skills/SKILL.md`:
+  - Update the ASCII decision tree to branch to `autonomous-agent-workflow`, `dispatching-parallel-agents`, `receiving-code-review`, `verification-before-completion`, and `technical-debt-and-shortcuts`.
+  - Expand the Quick Reference table with the 5 omitted skills mapped to their respective phases.
+  - Verify line count remains well below 500 lines.
 
-### Phase 3: Alias Re-sync & Test Suite Verification
-- Re-sync installed IDE alias wrappers (`./scripts/install-aliases.sh --all`).
-- Run `npm test` to verify 100% compliance across all 31 skills, 4 personas, and 12 commands.
+### Wave 3: Distribution Rebuild, Local Plugin Re-sync & Verification
+- Execute `node scripts/build-agent-dist.js` to synchronize all 15+ multi-agent distributions.
+- Run `./scripts/install-local.sh --all` and `./scripts/install-aliases.sh --all` to re-sync local IDE environments.
+- Verify through `npm test`.

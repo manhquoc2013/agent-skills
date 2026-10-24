@@ -229,9 +229,9 @@ Already installed? How you roll the pack out depends on your codebase. The **[Ad
 
 ---
 
-## All 29 Skills
+## All 31 Skills
 
-The commands above are entry points. The pack includes 29 skills total — 28 lifecycle skills plus the `using-agent-skills` meta-skill. Each skill is a structured workflow with steps, verification gates, and anti-rationalization tables. You can also reference any skill directly.
+The commands above are entry points. The pack includes 31 skills total — 30 lifecycle skills plus the `using-agent-skills` meta-skill. Each skill is a structured workflow with steps, verification gates, and anti-rationalization tables. You can also reference any skill directly.
 
 ### Meta - Discover which skill applies
 
@@ -284,6 +284,7 @@ The commands above are entry points. The pack includes 29 skills total — 28 li
 | [code-review-and-quality](skills/code-review-and-quality/SKILL.md) | Five-axis review, change sizing (~100 lines), severity labels (Nit/Optional/FYI), review speed norms, splitting strategies | Before merging any change |
 | [receiving-code-review](skills/receiving-code-review/SKILL.md) | Verify feedback before implementing, reasoned pushback over performative agreement, clarify-then-fix ordering | Responding to review comments or implementing reviewer suggestions |
 | [code-simplification](skills/code-simplification/SKILL.md) | Chesterton's Fence, Rule of 500, reduce complexity while preserving exact behavior | Code works but is harder to read or maintain than it should be |
+| [technical-debt-and-shortcuts](skills/technical-debt-and-shortcuts/SKILL.md) | Mark, track, and audit deliberate shortcuts with ceilings and upgrade triggers | Taking deliberate shortcuts, deferring work, or auditing technical debt |
 | [security-and-hardening](skills/security-and-hardening/SKILL.md) | OWASP Top 10 prevention, auth patterns, secrets management, dependency auditing, three-tier boundary system | Handling user input, auth, data storage, or external integrations |
 | [performance-optimization](skills/performance-optimization/SKILL.md) | Measure-first approach - Core Web Vitals targets, profiling workflows, bundle analysis, anti-pattern detection | Performance requirements exist or you suspect regressions |
 
