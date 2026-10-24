@@ -2,11 +2,11 @@
 
 ## Phase 1: Data & Intelligence Engine (Foundation)
 
-- [ ] **Task 1.1: Populate Canonical Datasets into frontend-ui-engineering**
+- [x] **Task 1.1: Populate Canonical Datasets into frontend-ui-engineering**
   - **Description**: Copy and organize canonical CSV and JSON datasets from `docs/references/ui-ux-pro-max-skill-main/src/ui-ux-pro-max/data/` into `skills/frontend-ui-engineering/data/` (styles, products, colors, typography, ux-guidelines, ui-reasoning, charts, icons, motion, and 22 stacks).
   - **Acceptance Criteria**:
-    - [ ] `skills/frontend-ui-engineering/data/` contains all 17 canonical data files + `stacks/` directory with 22 stack files.
-    - [ ] All CSV files are intact, properly encoded in UTF-8 without corruption.
+    - [x] `skills/frontend-ui-engineering/data/` contains all 17 canonical data files + `stacks/` directory with 22 stack files.
+    - [x] All CSV files are intact, properly encoded in UTF-8 without corruption.
   - **Verification**: `python scripts/validate-ui-data.py` (or directory file count check)
   - **Files**: `skills/frontend-ui-engineering/data/*`
 
