@@ -80,12 +80,12 @@
 
 ## Phase 4: Asset Sync & Multi-Platform Distribution
 
-- [ ] **Task 4.1: Implement scripts/sync-assets.js**
+- [x] **Task 4.1: Implement scripts/sync-assets.js**
   - **Description**: Create `scripts/sync-assets.js` to mirror datasets and scripts cleanly without symlinks, guaranteeing standalone skill portability for Issue #361.
   - **Acceptance Criteria**:
-    - [ ] Validates that all mirrored copies match source files byte-for-byte.
-    - [ ] Flags any drift or missing assets.
-    - [ ] Never generates symlinks.
+    - [x] Validates that all mirrored copies match source files byte-for-byte.
+    - [x] Flags any drift or missing assets.
+    - [x] Never generates symlinks.
   - **Verification**: `node scripts/sync-assets.js`
   - **Files**: `scripts/sync-assets.js`
 
