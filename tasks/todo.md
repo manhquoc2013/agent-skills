@@ -105,11 +105,11 @@
 
 ## Phase 5: Validation, Tests & Documentation
 
-- [ ] **Task 5.1: Implement scripts/validate-ui-data.py & Run Evals**
+- [x] **Task 5.1: Implement scripts/validate-ui-data.py & Run Evals**
   - **Description**: Provide `scripts/validate-ui-data.py` to continuously validate dataset schemas, column headers, and Google Fonts references. Run full Python and Node test suites.
   - **Acceptance Criteria**:
-    - [ ] Validates all CSV/JSON datasets.
-    - [ ] Python unit tests pass 100%.
+    - [x] Validates all CSV/JSON datasets.
+    - [x] Python unit tests pass 100%.
   - **Verification**: `python scripts/validate-ui-data.py && python -m unittest discover -s skills/frontend-ui-engineering/scripts/tests`
   - **Files**: `scripts/validate-ui-data.py`
 
