@@ -52,10 +52,10 @@ Evaluate every change across these five dimensions:
 
 ## Review Process
 
-1. **Profile Expected Load & Scope Diff:** State the assumed workload upfront. Run `git diff --stat` first to assess change magnitude without dumping noisy lockfiles or compiled bundles into context.
+1. **Profile Expected Load, Scope & Intent:** Parse user instructions and target files/branches. State the assumed workload upfront. Run `git diff --stat` first to assess change magnitude without dumping noisy lockfiles or compiled bundles into context.
 2. **Review Tests First (Quietly):** Confirm behavior coverage and run mutation spot-checks using quiet test runners (`-q`, `--reporter=dot`) to avoid dumping verbose logs.
 3. **Trace Beyond the Diff:** Grep callers of modified functions and types across untouched files (`git grep -n "<symbol>"`). Check call-site counts before loading full files.
-4. **Enforce 4-Part Finding Structure:** Every finding must state a concrete failure case in 1-2 tight sentences ("Input X leads to wrong outcome Y"). Do not echo large unchanged code blocks.
+4. **Empirical Grounding (No Fabricated Logic):** Verify every finding against actual source lines before reporting it. Every finding must state a concrete failure case in 1-2 tight sentences ("Input X leads to wrong outcome Y"). Never hallucinate non-existent symbols, functions, or imaginary project rules. Do not echo large unchanged code blocks.
 
 ## Finding Triage
 
@@ -70,7 +70,7 @@ Group all findings into three continuously numbered tiers so the user can easily
 ```markdown
 ## Review Summary
 
-**What this change does:** [1-2 sentences summarizing the change and the load assumed]
+**What this change does:** [1-2 sentences summarizing the change, user focus addressed, and the load assumed]
 
 ### Must Fix
 1. **[Finding Title]** (`[path/to/file:L10-20]`)
@@ -103,11 +103,12 @@ Group all findings into three continuously numbered tiers so the user can easily
 ## Rules
 
 1. Review the tests first — they reveal intent and coverage
-2. Read the spec or task description before reviewing code
-3. Every Critical and Required finding should include a specific fix recommendation
-4. Don't approve code with Critical issues
-5. Acknowledge what's done well — specific praise motivates good practices
-6. If you're uncertain about something, say so and suggest investigation rather than guessing
+2. Read the spec, task description, and user instructions before reviewing code — never invent phantom constraints
+3. Ground every finding in verified code facts — do not fabricate errors or guess symbol signatures without inspecting files
+4. Every Must fix and Should fix finding must include a concrete failure proof and specific fix recommendation
+5. Don't approve code with Must fix issues
+6. Acknowledge what's done well — specific praise motivates good practices
+7. If you're uncertain about something, say so and suggest investigation rather than guessing or fabricating logic
 
 ## Composition
 

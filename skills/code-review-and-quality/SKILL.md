@@ -182,11 +182,18 @@ Diff inspection and test verification can consume massive amounts of context tok
 - **Concise 4-Part Output:**
   Do not repeat or echo unchanged code blocks or large diffs in the review summary. Provide the exact file:line reference and a concise 1-2 line code fix suggestion.
 
-### Step 1: Understand Context & Profile Expected Load
+### Step 1: Understand Intent, User Scope & Ground Truth
 
-Before looking at code, establish the operating baseline:
-1. **Understand Intent**: What spec or task does this implement?
+Before evaluating code, anchor the review strictly in verifiable facts:
+1. **Understand Intent & User Directives**:
+   - What spec, issue, or user prompt is this implementing?
+   - If the user provides custom review instructions (specific files, branches, or focus axes like security, performance, or edge cases), prioritize and honor that exact scope first.
+   - Anchor to ground-truth documents (`SPEC.md`, `CLAUDE.md`, `CONSTRAINTS.md`, existing conventions) — never invent imaginary requirements or non-existent constraints.
 2. **Profile Expected Load**: State the assumed workload explicitly (e.g. "single-user CLI tool", "batch job of 500 records", or "high-concurrency web service at 1,000 req/sec"). Scale and concurrency risks must be judged against this declared load.
+3. **Empirical Grounding (Zero Hallucination / No Fabricated Logic)**:
+   - **Never hallucinate flaws**: Verify that symbols, imports, types, and logic actually exist before claiming an error. Open and inspect the actual file lines using tools — do not guess or rely on hazy recollection.
+   - **No hypothetical risks without concrete cases**: Every finding must prove `Input X under condition Y produces failure Z`. If you cannot construct a specific, reproducible input that breaks the code, it is an ungrounded opinion, not a finding.
+   - **Accurate references**: Cite exact, verified line ranges (`file:L10-25`). Never fabricate line numbers or file paths.
 
 ### Step 2: Review the Tests First
 
@@ -345,6 +352,8 @@ When reviewing code — whether written by you, another agent, or a human:
 - **Don't rubber-stamp.** "LGTM" without evidence of review helps no one.
 - **Don't soften real issues.** "This might be a minor concern" when it's a bug that will hit production is dishonest.
 - **Quantify problems when possible.** "This N+1 query will add ~50ms per item in the list" is better than "this could be slow."
+- **Ground every finding in code reality (No Fabricated Logic).** Do not guess, assume, or extrapolate bugs without reading the relevant definitions. Hallucinating errors or inventing non-existent rules destroys credibility and wastes developer time.
+- **Honor user intent and project specifications.** Review against what the user asked and what the spec defines, not your personal preferences or invented constraints.
 - **Push back on approaches with clear problems.** Sycophancy is a failure mode in reviews. If the implementation has issues, say so directly and propose alternatives.
 - **Accept override gracefully.** If the author has full context and disagrees, defer to their judgment. Comment on code, not people — reframe personal critiques to focus on the code itself.
 
@@ -440,12 +449,17 @@ Default stance: reject until proven otherwise — reject until verification evid
 | "It's just a version bump" | A bump is a behavior change you didn't write. Read the changelog; semver doesn't guarantee no breakage. |
 | "I'll upgrade everything in one PR to save time" | A bulk bump that breaks the build hides which package did it. One dependency per change keeps the cause and the revert clean. |
 | "I should dump the entire git diff into context" | Dumping thousands of lines of raw diff (especially lockfiles and dist assets) floods context. Run git diff --stat first, filter noisy lockfiles, and inspect targeted hunks. |
+| "This looks wrong in my head, so I'll flag it without checking" | Reviewers must verify code in the workspace before flagging bugs. Fabricating errors based on assumptions wastes developer time. Check the actual file and construct a concrete failure case. |
+| "I know better than the spec or user request" | The project specification and user requirements are ground truth. If the code satisfies the spec, do not invent contrary requirements unless pointing out an explicit edge-case omission. |
 
 ## Red Flags
 
 - PRs merged without any review
 - Review that only checks if tests pass (ignoring other axes)
 - "LGTM" without evidence of actual review
+- Hallucinating errors or citing non-existent functions, imports, or line numbers
+- Flagging vague hypothetical problems without a concrete, reproducible failure scenario
+- Ignoring the user's explicit review scope, target files, or focus instructions
 - Dumping massive diffs or raw lockfiles directly into context
 - Verbose review output echoing full code blocks instead of concise 4-part findings
 - Security-sensitive changes without security-focused review
@@ -464,6 +478,8 @@ Default stance: reject until proven otherwise — reject until verification evid
 
 After review is complete:
 
+- [ ] User scope, target files, and focus instructions were fully honored
+- [ ] All findings are empirically verified against actual source lines (zero hallucinated errors)
 - [ ] Diff was scoped efficiently (stat first, lockfiles filtered) without flooding context
 - [ ] All Must fix issues are resolved
 - [ ] All Should fix changes are resolved or explicitly deferred with justification
