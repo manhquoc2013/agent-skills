@@ -68,6 +68,9 @@ Build order: identity → billing, notifications → reporting
 
 Start with a high-level vision. Ask the human clarifying questions until requirements are concrete.
 
+**Interactive Clarification Modal Gate:**
+In environments supporting interactive dialogs (such as Antigravity IDE with the `ask_question` tool), you **MUST** invoke `ask_question` to render an interactive popup modal with selectable choices and write-in fields to resolve requirements, tech stack choices, and assumptions before drafting the spec document. Do not output plain text questions when interactive modal tools are available.
+
 **Surface assumptions immediately.** Before writing any spec content, list what you're assuming:
 
 ```
