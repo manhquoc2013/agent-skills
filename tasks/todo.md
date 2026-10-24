@@ -39,18 +39,18 @@
   - **Verification**: `node scripts/validate-skills.js && node scripts/validate-reference-links.js`
   - **Files**: `skills/frontend-ui-engineering/SKILL.md`, `skills/frontend-ui-engineering/references/quick-reference.md`, `skills/frontend-ui-engineering/references/pro-rules.md`
 
-- [ ] **Task 2.2: Implement Root CLI Shortcut scripts/ui-search.sh**
+- [x] **Task 2.2: Implement Root CLI Shortcut scripts/ui-search.sh**
   - **Description**: Create root-level executable wrapper `scripts/ui-search.sh` that delegates to `skills/frontend-ui-engineering/scripts/search.py` with automatic python3 detection and friendly error reporting.
   - **Acceptance Criteria**:
-    - [ ] `scripts/ui-search.sh` is executable (`chmod +x`).
-    - [ ] Supports all arguments passed to `search.py`.
-    - [ ] Handles python/python3 path resolution gracefully.
+    - [x] `scripts/ui-search.sh` is executable (`chmod +x`).
+    - [x] Supports all arguments passed to `search.py`.
+    - [x] Handles python/python3 path resolution gracefully.
   - **Verification**: `./scripts/ui-search.sh --help && ./scripts/ui-search.sh "saas" --domain style`
-  - **Files**: `scripts/ui-search.sh`
+  - **Files**: `scripts/ui-search.sh`, `scripts/ui-search.ps1`
 
 ### Checkpoint 2: Skill & CLI Shortcut
-- [ ] `node scripts/validate-skills.js` passes with 0 errors
-- [ ] `./scripts/ui-search.sh` runs cleanly from workspace root
+- [x] `node scripts/validate-skills.js` passes with 0 errors
+- [x] `./scripts/ui-search.sh` runs cleanly from workspace root
 
 ---
 
