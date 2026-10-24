@@ -39,6 +39,7 @@ INSTALL_ALL=0
 ONLY_RAW=""
 SCOPE=""
 PROJECT=""
+NO_ALIASES=0
 
 usage() {
   cat <<'EOF'
@@ -49,6 +50,7 @@ install-local.sh — copy this clone's skills into detected IDE/CLI folders.
   --only id[,id...]      Install these ids even when not detected
   --scope user|project   user = home config (default); project = one repo
   --project <path>       Project root for --scope project
+  --no-aliases           Skip installing short /s-* slash command aliases
   --help                 Show this text
 
 Ids: cursor, claude, codex, gemini, antigravity, windsurf, opencode,
@@ -258,6 +260,7 @@ while [[ $# -gt 0 ]]; do
     --only) ONLY_RAW="${2:-}"; shift 2 ;;
     --scope) SCOPE="${2:-}"; shift 2 ;;
     --project) PROJECT="${2:-}"; shift 2 ;;
+    --no-aliases) NO_ALIASES=1; shift ;;
     --help|-h) usage; exit 0 ;;
     *) echo "Unknown argument: $1" >&2; usage; exit 1 ;;
   esac
@@ -535,3 +538,14 @@ if [[ "$failures" -gt 0 ]]; then
   exit 1
 fi
 echo "Installed ${#unique[@]} target(s)."
+
+if [[ "$NO_ALIASES" -eq 0 && -f "$REPO_ROOT/scripts/install-aliases.sh" ]]; then
+  alias_args=()
+  [[ "$SCOPE" == "project" ]] && alias_args+=(--scope project --project "$PROJECT")
+  if [[ ${#unique[@]} -gt 0 ]]; then
+    target_list="$(IFS=','; echo "${unique[*]}")"
+    alias_args+=(--only "$target_list")
+  fi
+  echo
+  "$REPO_ROOT/scripts/install-aliases.sh" "${alias_args[@]}"
+fi
