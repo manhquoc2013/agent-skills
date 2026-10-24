@@ -707,6 +707,16 @@ function Invoke-MarketplaceInstall {
     return $true
 }
 
+$buildScript = Join-Path $Script:RepoRoot "scripts\build-agent-dist.js"
+if (Test-Path $buildScript) {
+    Write-Host "Synchronizing multi-agent configurations..."
+    try {
+        & node $buildScript *>$null
+    } catch {
+        # ignore if node is not on PATH
+    }
+}
+
 $failures = New-Object System.Collections.Generic.List[string]
 foreach ($id in @($selectedIds)) {
     $row = $null

@@ -499,6 +499,11 @@ install_plugin() {
   return 0
 }
 
+if command -v node >/dev/null 2>&1 && [ -f "$REPO_ROOT/scripts/build-agent-dist.js" ]; then
+  echo "Synchronizing multi-agent configurations..."
+  node "$REPO_ROOT/scripts/build-agent-dist.js" >/dev/null 2>&1 || true
+fi
+
 failures=0
 for id in "${unique[@]}"; do
   idx="$(index_of "$id")"

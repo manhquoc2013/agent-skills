@@ -29,6 +29,7 @@ The agent should automatically map user intent to skills:
 - Bug / failure / unexpected behavior → `debugging-and-error-recovery`
 - Code review → `code-review-and-quality`
 - Refactoring / simplification → `code-simplification`
+- Technical debt / deliberate shortcuts / deferrals → `technical-debt-and-shortcuts`
 - API or interface design → `api-and-interface-design`
 - UI work → `frontend-ui-engineering`
 
@@ -42,6 +43,7 @@ Instead, the agent must internally follow this lifecycle:
 - PLAN → `planning-and-task-breakdown`
 - BUILD → `incremental-implementation` + `test-driven-development`
 - VERIFY → `debugging-and-error-recovery`
+- DEBT → `technical-debt-and-shortcuts`
 - REVIEW → `code-review-and-quality`
 - SHIP → `shipping-and-launch`
 

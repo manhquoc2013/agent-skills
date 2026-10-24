@@ -1,0 +1,6 @@
+{
+  "name": "agent-skills",
+  "version": "0.6.13",
+  "description": "Engineering skills for Devin",
+  "contextFile": "AGENTS.md"
+}

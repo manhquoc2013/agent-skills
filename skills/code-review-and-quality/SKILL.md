@@ -153,15 +153,11 @@ Match the depth to what the change can break — a config tweak does not deserve
 
 State the depth you used in the verdict. If the diff's real risk outgrows the depth you planned, escalate the depth rather than proceeding.
 
-### Step 1: Understand the Context
+### Step 1: Understand Context & Profile Expected Load
 
-Before looking at code, understand the intent:
-
-```
-- What is this change trying to accomplish?
-- What spec or task does it implement?
-- What is the expected behavior change?
-```
+Before looking at code, establish the operating baseline:
+1. **Understand Intent**: What spec or task does this implement?
+2. **Profile Expected Load**: State the assumed workload explicitly (e.g. "single-user CLI tool", "batch job of 500 records", or "high-concurrency web service at 1,000 req/sec"). Scale and concurrency risks must be judged against this declared load.
 
 ### Step 2: Review the Tests First
 
@@ -177,7 +173,7 @@ Tests reveal intent and coverage:
 
 Answer the last question by experiment, not by reading. Invert one condition the change adds (drop a negation, swap `&&` for `||`), run the suite, then restore the file from a copy. A mutation that stays green is a finding: name the test case that is missing. For a project-wide mutation score, see `constraint-driven-development`.
 
-### Step 3: Review the Implementation
+### Step 3: Review Implementation & Trace Beyond the Diff
 
 Walk through the code with the five axes in mind:
 
@@ -187,24 +183,45 @@ For each file changed:
 2. Readability: Can I understand this without help?
 3. Architecture: Does this fit the system?
 4. Security: Any vulnerabilities?
-5. Performance: Any bottlenecks?
+5. Performance: Any bottlenecks under the assumed load?
 ```
 
-### Step 4: Categorize Findings
+**Trace ripple impact outside the diff (Mandatory):**
+A change can easily break code it does not touch. Whenever a signature, export, return type, or shared invariant changes, grep for every caller across the entire codebase:
+```bash
+git grep -n "<modified_function_or_symbol>"
+```
+Read the untouched caller files to verify they handle the modified contract. Many of the most severe production incidents originate from untouched files breaking after a shared helper changes.
 
-Label every comment with its severity so the author knows what's required vs optional:
+### Step 4: Categorize Findings with the 4-Part Structure
 
-| Prefix | Meaning | Author Action |
-|--------|---------|---------------|
-| *(no prefix)* | Required change | Must address before merge |
-| **Critical:** | Blocks merge | Security vulnerability, data loss, broken functionality |
-| **Nit:** | Minor, optional | Author may ignore — formatting, style preferences |
-| **Optional:** / **Consider:** | Suggestion | Worth considering but not required |
-| **FYI** | Informational only | No action needed — context for future reference |
+Every finding must provide a concrete, reproducible failure scenario. Vague stylistic preferences or ungrounded worries are not valid findings ("this input or condition leads to this specific wrong outcome — no case, no finding").
 
-This prevents authors from treating all feedback as mandatory and wasting time on optional suggestions.
+Group findings into three numbered tiers across all categories so the author can easily say "Fix 1 and 3":
 
-**Lead with what matters.** Order findings by leverage: correctness and security first, then structural regressions and missed simplifications, then everything else. Don't bury a real issue under cosmetic nits — a few high-conviction comments beat a long list. If you have one structural problem and ten nits, the structural problem *is* the review.
+- **Must fix**: Bugs, security vulnerabilities, data loss, breaks at expected load.
+- **Should fix**: Risky code lacking tests, real slowness, code duplication, functions mixing responsibilities, dead code.
+- **Nice to have**: Minor speedups, shorter syntactic forms.
+
+#### The 4-Part Finding Contract
+
+Every finding must contain all four parts in one or two concise sentences:
+
+```markdown
+1. **Orders land on the wrong billing date** (`billing/close_day.py:L40-52`)
+   - **What this is:** Nightly cron job closing the day and billing all orders placed that day.
+   - **Problem:** Takes "today" from server clock running UTC. An order placed at 00:30 in Tokyo is billed on the previous day.
+   - **Fix:** Compute the date in the store's configured timezone: `datetime.now(ZoneInfo(store.tz)).date()`.
+   - **If we skip it:** End-of-month reconciliations and tax reporting will be misattributed.
+```
+
+#### Final Review Verdict
+
+Always conclude with:
+- `Verdict: Ship.` or `Verdict: Fix 1 and 3 first.`
+- `Lean: -<N> lines, -<M> dependencies possible.` (when simplification opportunities exist)
+- `Not checked:` explicit note of any untouched areas or environments not verified.
+
 
 ### Step 5: Verify the Verification
 

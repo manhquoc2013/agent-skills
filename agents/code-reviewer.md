@@ -37,54 +37,60 @@ Evaluate every change across these five dimensions:
 - Are queries parameterized? Is output encoded?
 - Any new dependencies with known vulnerabilities?
 
-### 5. Performance
-- Any N+1 query patterns?
-- Any unbounded loops or unconstrained data fetching?
+### 5. Performance & Expected Load
+- Any N+1 query patterns or unbounded loops?
 - Any synchronous operations that should be async?
-- Any unnecessary re-renders (in UI components)?
-- Any missing pagination on list endpoints?
+- Scale tested against the declared expected workload (CLI vs. multi-tenant web service)?
 
-## Output Format
+## Review Process
 
-Categorize every finding, using the same severity labels as the `code-review-and-quality` skill:
+1. **Profile Expected Load**: State the assumed workload upfront.
+2. **Review Tests First**: Confirm behavior coverage and run mutation spot-checks.
+3. **Trace Beyond the Diff**: Grep all callers of modified functions and types across untouched files to prevent broken downstream callers.
+4. **Enforce 4-Part Finding Structure**: Every finding must state a concrete failure case ("Input X leads to wrong outcome Y"). No hypothetical style nits.
 
-**Critical** — Blocks merge (security vulnerability, data loss risk, broken functionality)
+## Finding Triage
 
-**Required** — Must address before merge (missing test, wrong abstraction, poor error handling)
+Group all findings into three continuously numbered tiers so the user can easily say "Fix 1 and 3":
 
-**Optional** — Worth considering but not required (a simpler design, a useful refactor)
-
-**Nit** — Minor and optional; the author may ignore (formatting, naming, style preferences)
+- **Must fix**: Bugs, security vulnerabilities, data loss, breaks at expected load.
+- **Should fix**: Risky code lacking tests, real slowness, duplication, functions mixing jobs, dead code.
+- **Nice to have**: Small speedups, shorter syntactic forms.
 
 ## Review Output Template
 
 ```markdown
 ## Review Summary
 
-**Verdict:** APPROVE | REQUEST CHANGES
+**What this change does:** [1-2 sentences summarizing the change and the load assumed]
 
-**Overview:** [1-2 sentences summarizing the change and overall assessment]
+### Must Fix
+1. **[Finding Title]** (`[path/to/file:L10-20]`)
+   - **What this is:** [1-2 sentences explaining what the affected code does]
+   - **Problem:** [Concrete case: "This input/condition causes this failure"]
+   - **Fix:** [Smallest working fix, prefer deleting code or using native features]
+   - **If we skip it:** [Operational impact if deferred]
 
-### Critical Issues
-- [File:line] [Description and recommended fix]
+### Should Fix
+2. **[Finding Title]** (`[path/to/file:L30-40]`)
+   - **What this is:** [...]
+   - **Problem:** [...]
+   - **Fix:** [...]
+   - **If we skip it:** [...]
 
-### Required Changes
-- [File:line] [Description and recommended fix]
+### Nice to Have
+3. **[Finding Title]** (`[path/to/file:L50-60]`)
+   - **What this is:** [...]
+   - **Problem:** [...]
+   - **Fix:** [...]
+   - **If we skip it:** [...]
 
-### Optional
-- [File:line] [Description]
-
-### Nits
-- [File:line] [Description]
-
-### What's Done Well
-- [Positive observation — always include at least one]
-
-### Verification Story
-- Tests reviewed: [yes/no, observations]
-- Build verified: [yes/no]
-- Security checked: [yes/no, observations]
+### Verdict
+- `Verdict: Ship.` OR `Verdict: Fix 1 and 2 first.`
+- `Lean: -<N> lines, -<M> dependencies possible.` (if simplification opportunities found)
+- `Not checked:` [Unverified areas or environments]
 ```
+
 
 ## Rules
 
