@@ -39,7 +39,8 @@ For each slice:
 2. **Test** — run the test suite (or write a test if none exists)
 3. **Verify** — confirm the slice works as expected (tests pass, build succeeds, manual check)
 4. **Commit** -- save your progress with a descriptive message (see `git-workflow-and-versioning` for atomic commit guidance)
-5. **Move to the next slice** — carry forward, don't restart
+5. **Track Progress** — mark task `[x]`, recalculate progress (`X/Y tasks, Z%`), and update banner in `tasks/todo.md`
+6. **Move to the next slice** — carry forward, don't restart
 
 ## Slicing Strategies
 
@@ -184,6 +185,49 @@ verify nothing is broken."
 ```
 
 Be explicit about what's in scope and what's NOT in scope for each increment.
+
+## Progress Tracking and Completion Status
+
+Never leave the user guessing about how much of the plan is done. Maintain an authoritative progress record across both `tasks/todo.md` and `SPEC.md`:
+
+### 1. Plan Progress Header (`tasks/todo.md`)
+
+Each time a task is completed, update the header banner at the top of `tasks/todo.md`:
+
+```markdown
+# Implementation Tasks
+
+> **Progress:** 3/5 tasks (60%) — STATUS: IN-PROGRESS
+```
+
+When all tasks are complete (100%):
+
+```markdown
+# Implementation Tasks
+
+> **Progress:** 5/5 tasks (100%) — STATUS: COMPLETED
+```
+
+### 2. Spec Completion Marking (`SPEC.md`)
+
+When all tasks in `tasks/todo.md` reach 100%:
+- Update the status header in `SPEC.md` (or `docs/SPEC.md`):
+  ```markdown
+  > **Status:** COMPLETED (All X/X tasks implemented & verified)
+  ```
+- Notify the user with a clean summary:
+  ```
+  ✅ All 5/5 tasks completed (100%).
+  - Tests passing: [X total tests]
+  - Commits: [list of atomic commits]
+  Next recommended step: Run `/s-review` for code review or `/s-ship` for pre-launch verification.
+  ```
+
+### 3. Partial or Single-Task Mode Summary
+
+When stopping after a single increment (default `/s-build`):
+- Report completed count vs. total: `Progress: 2/5 tasks (40%)`.
+- Clearly state the next pending task: `Next pending task: Task 3 — [Title]`.
 
 ## Increment Checklist
 

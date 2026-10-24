@@ -22,7 +22,7 @@ Pick the next pending task from the plan. Then:
 5. Run the full test suite to check for regressions
 6. Run the build to verify compilation
 7. Commit with a descriptive message
-8. Mark the task complete and stop
+8. Mark the task complete `[x]`, recalculate progress (`X/Y tasks, Z%`), update header banner in `tasks/todo.md`, and report progress and next task. If all tasks are complete, update `SPEC.md` status to `COMPLETED`.
 
 ## Autonomous: the whole plan (`/s-build auto`)
 
@@ -39,6 +39,6 @@ Use this once a spec exists and you want to collapse plan + build into one run. 
    - a task is high-risk or irreversible — auth/permission changes, destructive data migrations, payments, deletions, deploys, anything touching secrets, **or anything you can't undo with `git revert`** → follow agent-skills:doubt-driven-development and get explicit sign-off before continuing
 
    After the user resolves a blocker, they re-invoke `/s-build auto` — it resumes from the next pending task.
-7. **Summarize at the end:** tasks completed, tests added, commits made, and anything skipped, flagged, or left for the user.
+7. **Summarize and mark completion:** Calculate final progress (`X/Y tasks, 100%`), update status in `tasks/todo.md` and `SPEC.md` to `COMPLETED`, list all tasks completed, tests added, commits made, and recommend `/s-review` or `/s-ship`.
 
 If any step fails, follow the agent-skills:debugging-and-error-recovery skill.

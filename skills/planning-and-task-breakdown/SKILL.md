@@ -21,6 +21,29 @@ Decompose work into small, verifiable tasks with explicit acceptance criteria. G
 
 ## The Planning Process
 
+### Step 0: Pre-Flight Spec Check & Auto-Archival
+
+Before decomposing work, inspect existing specifications and plan state:
+
+1. **Missing Spec**: If no `SPEC.md` (or `docs/SPEC.md`, `spec/*`) exists:
+   - **Do NOT guess or invent tasks.**
+   - Immediately invoke `/s-spec` (which presents the interactive modal interview via `ask_question`).
+   - Resume planning once the spec is generated and approved.
+
+2. **Completed Prior Work (Auto-Archival)**:
+   - If an existing `SPEC.md` exists and its corresponding tasks in `tasks/todo.md` are **100% complete** (all tasks marked `[x]` or status marked `COMPLETED`):
+   - Archive the completed spec and plan to avoid stale requirement contamination:
+     ```bash
+     mkdir -p docs/specs/archive/$(date +%Y-%m-%d)-<initiative-name>
+     mv SPEC.md tasks/plan.md tasks/todo.md docs/specs/archive/$(date +%Y-%m-%d)-<initiative-name>/
+     ```
+   - Inform the user: *"Previous initiative is 100% complete and archived to `docs/specs/archive/`. Initiating `/s-spec` to define requirements for your new feature."*
+   - Seamlessly launch `/s-spec` with the interactive modal interview.
+
+3. **In-Progress Work (Conflict Guard)**:
+   - If `tasks/todo.md` exists with pending/unchecked tasks (`- [ ]`), do NOT overwrite.
+   - Stop and confirm with the user: Are you modifying the current plan in-flight, or discarding/archiving the unfinished work to start a new initiative?
+
 ### Step 1: Enter Plan Mode
 
 Before writing any code, operate in read-only mode:

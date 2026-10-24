@@ -15,10 +15,24 @@ fi
 # Detect lifecycle phase from workspace files
 phase="READY"
 if [ -f "tasks/todo.md" ]; then
-  if grep -q '\- \[ \]' "tasks/todo.md" 2>/dev/null; then
-    phase="BUILD"
+  total=$(grep -cE '^\s*-\s*\[[ xX]\]' "tasks/todo.md" 2>/dev/null || true)
+  done_cnt=$(grep -cE '^\s*-\s*\[[xX]\]' "tasks/todo.md" 2>/dev/null || true)
+  total=${total:-0}
+  done_cnt=${done_cnt:-0}
+
+  if [ "$total" -gt 0 ]; then
+    if [ "$done_cnt" -lt "$total" ]; then
+      percent=$(( (done_cnt * 100) / total ))
+      phase="BUILD:${done_cnt}/${total} ${percent}%"
+    else
+      phase="REVIEW:100%"
+    fi
   else
-    phase="REVIEW"
+    if grep -q '\- \[ \]' "tasks/todo.md" 2>/dev/null; then
+      phase="BUILD"
+    else
+      phase="REVIEW"
+    fi
   fi
 elif [ -f "tasks/plan.md" ]; then
   phase="PLAN"
@@ -29,7 +43,9 @@ fi
 # Color styling
 color=75 # Cyan
 [ "$mode" = "ultra" ] && color=208 # Orange
-[ "$phase" = "BUILD" ] && color=114 # Green
-[ "$phase" = "REVIEW" ] && color=141 # Purple
+case "$phase" in
+  BUILD*) color=114 ;;  # Green
+  REVIEW*) color=141 ;; # Purple
+esac
 
 printf '\033[38;5;%sm[%s:%s]\033[0m\n' "$color" "$phase" "$(printf '%s' "$mode" | tr '[:lower:]' '[:upper:]')"
