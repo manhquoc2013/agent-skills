@@ -29,13 +29,13 @@
 
 ## Phase 2: Skill Overhaul & CLI Shortcut
 
-- [ ] **Task 2.1: Overhaul skills/frontend-ui-engineering/SKILL.md & References**
+- [x] **Task 2.1: Overhaul skills/frontend-ui-engineering/SKILL.md & References**
   - **Description**: Update `skills/frontend-ui-engineering/SKILL.md` to integrate the Query Contract, 10-tier rule priority matrix, stack search guidelines, anti-patterns, and the Pre-Delivery UI Checklist. Add `references/quick-reference.md` and `references/pro-rules.md`.
   - **Acceptance Criteria**:
-    - [ ] Frontmatter conforms to `docs/skill-anatomy.md`.
-    - [ ] Detailed workflow covering when to use domain search vs design-system generator.
-    - [ ] Standard sections included: Overview, When to Use, Process, Common Rationalizations, Red Flags, Verification.
-    - [ ] References `references/quick-reference.md` and `references/pro-rules.md` exist and are linked.
+    - [x] Frontmatter conforms to `docs/skill-anatomy.md`.
+    - [x] Detailed workflow covering when to use domain search vs design-system generator.
+    - [x] Standard sections included: Overview, When to Use, Process, Common Rationalizations, Red Flags, Verification.
+    - [x] References `references/quick-reference.md` and `references/pro-rules.md` exist and are linked.
   - **Verification**: `node scripts/validate-skills.js && node scripts/validate-reference-links.js`
   - **Files**: `skills/frontend-ui-engineering/SKILL.md`, `skills/frontend-ui-engineering/references/quick-reference.md`, `skills/frontend-ui-engineering/references/pro-rules.md`
 
