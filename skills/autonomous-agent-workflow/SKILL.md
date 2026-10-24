@@ -53,9 +53,9 @@ Never assume requirements or guess architecture. Surface all unknowns and interr
 2. **Decompose into Vertical Slices**:
    - Invoke `planning-and-task-breakdown` to produce `tasks/plan.md` and dependency-ordered atomic tasks in `tasks/todo.md`.
    - Each task must have clear Acceptance Criteria, Verification Commands, and Files likely touched.
-3. **Single Confirmation Checkpoint**:
-   - Present the synthesized specification and plan summary to the user.
-   - Once confirmed, proceed completely autonomously through Phase 3, 4, and 5.
+3. **Continuous Autonomous Execution & In-Flight Gap Interruption**:
+   - Once requirements are clarified and the spec/plan are written, proceed **directly into implementation** without pausing for redundant confirmation.
+   - **In-Flight Gap Interruption**: If at any point during planning, sub-agent dispatch, or implementation an unexpected ambiguity, unknown constraint, or architectural decision gap is encountered, immediately invoke `ask_question` (interactive popup modal) to clarify with the user rather than guessing or continuing with unverified assumptions.
 
 ### Phase 3: Parallel Sub-Agent Dispatch
 

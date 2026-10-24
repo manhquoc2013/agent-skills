@@ -17,7 +17,7 @@ When invoked, execute the complete 5-phase engineering lifecycle without stoppin
    - Synthesize `SPEC.md` covering Objective, Commands, Architecture, Code Style, Testing Strategy, and Boundaries.
    - If user-facing screens or UI are required, automatically generate `.agents/design-system/<project>/MASTER.md` via `./scripts/ui-search.sh "<product> <keywords>" --design-system --persist -p "<project>"`.
    - Produce vertical slices in `tasks/plan.md` and dependency-ordered tasks in `tasks/todo.md`.
-   - Request single user confirmation before proceeding.
+   - Proceed directly into implementation without pausing for redundant confirmation. If any gap, unexpected ambiguity, or architectural decision emerges at any point in the workflow, immediately invoke interactive questions to clarify with the user.
 
 3. **Dispatch Parallel Sub-Agents (When applicable):**
    - For independent problem domains (e.g. API backend vs UI components vs test harnesses), invoke agent-skills:dispatching-parallel-agents to spawn specialized sub-agents concurrently.
