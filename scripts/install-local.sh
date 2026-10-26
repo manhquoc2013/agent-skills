@@ -139,7 +139,7 @@ project_skills_for() {
 
 note_for() {
   case "$1" in
-    cursor) echo "Open a new Cursor chat so the skill list reloads." ;;
+    cursor) echo "Open a new Cursor chat. Short commands start with /s- (for example /s-spec)." ;;
     claude) echo "Registers this clone with: claude plugin marketplace add <repo> && claude plugin install agent-skills@addy-agent-skills" ;;
     codex) echo "Registers this clone with: codex plugin marketplace add <repo> && codex plugin add agent-skills@agent-skills" ;;
     gemini) echo "Installs with: gemini skills install <repo>/skills" ;;
@@ -222,6 +222,30 @@ destination_for() {
   else
     user_skills_for "$id"
   fi
+}
+
+install_cursor_slash_commands() {
+  local dest="$1" table="$REPO_ROOT/scripts/cursor-slash-commands.tsv"
+  local alias skill summary folder count=0
+  [[ -f "$table" ]] || return 1
+  while IFS="$(printf '\t')" read -r alias skill summary; do
+    [[ -z "$alias" || "$alias" == "alias" || "$alias" == \#* ]] && continue
+    folder="$dest/$alias"
+    mkdir -p "$folder"
+    cat >"$folder/SKILL.md" <<EOF
+---
+name: $alias
+description: $summary. Use when the user invokes /$alias.
+disable-model-invocation: true
+---
+
+This is the short slash command for \`$skill\`.
+
+Read \`../$skill/SKILL.md\` and follow that workflow in full. Do not replace it with a shorter process.
+EOF
+    count=$((count + 1))
+  done <"$table"
+  echo "$count"
 }
 
 copy_skill_pack() {
@@ -517,6 +541,11 @@ for id in "${unique[@]}"; do
     if copied="$(copy_skill_pack "${DESTS[$idx]}" "${VERSION:-unknown}")"; then
       echo "  Skill folders -> ${DESTS[$idx]}"
       echo "  Copied $copied skills."
+      if [[ "$id" == "cursor" ]]; then
+        if alias_count="$(install_cursor_slash_commands "${DESTS[$idx]}")"; then
+          echo "  Added $alias_count short slash commands. In a new chat, type /s- ."
+        fi
+      fi
       if [[ "${FOUND[$idx]}" -eq 0 ]]; then
         echo "  Tool was not detected. Folders were created for a later install of that IDE/CLI."
       fi

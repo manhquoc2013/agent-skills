@@ -1,0 +1,30 @@
+alias	skill	description
+s-use	using-agent-skills	Route the task to the right skill
+s-interview	interview-me	Interview one question at a time until the request is clear
+s-idea	idea-refine	Turn a vague idea into a concrete proposal
+s-clarify	document-clarification	Settle the open points in an existing spec or PRD
+s-spec	spec-driven-development	Write a structured spec before any code
+s-guard	constraint-driven-development	Set and enforce the project quality bar
+s-plan	planning-and-task-breakdown	Break a spec into small verifiable tasks
+s-build	incremental-implementation	Implement the next slice, or the whole plan when given auto
+s-test	test-driven-development	Write a failing test before the change
+s-context	context-engineering	Load the right context for the current task
+s-source	source-driven-development	Ground a framework decision in official documentation
+s-doubt	doubt-driven-development	Adversarially review a non-trivial decision
+s-ui	frontend-ui-engineering	Build or change a user-facing interface
+s-api	api-and-interface-design	Design an API, module boundary, or public interface
+s-dispatch	dispatching-parallel-agents	Run independent tasks in parallel
+s-browser	browser-testing-with-devtools	Inspect a running page in the browser
+s-debug	debugging-and-error-recovery	Reproduce, localize, and fix a failure
+s-verify	verification-before-completion	Prove the work with fresh evidence before claiming it is done
+s-review	code-review-and-quality	Review the change before merge
+s-receive	receiving-code-review	Verify review feedback before changing the code
+s-simplify	code-simplification	Simplify code without changing behavior
+s-security	security-and-hardening	Harden input handling, auth, and secrets
+s-perf	performance-optimization	Measure first, then fix the proven bottleneck
+s-git	git-workflow-and-versioning	Make a small trunk-based commit
+s-ci	ci-cd-and-automation	Change the build, test, or deploy pipeline
+s-deprecate	deprecation-and-migration	Remove or migrate old behavior
+s-docs	documentation-and-adrs	Write the decision or the API docs
+s-observe	observability-and-instrumentation	Add logs, metrics, or traces
+s-ship	shipping-and-launch	Run the pre-launch checklist and decide go or no-go

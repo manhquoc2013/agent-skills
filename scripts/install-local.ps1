@@ -130,7 +130,7 @@ function Get-HostCatalog {
             ConfigDirs = @((Join-Path $homeDir '.cursor'))
             UserSkills = (Join-Path $homeDir '.cursor\skills')
             ProjectSkills = '.cursor\skills'
-            Note = 'Open a new Cursor chat so the skill list reloads.'
+            Note = 'Open a new Cursor chat. Short commands start with /s- (for example /s-spec).'
         },
         @{
             Id = 'claude'
@@ -345,6 +345,41 @@ function Get-RowState {
         return [pscustomobject]@{ Status = 'need'; Installed = $installed; Needs = $true }
     }
     return [pscustomobject]@{ Status = 'ready'; Installed = $installed; Needs = $false }
+}
+
+function Install-CursorSlashCommands {
+    param([string]$DestinationSkills)
+    $tablePath = Join-Path $PSScriptRoot 'cursor-slash-commands.tsv'
+    if (-not (Test-Path -LiteralPath $tablePath)) {
+        throw "Missing slash-command table: $tablePath"
+    }
+    $utf8 = New-Object System.Text.UTF8Encoding $false
+    $written = 0
+    foreach ($entry in (Import-Csv -LiteralPath $tablePath -Delimiter "`t")) {
+        $alias = [string]$entry.alias
+        $skill = [string]$entry.skill
+        $summary = [string]$entry.description
+        if (-not $alias -or -not $skill) {
+            continue
+        }
+        $folder = Join-Path $DestinationSkills $alias
+        New-Item -ItemType Directory -Force -Path $folder | Out-Null
+        $body = @"
+---
+name: $alias
+description: $summary. Use when the user invokes /$alias.
+disable-model-invocation: true
+---
+
+This is the short slash command for ``$skill``.
+
+Read ``../$skill/SKILL.md`` and follow that workflow in full. Do not replace it with a shorter process.
+"@
+        $skillFile = Join-Path $folder 'SKILL.md'
+        [System.IO.File]::WriteAllText($skillFile, $body.Replace("`r`n", "`n"), $utf8)
+        $written++
+    }
+    return $written
 }
 
 function Copy-SkillPack {
@@ -743,6 +778,10 @@ foreach ($id in @($selectedIds)) {
             Write-Host "  Skill folders -> $($row.Destination)"
             $copied = Copy-SkillPack -DestinationSkills $row.Destination -Version $packVersion
             Write-Host "  Copied $copied skills."
+            if ($row.Id -eq 'cursor') {
+                $aliases = Install-CursorSlashCommands -DestinationSkills $row.Destination
+                Write-Host "  Added $aliases short slash commands. In a new chat, type /s- ."
+            }
             if (-not $row.Found) {
                 Write-Host '  Tool was not detected. Folders were created for a later install of that IDE/CLI.'
             }
