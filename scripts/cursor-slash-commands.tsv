@@ -1,5 +1,6 @@
 alias	skill	description
 s-use	using-agent-skills	Route the task to the right skill
+s-agent	autonomous-agent-workflow	End-to-end autopilot: interview, spec, plan, sub-agents, self-healing TDD
 s-interview	interview-me	Interview one question at a time until the request is clear
 s-idea	idea-refine	Turn a vague idea into a concrete proposal
 s-clarify	document-clarification	Settle the open points in an existing spec or PRD
@@ -20,6 +21,7 @@ s-verify	verification-before-completion	Prove the work with fresh evidence befor
 s-review	code-review-and-quality	Review the change before merge
 s-receive	receiving-code-review	Verify review feedback before changing the code
 s-simplify	code-simplification	Simplify code without changing behavior
+s-debt	technical-debt-and-shortcuts	Audit deliberate shortcuts and technical debt ceilings
 s-security	security-and-hardening	Harden input handling, auth, and secrets
 s-perf	performance-optimization	Measure first, then fix the proven bottleneck
 s-git	git-workflow-and-versioning	Make a small trunk-based commit
