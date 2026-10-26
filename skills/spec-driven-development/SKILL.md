@@ -1,6 +1,6 @@
 ---
 name: spec-driven-development
-description: Creates specs before coding. Use when starting a new project, feature, or significant change and no specification exists yet. Use when drafting a PRD or requirements document with objectives and scope, or when requirements are unclear, ambiguous, or only exist as a vague idea. Use when a single requirement spans several independently testable capabilities and needs decomposing into a capability map of modules before specifying.
+description: Creates specs before writing code. Use when starting a new project, feature, or significant change and no specification exists yet. Use when drafting a PRD or requirements document with objectives and scope, or when requirements are unclear, ambiguous, or only exist as a vague idea. Use when a single requirement spans several independently testable capabilities and needs decomposing into a capability map of modules before specifying.
 ---
 
 # Spec-Driven Development
@@ -67,6 +67,14 @@ Build order: identity → billing, notifications → reporting
 ### Phase 1: Specify
 
 Start with a high-level vision. Ask the human clarifying questions until requirements are concrete.
+
+**Interactive Clarification Modal Gate:**
+In environments supporting interactive dialogs (such as Antigravity IDE with the `ask_question` tool), you **MUST** invoke `ask_question` to render an interactive popup modal with selectable choices and write-in fields to resolve requirements, tech stack choices, and assumptions before drafting the spec document. Do not output plain text questions when interactive modal tools are available.
+
+**Drift Pre-check Gate (Preventing Stale Foundations):**
+Before authoring or extending a specification, check for drift against the live codebase:
+1. **Schema Drift Check:** If the feature touches data persistence, inspect whether database schemas, migration files, and ORM models are currently synchronized (`git status`, migration status). Flag any pending unapplied migrations up front.
+2. **Context Drift Check:** If modifying or extending an existing architecture, verify whether upstream architectural assumptions have changed (e.g. auth model switched from session to JWT, or database engine changed). Reconcile stale assumptions before drafting the new spec.
 
 **Surface assumptions immediately.** Before writing any spec content, list what you're assuming:
 
@@ -146,6 +154,15 @@ Don't silently fill in ambiguous requirements. The spec's entire purpose is to s
 ## Open Questions
 [Anything unresolved that needs human input]
 ```
+
+**UI & Frontend Requirements (Design System Gate):**
+If the specification touches user-facing screens, components, or visual layouts:
+1. Run design system generation before finalizing the spec:
+   ```bash
+   ./scripts/ui-search.sh "<product-type> <keywords>" --design-system --persist -p "<project-slug>" --output-dir .
+   ```
+2. Embed the resulting color tokens, typography pairing (with Google Fonts link), and anti-patterns into the spec's **Code Style / Design Tokens** section.
+3. Confirm that `.agents/design-system/<project-slug>/MASTER.md` is persisted as the binding design source of truth.
 
 **External spec tools:** This workflow is format-agnostic. If the project
 already uses OpenSpec or another specification system, keep that system's
@@ -249,6 +266,7 @@ The spec is a living document, not a one-time artifact:
 
 Before proceeding to implementation, confirm:
 
+- [ ] Drift pre-checks passed: database schema/migrations synchronized and upstream architectural assumptions verified
 - [ ] The spec covers all six core areas
 - [ ] The human has reviewed and approved the spec
 - [ ] The turn ended after saving the spec; approval came in a later turn

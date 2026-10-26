@@ -1,0 +1,10 @@
+{
+  "description": "Lifecycle hooks for agent-skills mode and session context",
+  "hooks": {
+    "SessionStart": [
+      {
+        "command": "node hooks/agent-mode-hook.js"
+      }
+    ]
+  }
+}

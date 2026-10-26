@@ -23,12 +23,17 @@ OpenCode uses a **skill-driven execution model** powered by the `skill` tool and
 
 The agent should automatically map user intent to skills:
 
+- Autonomous / end-to-end autopilot → `autonomous-agent-workflow` (`/s-agent`)
 - Feature / new functionality → `spec-driven-development`, then `incremental-implementation`, `test-driven-development`
 - Planning / breakdown → `planning-and-task-breakdown`
 - Unclear/open points in a spec or PRD → `document-clarification`
-- Bug / failure / unexpected behavior → `debugging-and-error-recovery`
+- Bug / failure / unexpected behavior → `debugging-and-error-recovery` (`/s-debug`)
+- Multiple independent workstreams → `dispatching-parallel-agents`
 - Code review → `code-review-and-quality`
+- Addressing review feedback → `receiving-code-review`
 - Refactoring / simplification → `code-simplification`
+- Technical debt / deliberate shortcuts / deferrals → `technical-debt-and-shortcuts` (`/s-debt`)
+- Pre-commit / evidence before done → `verification-before-completion`
 - API or interface design → `api-and-interface-design`
 - UI work → `frontend-ui-engineering`
 
@@ -42,6 +47,7 @@ Instead, the agent must internally follow this lifecycle:
 - PLAN → `planning-and-task-breakdown`
 - BUILD → `incremental-implementation` + `test-driven-development`
 - VERIFY → `debugging-and-error-recovery`
+- DEBT → `technical-debt-and-shortcuts`
 - REVIEW → `code-review-and-quality`
 - SHIP → `shipping-and-launch`
 

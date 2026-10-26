@@ -24,6 +24,7 @@ When a task arrives, identify the development phase and apply the corresponding 
 ```
 Task arrives
     │
+    ├── End-to-end autonomous feature? ────→ autonomous-agent-workflow
     ├── Don't know what you want yet? ──────→ interview-me
     ├── Have a rough concept, need variants? → idea-refine
     ├── New project/feature/change? ──→ spec-driven-development
@@ -35,12 +36,16 @@ Task arrives
     │   ├── API work? ────────────────→ api-and-interface-design
     │   ├── Need better context? ─────→ context-engineering
     │   ├── Need doc-verified code? ───→ source-driven-development
-    │   └── Stakes high / unfamiliar code? ──→ doubt-driven-development
+    │   ├── Stakes high / unfamiliar code? ──→ doubt-driven-development
+    │   └── Independent sub-problems? ─→ dispatching-parallel-agents
     ├── Writing/running tests? ────────→ test-driven-development
     │   └── Browser-based? ───────────→ browser-testing-with-devtools
     ├── Something broke? ──────────────→ debugging-and-error-recovery
+    ├── About to claim work complete? ─→ verification-before-completion
     ├── Reviewing code? ───────────────→ code-review-and-quality
+    │   ├── Addressing review comments? ──→ receiving-code-review
     │   ├── Too complex? ─────────────→ code-simplification
+    │   ├── Taking a deliberate shortcut? → technical-debt-and-shortcuts
     │   ├── Security concerns? ───────→ security-and-hardening
     │   └── Performance concerns? ────→ performance-optimization
     ├── Committing/branching? ─────────→ git-workflow-and-versioning
@@ -178,6 +183,8 @@ Not every task needs every skill. A bug fix might only need: `debugging-and-erro
 
 | Phase | Skill | One-Line Summary |
 |-------|-------|-----------------|
+| Meta | using-agent-skills | Maps incoming work to the right skill workflow and defines shared operating rules |
+| Meta | autonomous-agent-workflow | End-to-end autonomous engineering from interview to verified completion |
 | Define | interview-me | Surface what the user actually wants before any plan, spec, or code exists |
 | Define | idea-refine | Refine ideas through structured divergent and convergent thinking |
 | Define | spec-driven-development | Requirements and acceptance criteria before code |
@@ -190,11 +197,15 @@ Not every task needs every skill. A bug fix might only need: `debugging-and-erro
 | Build | context-engineering | Right context at the right time |
 | Build | frontend-ui-engineering | Production-quality UI with accessibility |
 | Build | api-and-interface-design | Stable interfaces with clear contracts |
+| Build | dispatching-parallel-agents | One agent per independent problem domain with coordinator merge |
 | Verify | test-driven-development | Failing test first, then make it pass |
 | Verify | browser-testing-with-devtools | Chrome DevTools MCP for runtime verification |
 | Verify | debugging-and-error-recovery | Reproduce → localize → fix → guard |
+| Verify | verification-before-completion | Evidence before claims — run checks and cite output before marking done |
 | Review | code-review-and-quality | Five-axis review with quality gates |
+| Review | receiving-code-review | Verify feedback before implementing, reasoned pushback over performative agreement |
 | Review | code-simplification | Preserve behavior while reducing unnecessary complexity |
+| Review | technical-debt-and-shortcuts | Mark, track, and audit deliberate shortcuts with ceilings and upgrade triggers |
 | Review | security-and-hardening | OWASP prevention, input validation, least privilege |
 | Review | performance-optimization | Measure first, optimize only what matters |
 | Ship | git-workflow-and-versioning | Atomic commits, clean history |

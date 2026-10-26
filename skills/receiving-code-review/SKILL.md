@@ -1,6 +1,6 @@
 ---
 name: receiving-code-review
-description: Guides how to receive code review feedback — verify before implementing, ask before assuming. Use when responding to review comments or a reviewer's suggestions, and when feedback is unclear, seems wrong for the codebase, or conflicts with an earlier decision.
+description: Guides how to receive code review feedback — verify before implementing, ask before assuming. Use when responding to review comments or a reviewer's suggestions on a diff, and when feedback is unclear, seems wrong for the codebase, or conflicts with an earlier decision.
 ---
 
 # Receiving Code Review

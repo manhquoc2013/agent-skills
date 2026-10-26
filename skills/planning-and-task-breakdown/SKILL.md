@@ -21,6 +21,29 @@ Decompose work into small, verifiable tasks with explicit acceptance criteria. G
 
 ## The Planning Process
 
+### Step 0: Pre-Flight Spec Check & Auto-Archival
+
+Before decomposing work, inspect existing specifications and plan state:
+
+1. **Missing Spec**: If no `SPEC.md` (or `docs/SPEC.md`, `spec/*`) exists:
+   - **Do NOT guess or invent tasks.**
+   - Immediately invoke `/s-spec` (which presents the interactive modal interview via `ask_question`).
+   - Resume planning once the spec is generated and approved.
+
+2. **Completed Prior Work (Auto-Archival)**:
+   - If an existing `SPEC.md` exists and its corresponding tasks in `tasks/todo.md` are **100% complete** (all tasks marked `[x]` or status marked `COMPLETED`):
+   - Archive the completed spec and plan to avoid stale requirement contamination:
+     ```bash
+     mkdir -p docs/specs/archive/$(date +%Y-%m-%d)-<initiative-name>
+     mv SPEC.md tasks/plan.md tasks/todo.md docs/specs/archive/$(date +%Y-%m-%d)-<initiative-name>/
+     ```
+   - Inform the user: *"Previous initiative is 100% complete and archived to `docs/specs/archive/`. Initiating `/s-spec` to define requirements for your new feature."*
+   - Seamlessly launch `/s-spec` with the interactive modal interview.
+
+3. **In-Progress Work (Conflict Guard)**:
+   - If `tasks/todo.md` exists with pending/unchecked tasks (`- [ ]`), do NOT overwrite.
+   - Stop and confirm with the user: Are you modifying the current plan in-flight, or discarding/archiving the unfinished work to start a new initiative?
+
 ### Step 1: Enter Plan Mode
 
 Before writing any code, operate in read-only mode:
@@ -107,33 +130,48 @@ Each task follows this structure, whether it lands in the markdown task list or 
 **Estimated scope:** [Small: 1-2 files | Medium: 3-5 files | Large: 5+ files]
 ```
 
-### Step 5: Order and Checkpoint
+#### Compact Format for XS/S Tasks (Token Efficiency)
 
-Arrange tasks so that:
+To keep `tasks/todo.md` concise (<100 lines) and avoid burning tokens re-reading boilerplate across turns, small tasks (single function, minor config, simple component) can use this streamlined 3-4 line checklist format:
 
-1. Dependencies are satisfied (build foundation first)
-2. Each task leaves the system in a working state
-3. Verification checkpoints occur after every 2-3 tasks
-4. High-risk tasks are early (fail fast)
+```markdown
+- [ ] **Task [N]: [Title]** ([XS/S])
+  - **Scope**: [One sentence explaining behavior and changes]
+  - **Verify**: [Focused test command or verification step]
+  - **Files**: `path/to/source.ts`, `path/to/test.ts`
+```
+
+Reserve the detailed block structure above for M/L architectural tasks or multi-module wave boundaries.
+
+### Step 5: Order, Checkpoint, and Group into Waves
+
+Arrange tasks so that dependencies are satisfied, high-risk items fail fast, and parallelization opportunities are explicit:
+
+1. **Group into Execution Waves:**
+   - **Wave 1 (Foundation & Contracts):** Data models, interfaces, migrations, core schemas. Tasks here must complete first.
+   - **Wave 2 (Parallel Implementation):** Independent feature slices, components, services. Tasks within Wave 2 touch disjoint files and are safe for concurrent sub-agent dispatch without git merge conflicts.
+   - **Wave 3 (Integration & Verification):** End-to-end integration, consumer wiring, and final system validation.
+2. **Add Checkpoints between Waves:**
+   - Checkpoint after each wave verifying compilation, test passing, and contract adherence before dispatching subsequent waves.
 
 Add explicit checkpoints to the task list target:
 
 ```markdown
-## Checkpoint: After Tasks 1-3
+## Checkpoint: After Wave 1
 - [ ] All tests pass
 - [ ] Application builds without errors
-- [ ] Core user flow works end-to-end
-- [ ] Review with human before proceeding
+- [ ] Core interfaces verified before Wave 2 dispatch
 ```
 
-### Step 6: Self-Review the Plan
+### Step 6: Plan Convergence & Self-Review
 
-Before handing the plan off, check it yourself — this is a checklist you run, not a subagent dispatch:
+Before presenting the plan for human approval, run a convergence audit to eliminate planning flaws:
 
-1. **Spec coverage:** point at a task for every requirement in the spec; list gaps and add tasks for them.
-2. **Step scan:** every task must let an implementer write exactly one reasonable thing — a task that decides nothing is a gap; one that prescribes the whole body is a transcript.
-3. **Type consistency:** names and signatures used in later tasks match what earlier tasks define — `clearLayers()` in one task and `clearFullLayers()` in the next is a bug.
-4. **Proportion:** a plan several times longer than the spec is a transcript of the program. Replace bodies with signatures, test names, and assertions.
+1. **Spec coverage:** Every requirement in the spec maps directly to at least one task; list gaps and add tasks for them.
+2. **Disjoint file sets:** Confirm tasks scheduled within the same execution wave declare disjoint file sets to prevent sub-agent git collisions.
+3. **Step scan:** Every task must let an implementer write exactly one reasonable thing — a task that decides nothing is a gap; one that prescribes the whole body is a transcript.
+4. **Type consistency:** Names and signatures used in later tasks match what earlier tasks define — `clearLayers()` in one task and `clearFullLayers()` in the next is a bug.
+5. **Concrete verification:** Every task specifies exact test or validation commands rather than vague "verify it works".
 
 Fix what you find inline. A spec requirement with no task gets a task.
 
@@ -260,6 +298,8 @@ Before starting implementation, confirm:
 
 - [ ] Every task has acceptance criteria
 - [ ] Every task has a verification step
+- [ ] Tasks grouped into explicit Execution Waves (Wave 1: Foundation → Wave 2: Parallel → Wave 3: Integration)
+- [ ] Plan convergence self-critique completed: 100% spec coverage with disjoint file sets for parallel tasks
 - [ ] Task dependencies are identified and ordered correctly
 - [ ] Tasks are recorded in the task list target (default `tasks/todo.md`)
 - [ ] No pre-existing incomplete plan was overwritten without explicit user confirmation

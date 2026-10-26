@@ -21,25 +21,33 @@ Skills encode the workflows, quality gates, and best practices that senior engin
 
 ## Commands
 
-9 slash commands that map to the development lifecycle. Each one activates the right skills automatically.
+12 slash commands that map to the development lifecycle. Each one activates the right skills automatically.
 
 | What you're doing | Command | Key principle |
 |-------------------|---------|---------------|
+| Full autonomous autopilot | `/s-agent` | Interview popup, spec, plan, sub-agents & self-healing TDD |
 | Define what to build | `/s-spec` | Spec before code |
 | Plan how to build it | `/s-plan` | Small, atomic tasks |
 | Build incrementally | `/s-build` | One slice at a time |
 | Prove it works | `/s-test` | Tests are proof |
+| Debug & root cause | `/s-debug` | Fix root causes, not symptoms (use `--find` to diagnose only) |
 | Set the quality bar | `/s-guard` | Decide it once, enforce it everywhere |
+| Track technical debt | `/s-debt` | Deliberate shortcuts, zero rot |
 | Review before merge | `/s-review` | Improve code health |
 | Audit web performance | `/s-perf` | Measure before you optimize |
 | Simplify the code | `/s-simplify` | Clarity over cleverness |
 | Ship to production | `/s-ship` | Faster is safer |
 
-In Claude Code these install as plugin commands.
+Works across 20+ environments (Claude Code, Cursor, OpenCode, Codex, Antigravity, Copilot, Windsurf, Cline, Gemini CLI). See [INSTALL.md](INSTALL.md) for full setup guides and uninstallation instructions.
 
 Want fewer manual steps once the spec exists? **`/s-build auto`** generates the plan and implements every task in a single approved pass — you approve the plan once, then it runs autonomously. It removes the human stepping *between* tasks, not the verification: every task is still test-driven and committed individually, and it pauses on failures or risky steps.
 
 Skills also activate automatically based on what you're doing — designing an API triggers `api-and-interface-design`, building UI triggers `frontend-ui-engineering`, and so on.
+
+Need instant, deterministic design intelligence? Query the embedded zero-dependency UI search engine at any time:
+```bash
+./scripts/ui-search.sh "fintech crypto dashboard" --design-system --persist -p "MyFintech"
+```
 
 ---
 
@@ -221,15 +229,16 @@ Already installed? How you roll the pack out depends on your codebase. The **[Ad
 
 ---
 
-## All 29 Skills
+## All 31 Skills
 
-The commands above are entry points. The pack includes 29 skills total — 28 lifecycle skills plus the `using-agent-skills` meta-skill. Each skill is a structured workflow with steps, verification gates, and anti-rationalization tables. You can also reference any skill directly.
+The commands above are entry points. The pack includes 31 skills total — 30 lifecycle skills plus the `using-agent-skills` meta-skill. Each skill is a structured workflow with steps, verification gates, and anti-rationalization tables. You can also reference any skill directly.
 
 ### Meta - Discover which skill applies
 
 | Skill | What It Does | Use When |
 |-------|-------------|----------|
 | [using-agent-skills](skills/using-agent-skills/SKILL.md) | Maps incoming work to the right skill workflow and defines shared operating rules | Starting a session or deciding which skill applies |
+| [autonomous-agent-workflow](skills/autonomous-agent-workflow/SKILL.md) | End-to-end autonomous engineering — interactive interview modal, spec & plan generation, sub-agent dispatch, self-healing TDD, multi-specialist review | Running complex features or long-running tasks on full autopilot |
 
 ### Define - Clarify what to build
 
@@ -256,7 +265,7 @@ The commands above are entry points. The pack includes 29 skills total — 28 li
 | [context-engineering](skills/context-engineering/SKILL.md) | Feed agents the right information at the right time - rules files, context packing, MCP integrations | Starting a session, switching tasks, or when output quality drops |
 | [source-driven-development](skills/source-driven-development/SKILL.md) | Ground every framework decision in official documentation - verify, cite sources, flag what's unverified | You want authoritative, source-cited code for any framework or library |
 | [doubt-driven-development](skills/doubt-driven-development/SKILL.md) | Adversarial fresh-context review of every non-trivial decision in-flight - CLAIM → EXTRACT → DOUBT → RECONCILE → STOP, with optional user-authorized cross-model escalation | Stakes are high (production, security, irreversible), working in unfamiliar code, or a confident output is cheaper to verify now than to debug later |
-| [frontend-ui-engineering](skills/frontend-ui-engineering/SKILL.md) | Component architecture, design systems, state management, responsive design, WCAG 2.1 AA accessibility | Building or modifying user-facing interfaces |
+| [frontend-ui-engineering](skills/frontend-ui-engineering/SKILL.md) | Component architecture, deterministic design intelligence (79 styles, 192 reasoning profiles, 192 palettes, 74 typography pairings, 22 stacks), state management, responsive design, WCAG 2.1 AA | Building or modifying user-facing interfaces |
 | [api-and-interface-design](skills/api-and-interface-design/SKILL.md) | Contract-first design, Hyrum's Law, One-Version Rule, error semantics, boundary validation | Designing APIs, module boundaries, or public interfaces |
 | [dispatching-parallel-agents](skills/dispatching-parallel-agents/SKILL.md) | One agent per independent problem domain, parallel dispatch, hand-built briefs, coordinator integrates and verifies | Two or more independent tasks or failures that share no state or dependency |
 
@@ -275,6 +284,7 @@ The commands above are entry points. The pack includes 29 skills total — 28 li
 | [code-review-and-quality](skills/code-review-and-quality/SKILL.md) | Five-axis review, change sizing (~100 lines), severity labels (Nit/Optional/FYI), review speed norms, splitting strategies | Before merging any change |
 | [receiving-code-review](skills/receiving-code-review/SKILL.md) | Verify feedback before implementing, reasoned pushback over performative agreement, clarify-then-fix ordering | Responding to review comments or implementing reviewer suggestions |
 | [code-simplification](skills/code-simplification/SKILL.md) | Chesterton's Fence, Rule of 500, reduce complexity while preserving exact behavior | Code works but is harder to read or maintain than it should be |
+| [technical-debt-and-shortcuts](skills/technical-debt-and-shortcuts/SKILL.md) | Mark, track, and audit deliberate shortcuts with ceilings and upgrade triggers | Taking deliberate shortcuts, deferring work, or auditing technical debt |
 | [security-and-hardening](skills/security-and-hardening/SKILL.md) | OWASP Top 10 prevention, auth patterns, secrets management, dependency auditing, three-tier boundary system | Handling user input, auth, data storage, or external integrations |
 | [performance-optimization](skills/performance-optimization/SKILL.md) | Measure-first approach - Core Web Vitals targets, profiling workflows, bundle analysis, anti-pattern detection | Performance requirements exist or you suspect regressions |
 

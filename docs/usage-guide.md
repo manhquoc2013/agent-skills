@@ -132,14 +132,17 @@ Dùng khi: gỡ hệ thống/API/tính năng cũ; di trú người dùng giữa 
 **`git-workflow-and-versioning`** — Kỷ luật git: commit là save point, branch là sandbox, lịch sử là tài liệu.
 Dùng khi: mọi thay đổi code — commit, branch, giải quyết conflict, tách working tree bừa bộn thành các commit nguyên tử, mở/review PR, push, cắt release, chọn semver, viết changelog, hoặc tổ chức nhiều luồng công việc song song (worktree).
 
-## 5. Slash commands (9 lệnh)
+## 5. Slash commands (12 lệnh)
 
 | Lệnh | Skill tương ứng | Mô tả |
 |---|---|---|
+| `/s-agent` | autonomous-agent-workflow | Autopilot đầu cuối: phỏng vấn modal, spec, plan, sub-agent song song, tự sửa lỗi TDD |
 | `/s-spec` | spec-driven-development | Viết spec có cấu trúc trước khi code; nếu yêu cầu gồm nhiều năng lực độc lập → capability map trước |
 | `/s-plan` | planning-and-task-breakdown | Chia việc thành task nhỏ có tiêu chí chấp nhận; lưu `tasks/plan.md` + `tasks/todo.md` |
 | `/s-build` | incremental-implementation + test-driven-development | Cài đặt task kế tiếp rồi dừng; `/s-build auto` = duyệt kế hoạch một lần rồi chạy hết các task (vẫn test-từng-task + commit-từng-task) |
 | `/s-test` | test-driven-development | Vòng đỏ-xanh-refactor; với bug dùng Prove-It pattern (test tái hiện bug phải ĐỎ trước) |
+| `/s-debug` | debugging-and-error-recovery | Điều tra lỗi & Root Cause; mặc định fix + test; `--find` chỉ điều tra báo cáo bằng chứng mà không sửa code |
+| `/s-debt` | technical-debt-and-shortcuts | Quản lý nợ kỹ thuật: theo dõi trần kỹ thuật, điều kiện nâng cấp và rủi ro mọt code |
 | `/s-review` | code-review-and-quality | Review 5 trục với file:line cụ thể |
 | `/s-ship` | shipping-and-launch | Fan-out song song 3 persona (code-reviewer, security-auditor, test-engineer) → quyết định GO/NO-GO + rollback plan |
 | `/s-perf` | web-performance-auditor (persona) | Audit hiệu năng web; chế độ Deep (có dữ liệu Lighthouse/PSI/CrUX) hoặc Quick (soi cấu trúc code) |

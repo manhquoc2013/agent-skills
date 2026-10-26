@@ -26,6 +26,8 @@ param(
     [switch]$List,
     [switch]$All,
     [switch]$Help,
+    [switch]$Uninstall,
+    [string[]]$Skills,
     [string[]]$Only,
     [ValidateSet('user', 'project')]
     [string]$Scope,
@@ -40,6 +42,22 @@ $Script:RepoRoot = (Resolve-Path (Join-Path $PSScriptRoot '..')).Path
 $Script:SkillsRoot = Join-Path $Script:RepoRoot 'skills'
 $Script:ReferencesRoot = Join-Path $Script:RepoRoot 'references'
 
+if ($Uninstall) {
+    $uninstaller = Join-Path $PSScriptRoot 'uninstall-local.ps1'
+    if (Test-Path -LiteralPath $uninstaller) {
+        $forwardParams = @{}
+        if ($List) { $forwardParams['List'] = $true }
+        if ($All) { $forwardParams['All'] = $true }
+        if ($Help) { $forwardParams['Help'] = $true }
+        if ($Only) { $forwardParams['Only'] = $Only }
+        if ($Skills) { $forwardParams['Skills'] = $Skills }
+        if ($Scope) { $forwardParams['Scope'] = $Scope }
+        if ($Project) { $forwardParams['Project'] = $Project }
+        & $uninstaller @forwardParams
+        exit $LASTEXITCODE
+    }
+}
+
 function Show-InstallerHelp {
     Write-Host @"
 install-local.ps1 — copy this clone's skills into detected IDE/CLI folders.
@@ -49,6 +67,8 @@ install-local.ps1 — copy this clone's skills into detected IDE/CLI folders.
   -Only <id[,id...]>    Install these ids even when not detected
   -Scope user|project   user = home config (default); project = one repo
   -Project <path>       Project root for -Scope project (default: current directory)
+  -Uninstall            Uninstall skills from detected target(s)
+  -Skills <s1[,s2...]>  Selectively remove only specified skills (with -Uninstall)
   -Help                 Show this text
 
 Interactive menu (no -All / -Only):
@@ -116,8 +136,8 @@ function Test-MarkerInstalled {
 }
 
 function Get-HostCatalog {
-    $homeDir = $env:USERPROFILE
-    $local = $env:LOCALAPPDATA
+    $homeDir = if ($env:USERPROFILE) { $env:USERPROFILE } elseif ($env:HOME) { $env:HOME } else { '' }
+    $local = if ($env:LOCALAPPDATA) { $env:LOCALAPPDATA } elseif ($homeDir) { $homeDir } else { '' }
     return @(
         @{
             Id = 'cursor'
@@ -254,9 +274,11 @@ function Test-CopilotExtension {
         $codeCommand = 'code'
     }
     else {
-        $codeExe = Join-Path $env:LOCALAPPDATA 'Programs\Microsoft VS Code\Code.exe'
-        if (Test-Path -LiteralPath $codeExe) {
-            $codeCommand = $codeExe
+        if ($env:LOCALAPPDATA) {
+            $codeExe = Join-Path $env:LOCALAPPDATA 'Programs\Microsoft VS Code\Code.exe'
+            if (Test-Path -LiteralPath $codeExe) {
+                $codeCommand = $codeExe
+            }
         }
     }
     if (-not $codeCommand) {
@@ -688,7 +710,7 @@ function Invoke-MarketplaceInstall {
         'claude' {
             $command = 'claude'
             $steps.Add(@('plugin', 'marketplace', 'add', $Script:RepoRoot, '--scope', $claudeScope))
-            $steps.Add(@('plugin', 'install', 'agent-skills@addy-agent-skills', '--scope', $claudeScope, '-y'))
+            $steps.Add(@('plugin', 'install', 'agent-skills@addy-agent-skills', '--scope', $claudeScope))
         }
         'codex' {
             $command = 'codex'
@@ -740,6 +762,16 @@ function Invoke-MarketplaceInstall {
         Pop-Location
     }
     return $true
+}
+
+$buildScript = Join-Path $Script:RepoRoot "scripts\build-agent-dist.js"
+if (Test-Path $buildScript) {
+    Write-Host "Synchronizing multi-agent configurations..."
+    try {
+        & node $buildScript *>$null
+    } catch {
+        # ignore if node is not on PATH
+    }
 }
 
 $failures = New-Object System.Collections.Generic.List[string]

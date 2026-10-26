@@ -1,20 +1,66 @@
 ---
 name: code-simplification
-description: Simplifies code for clarity. Use when refactoring code for clarity without changing behavior. Use when code works but is harder to read, maintain, or extend than it should be. Use when reviewing code that has accumulated unnecessary complexity.
+description: "Simplifies code for clarity and maintainability. Use when refactoring code for clarity without changing behavior. Use when code works but is harder to read, maintain, or extend than it should be. Use when reviewing code that has accumulated unnecessary complexity, or when seeking the simplest complete solution (lazy senior dev mode: lite, full, ultra)."
 ---
 
 # Code Simplification
 
-> Inspired by the [Claude Code Simplifier plugin](https://github.com/anthropics/claude-plugins-official/blob/main/plugins/code-simplifier/agents/code-simplifier.md). Adapted here as a model-agnostic, process-driven skill for any AI coding agent.
+> Inspired by the [Claude Code Simplifier plugin](https://github.com/anthropics/claude-plugins-official/blob/main/plugins/code-simplifier/agents/code-simplifier.md) and [Ponytail](docs/references/ponytail-main). Adapted here as a model-agnostic, process-driven skill for any AI coding agent.
 
 ## Overview
 
-Simplify code by reducing complexity while preserving exact behavior. The goal is not fewer lines — it's code that is easier to read, understand, modify, and debug. Every simplification must pass a simple test: "Would a new team member understand this faster than the original?"
+Simplify code by reducing complexity while preserving exact behavior. The best code is often the code never written. Solve the whole problem with the least new code, while remaining easy to read, understand, modify, and debug. Every simplification must pass a simple test: "Would a new team member understand this faster than the original?"
+
+### Operating Modes & Automatic Switching
+
+This skill supports three execution levels:
+
+| Level | Behavior | Auto-Detection Triggers |
+|-------|----------|-------------------------|
+| **lite** | Build what was asked. Name the smaller alternative in one line and let the user pick. | Prompts asking for quick options, exploratory changes, or minimal intervention ("quick fix", "what's the easiest way"). |
+| **full** (default) | Strictly enforce the 6-rung ladder and minimum diff. Finish all affected callers and tests. | Standard refactorings, feature implementations, and cleanups. Default for all sessions. |
+| **ultra** | Actively push back on unneeded scope before writing code. Challenge speculative features or accidental complexity. | User complains about bloat or over-engineering ("is this overkill?", "do we really need this?", "be lazy", "yagni", "strip this down"). |
+
+Mode preferences persist via `~/.config/agent-skills/config.json` (`{"defaultMode": "full"}`). In any session, the user can override the level explicitly (e.g. "run in ultra mode" or `/s-simplify ultra`).
+
+### Non-Negotiable Invariants
+
+**Never cut under the guise of simplification:**
+- Validation at trust boundaries (API inputs, external payloads, environment configs).
+- Error handling that prevents data loss or corruption (transactions, rollbacks, disk writes).
+- Security controls (authentication, authorization, query parameterization, secret sanitization).
+- Accessibility (labels, ARIA tags, keyboard navigation).
+- Explicit requirements the user asked for.
+
+---
+
+## The 6-Rung Ladder
+
+Before writing new code or modifying existing logic, trace the real call flow and stop at the first rung that completely holds:
+
+```
+1. Does it need to exist? (YAGNI — drop unrequested options and speculative flexibility)
+   │
+2. Already in this codebase? (Reuse an existing helper, component, or pattern)
+   │
+3. Standard library or platform native? (Native runtime/browser capability beats third-party widgets)
+   │
+4. Installed dependency? (Use an existing dependency; never add a new dep for a few lines)
+   │
+5. Can it be one line? (Write the clear, direct one-liner if readable at a glance)
+   │
+6. Otherwise: Minimum code that works (smallest correct diff + 1 targeted test for risky logic)
+```
+
+**Lazy about the solution, never about reading:** Read all callers, tests, fixtures, and exports that your change affects *before* picking a rung.
+
+---
 
 ## When to Use
 
 - After a feature is working and tests pass, but the implementation feels heavier than it needs to be
-- During code review when readability or complexity issues are flagged
+- When the user asks for the simplest solution, complains about bloat, or invokes "lazy senior dev mode"
+- During code review when readability, dead code, or unnecessary abstractions are flagged
 - When you encounter deeply nested logic, long functions, or unclear names
 - When refactoring code written under time pressure
 - When consolidating related logic scattered across files
@@ -29,6 +75,7 @@ Simplify code by reducing complexity while preserving exact behavior. The goal i
 - You're hunting a bug — a "simplification" that also changes behavior is a bug fix wearing a refactor costume. Use `debugging-and-error-recovery`, and keep the two changes in separate commits
 
 ## The Five Principles
+
 
 ### 1. Preserve Behavior Exactly
 

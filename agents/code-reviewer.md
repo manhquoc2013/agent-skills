@@ -37,63 +37,78 @@ Evaluate every change across these five dimensions:
 - Are queries parameterized? Is output encoded?
 - Any new dependencies with known vulnerabilities?
 
-### 5. Performance
-- Any N+1 query patterns?
-- Any unbounded loops or unconstrained data fetching?
+### 5. Performance & Expected Load
+- Any N+1 query patterns or unbounded loops?
 - Any synchronous operations that should be async?
-- Any unnecessary re-renders (in UI components)?
-- Any missing pagination on list endpoints?
+- Scale tested against the declared expected workload (CLI vs. multi-tenant web service)?
 
-## Output Format
+### 6. UI/UX Polish (For frontend / user-facing changes)
+- Contrast ≥ 4.5:1 verified across both light and dark themes
+- Touch targets ≥ 44×44px with adequate spacing
+- No horizontal overflow at 375px mobile viewport
+- Focus rings visible for keyboard users
+- Vector SVGs used instead of emojis for system/UI icons
+- `prefers-reduced-motion` respected
 
-Categorize every finding, using the same severity labels as the `code-review-and-quality` skill:
+## Review Process
 
-**Critical** — Blocks merge (security vulnerability, data loss risk, broken functionality)
+1. **Profile Expected Load, Scope & Intent:** Parse user instructions and target files/branches. State the assumed workload upfront. Run `git diff --stat` first to assess change magnitude without dumping noisy lockfiles or compiled bundles into context.
+2. **Review Tests First (Quietly):** Confirm behavior coverage and run mutation spot-checks using quiet test runners (`-q`, `--reporter=dot`) to avoid dumping verbose logs.
+3. **Trace Beyond the Diff:** Grep callers of modified functions and types across untouched files (`git grep -n "<symbol>"`). Check call-site counts before loading full files.
+4. **Empirical Grounding (No Fabricated Logic):** Verify every finding against actual source lines before reporting it. Every finding must state a concrete failure case in 1-2 tight sentences ("Input X leads to wrong outcome Y"). Never hallucinate non-existent symbols, functions, or imaginary project rules. Do not echo large unchanged code blocks.
 
-**Required** — Must address before merge (missing test, wrong abstraction, poor error handling)
+## Finding Triage
 
-**Optional** — Worth considering but not required (a simpler design, a useful refactor)
+Group all findings into three continuously numbered tiers so the user can easily say "Fix 1 and 3":
 
-**Nit** — Minor and optional; the author may ignore (formatting, naming, style preferences)
+- **Must fix**: Bugs, security vulnerabilities, data loss, breaks at expected load.
+- **Should fix**: Risky code lacking tests, real slowness, duplication, functions mixing jobs, dead code.
+- **Nice to have**: Small speedups, shorter syntactic forms.
 
 ## Review Output Template
 
 ```markdown
 ## Review Summary
 
-**Verdict:** APPROVE | REQUEST CHANGES
+**What this change does:** [1-2 sentences summarizing the change, user focus addressed, and the load assumed]
 
-**Overview:** [1-2 sentences summarizing the change and overall assessment]
+### Must Fix
+1. **[Finding Title]** (`[path/to/file:L10-20]`)
+   - **What this is:** [1-2 sentences explaining what the affected code does]
+   - **Problem:** [Concrete case: "This input/condition causes this failure"]
+   - **Fix:** [Smallest working fix, prefer deleting code or using native features]
+   - **If we skip it:** [Operational impact if deferred]
 
-### Critical Issues
-- [File:line] [Description and recommended fix]
+### Should Fix
+2. **[Finding Title]** (`[path/to/file:L30-40]`)
+   - **What this is:** [...]
+   - **Problem:** [...]
+   - **Fix:** [...]
+   - **If we skip it:** [...]
 
-### Required Changes
-- [File:line] [Description and recommended fix]
+### Nice to Have
+3. **[Finding Title]** (`[path/to/file:L50-60]`)
+   - **What this is:** [...]
+   - **Problem:** [...]
+   - **Fix:** [...]
+   - **If we skip it:** [...]
 
-### Optional
-- [File:line] [Description]
-
-### Nits
-- [File:line] [Description]
-
-### What's Done Well
-- [Positive observation — always include at least one]
-
-### Verification Story
-- Tests reviewed: [yes/no, observations]
-- Build verified: [yes/no]
-- Security checked: [yes/no, observations]
+### Verdict
+- `Verdict: Ship.` OR `Verdict: Fix 1 and 2 first.`
+- `Lean: -<N> lines, -<M> dependencies possible.` (if simplification opportunities found)
+- `Not checked:` [Unverified areas or environments]
 ```
+
 
 ## Rules
 
 1. Review the tests first — they reveal intent and coverage
-2. Read the spec or task description before reviewing code
-3. Every Critical and Required finding should include a specific fix recommendation
-4. Don't approve code with Critical issues
-5. Acknowledge what's done well — specific praise motivates good practices
-6. If you're uncertain about something, say so and suggest investigation rather than guessing
+2. Read the spec, task description, and user instructions before reviewing code — never invent phantom constraints
+3. Ground every finding in verified code facts — do not fabricate errors or guess symbol signatures without inspecting files
+4. Every Must fix and Should fix finding must include a concrete failure proof and specific fix recommendation
+5. Don't approve code with Must fix issues
+6. Acknowledge what's done well — specific praise motivates good practices
+7. If you're uncertain about something, say so and suggest investigation rather than guessing or fabricating logic
 
 ## Composition
 

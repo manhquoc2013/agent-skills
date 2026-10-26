@@ -1,0 +1,45 @@
+{
+  "skill_name": "technical-debt-and-shortcuts",
+  "trigger": {
+    "positive": [
+      {
+        "prompt": "Scan this codebase for deliberate shortcuts and technical debt that might rot",
+        "top_k": 3
+      },
+      {
+        "prompt": "Audit all the shortcut markers and show me the debt ledger",
+        "top_k": 3
+      },
+      {
+        "prompt": "List all temporary shortcuts with their ceilings and upgrade triggers",
+        "top_k": 3
+      }
+    ],
+    "negative": [
+      {
+        "prompt": "Diagnose why this SQL query is throwing a syntax error",
+        "owner": "debugging-and-error-recovery"
+      },
+      {
+        "prompt": "Design the REST API schema for the user accounts service",
+        "owner": "api-and-interface-design"
+      }
+    ]
+  },
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "Audit the codebase for shortcuts marked with shortcut: comments and report any rot risk where an upgrade trigger is missing.",
+      "expected_output": "A technical debt ledger listing all markers with ceiling and upgrade trigger, flagging [no-trigger] items.",
+      "files": [
+        "technical-debt-and-shortcuts"
+      ],
+      "expectations": [
+        "Discovers and lists all shortcut markers with file and line references",
+        "Identifies the ceiling and upgrade trigger for each",
+        "Flags markers missing an upgrade trigger as rot risk",
+        "Does not modify files during a read-only audit"
+      ]
+    }
+  ]
+}

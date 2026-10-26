@@ -10,6 +10,10 @@ Begin by understanding what the user wants to build. Ask clarifying questions ab
 3. Tech stack preferences and constraints
 4. Known boundaries (what to always do, ask first about, and never do)
 
+In environments with interactive dialog capabilities (such as Antigravity IDE `ask_question`), launch an interactive popup modal with selectable choices and write-in fields to interview the user until all requirements are unambiguous.
+
+Before authoring the spec, run drift pre-checks: verify database schema/migration synchronization and ensure upstream architectural decisions are reconciled.
+
 Then generate a structured spec covering all six core areas: objective, commands, project structure, code style, testing strategy, and boundaries.
 
 If the request bundles several independently testable capabilities, first propose a capability map (module ids, dependency direction, build order) per the skill's Phase 0 and get it approved, then spec each module in dependency order.

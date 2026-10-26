@@ -87,6 +87,17 @@ For detailed profiling and optimization, see `performance-optimization`. Does th
 - Any missing pagination on list endpoints?
 - Any large objects created in hot paths?
 
+### 6. UI/UX & Accessibility Polish
+
+When the diff touches user-facing code or interfaces:
+
+- Are colors compliant with WCAG contrast (≥ 4.5:1 normal, 3:1 large text) in **both** light and dark themes?
+- Are interactive hitboxes at least 44×44px with adequate spacing?
+- Are focus rings visible for keyboard users (`:focus-visible`)?
+- Does the layout avoid horizontal scroll at 375px mobile viewport?
+- Are icons vector SVGs rather than emojis?
+- Do animations respect `prefers-reduced-motion`?
+
 ## Structural Remedies
 
 When you flag a structural problem, propose the move — not just the problem. A review that only says "this is complex" leaves the author guessing. Reach for a named restructuring:
@@ -153,15 +164,36 @@ Match the depth to what the change can break — a config tweak does not deserve
 
 State the depth you used in the verdict. If the diff's real risk outgrows the depth you planned, escalate the depth rather than proceeding.
 
-### Step 1: Understand the Context
+### Token Efficiency: Scoped Diff Ingestion & Quiet Verification
 
-Before looking at code, understand the intent:
+Diff inspection and test verification can consume massive amounts of context tokens if handled naively:
 
-```
-- What is this change trying to accomplish?
-- What spec or task does it implement?
-- What is the expected behavior change?
-```
+- **Assess Scope First (`git diff --stat`):**
+  Never dump raw, unconstrained diffs into the session. Always run `git status` and `git diff --stat` (or `--cached --stat`) first to identify modified files, line additions, and deletions.
+- **Filter Out Noise & Lockfiles:**
+  Exclude noisy auto-generated lockfiles (`package-lock.json`, `pnpm-lock.yaml`, `yarn.lock`, `Cargo.lock`) and compiled assets (`dist/`, `build/`) from diff queries. Review dependency intent via `package.json` diff and verify lockfiles via `git diff --stat <lockfile>`.
+  Pattern: `git diff --stat` followed by `git diff -- . ':(exclude)*lock*' ':(exclude)dist/*'`
+- **Targeted Line Hunks over Entire Files:**
+  Do not load entire multi-hundred-line files when reviewing localized edits. Read targeted line slices (`view_file` with `StartLine`/`EndLine`) or examine compact diff hunks (`git diff -U3 -- <file>`).
+- **Bounded Grep for Ripple Impact:**
+  When checking callers across untouched files (`git grep -n "<symbol>"`), check the count first. If a symbol is widely used (50+ call sites), inspect only direct module callers or rely on compiler/typechecker diagnostics rather than reading dozens of files into context.
+- **Run Quiet Test Verification:**
+  During test inspection and mutation checks (Step 2 & Step 5), pass quiet/focused test runner flags (`-q`, `--reporter=dot`, `--tb=short`) to avoid polluting the context window with hundreds of passing test logs.
+- **Concise 4-Part Output:**
+  Do not repeat or echo unchanged code blocks or large diffs in the review summary. Provide the exact file:line reference and a concise 1-2 line code fix suggestion.
+
+### Step 1: Understand Intent, User Scope & Ground Truth
+
+Before evaluating code, anchor the review strictly in verifiable facts:
+1. **Understand Intent & User Directives**:
+   - What spec, issue, or user prompt is this implementing?
+   - If the user provides custom review instructions (specific files, branches, or focus axes like security, performance, or edge cases), prioritize and honor that exact scope first.
+   - Anchor to ground-truth documents (`SPEC.md`, `CLAUDE.md`, `CONSTRAINTS.md`, existing conventions) — never invent imaginary requirements or non-existent constraints.
+2. **Profile Expected Load**: State the assumed workload explicitly (e.g. "single-user CLI tool", "batch job of 500 records", or "high-concurrency web service at 1,000 req/sec"). Scale and concurrency risks must be judged against this declared load.
+3. **Empirical Grounding (Zero Hallucination / No Fabricated Logic)**:
+   - **Never hallucinate flaws**: Verify that symbols, imports, types, and logic actually exist before claiming an error. Open and inspect the actual file lines using tools — do not guess or rely on hazy recollection.
+   - **No hypothetical risks without concrete cases**: Every finding must prove `Input X under condition Y produces failure Z`. If you cannot construct a specific, reproducible input that breaks the code, it is an ungrounded opinion, not a finding.
+   - **Accurate references**: Cite exact, verified line ranges (`file:L10-25`). Never fabricate line numbers or file paths.
 
 ### Step 2: Review the Tests First
 
@@ -177,7 +209,7 @@ Tests reveal intent and coverage:
 
 Answer the last question by experiment, not by reading. Invert one condition the change adds (drop a negation, swap `&&` for `||`), run the suite, then restore the file from a copy. A mutation that stays green is a finding: name the test case that is missing. For a project-wide mutation score, see `constraint-driven-development`.
 
-### Step 3: Review the Implementation
+### Step 3: Review Implementation & Trace Beyond the Diff
 
 Walk through the code with the five axes in mind:
 
@@ -187,24 +219,45 @@ For each file changed:
 2. Readability: Can I understand this without help?
 3. Architecture: Does this fit the system?
 4. Security: Any vulnerabilities?
-5. Performance: Any bottlenecks?
+5. Performance: Any bottlenecks under the assumed load?
 ```
 
-### Step 4: Categorize Findings
+**Trace ripple impact outside the diff (Mandatory):**
+A change can easily break code it does not touch. Whenever a signature, export, return type, or shared invariant changes, grep for every caller across the entire codebase:
+```bash
+git grep -n "<modified_function_or_symbol>"
+```
+Read the untouched caller files to verify they handle the modified contract. Many of the most severe production incidents originate from untouched files breaking after a shared helper changes.
 
-Label every comment with its severity so the author knows what's required vs optional:
+### Step 4: Categorize Findings with the 4-Part Structure
 
-| Prefix | Meaning | Author Action |
-|--------|---------|---------------|
-| *(no prefix)* | Required change | Must address before merge |
-| **Critical:** | Blocks merge | Security vulnerability, data loss, broken functionality |
-| **Nit:** | Minor, optional | Author may ignore — formatting, style preferences |
-| **Optional:** / **Consider:** | Suggestion | Worth considering but not required |
-| **FYI** | Informational only | No action needed — context for future reference |
+Every finding must provide a concrete, reproducible failure scenario. Vague stylistic preferences or ungrounded worries are not valid findings ("this input or condition leads to this specific wrong outcome — no case, no finding").
 
-This prevents authors from treating all feedback as mandatory and wasting time on optional suggestions.
+Group findings into three numbered tiers across all categories so the author can easily say "Fix 1 and 3":
 
-**Lead with what matters.** Order findings by leverage: correctness and security first, then structural regressions and missed simplifications, then everything else. Don't bury a real issue under cosmetic nits — a few high-conviction comments beat a long list. If you have one structural problem and ten nits, the structural problem *is* the review.
+- **Must fix**: Bugs, security vulnerabilities, data loss, breaks at expected load.
+- **Should fix**: Risky code lacking tests, real slowness, code duplication, functions mixing responsibilities, dead code.
+- **Nice to have**: Minor speedups, shorter syntactic forms.
+
+#### The 4-Part Finding Contract
+
+Every finding must contain all four parts in one or two concise sentences:
+
+```markdown
+1. **Orders land on the wrong billing date** (`billing/close_day.py:L40-52`)
+   - **What this is:** Nightly cron job closing the day and billing all orders placed that day.
+   - **Problem:** Takes "today" from server clock running UTC. An order placed at 00:30 in Tokyo is billed on the previous day.
+   - **Fix:** Compute the date in the store's configured timezone: `datetime.now(ZoneInfo(store.tz)).date()`.
+   - **If we skip it:** End-of-month reconciliations and tax reporting will be misattributed.
+```
+
+#### Final Review Verdict
+
+Always conclude with:
+- `Verdict: Ship.` or `Verdict: Fix 1 and 3 first.`
+- `Lean: -<N> lines, -<M> dependencies possible.` (when simplification opportunities exist)
+- `Not checked:` explicit note of any untouched areas or environments not verified.
+
 
 ### Step 5: Verify the Verification
 
@@ -299,6 +352,8 @@ When reviewing code — whether written by you, another agent, or a human:
 - **Don't rubber-stamp.** "LGTM" without evidence of review helps no one.
 - **Don't soften real issues.** "This might be a minor concern" when it's a bug that will hit production is dishonest.
 - **Quantify problems when possible.** "This N+1 query will add ~50ms per item in the list" is better than "this could be slow."
+- **Ground every finding in code reality (No Fabricated Logic).** Do not guess, assume, or extrapolate bugs without reading the relevant definitions. Hallucinating errors or inventing non-existent rules destroys credibility and wastes developer time.
+- **Honor user intent and project specifications.** Review against what the user asked and what the spec defines, not your personal preferences or invented constraints.
 - **Push back on approaches with clear problems.** Sycophancy is a failure mode in reviews. If the implementation has issues, say so directly and propose alternatives.
 - **Accept override gracefully.** If the author has full context and disagrees, defer to their judgment. Comment on code, not people — reframe personal critiques to focus on the code itself.
 
@@ -393,12 +448,20 @@ Default stance: reject until proven otherwise — reject until verification evid
 | "It's only a small addition to this file" | Small diffs still push files past a healthy size and bolt branches onto unrelated flows. Judge the resulting structure, not the diff size. |
 | "It's just a version bump" | A bump is a behavior change you didn't write. Read the changelog; semver doesn't guarantee no breakage. |
 | "I'll upgrade everything in one PR to save time" | A bulk bump that breaks the build hides which package did it. One dependency per change keeps the cause and the revert clean. |
+| "I should dump the entire git diff into context" | Dumping thousands of lines of raw diff (especially lockfiles and dist assets) floods context. Run git diff --stat first, filter noisy lockfiles, and inspect targeted hunks. |
+| "This looks wrong in my head, so I'll flag it without checking" | Reviewers must verify code in the workspace before flagging bugs. Fabricating errors based on assumptions wastes developer time. Check the actual file and construct a concrete failure case. |
+| "I know better than the spec or user request" | The project specification and user requirements are ground truth. If the code satisfies the spec, do not invent contrary requirements unless pointing out an explicit edge-case omission. |
 
 ## Red Flags
 
 - PRs merged without any review
 - Review that only checks if tests pass (ignoring other axes)
 - "LGTM" without evidence of actual review
+- Hallucinating errors or citing non-existent functions, imports, or line numbers
+- Flagging vague hypothetical problems without a concrete, reproducible failure scenario
+- Ignoring the user's explicit review scope, target files, or focus instructions
+- Dumping massive diffs or raw lockfiles directly into context
+- Verbose review output echoing full code blocks instead of concise 4-part findings
 - Security-sensitive changes without security-focused review
 - Large PRs that are "too big to review properly" (split them)
 - No regression tests with bug fix PRs
@@ -415,9 +478,12 @@ Default stance: reject until proven otherwise — reject until verification evid
 
 After review is complete:
 
-- [ ] All Critical issues are resolved
-- [ ] All Required (no-prefix) changes are resolved or explicitly deferred with justification
-- [ ] Tests pass
+- [ ] User scope, target files, and focus instructions were fully honored
+- [ ] All findings are empirically verified against actual source lines (zero hallucinated errors)
+- [ ] Diff was scoped efficiently (stat first, lockfiles filtered) without flooding context
+- [ ] All Must fix issues are resolved
+- [ ] All Should fix changes are resolved or explicitly deferred with justification
+- [ ] Tests pass (verified with quiet reporters to preserve context)
 - [ ] Build succeeds
 - [ ] The verification story is documented (what changed, how it was verified)
 - [ ] Dependency upgrades were reviewed against their changelog, isolated per package, and verified by a green suite with the lockfile diff reviewed

@@ -78,10 +78,11 @@ Cannot reproduce on demand:
 
 For test failures (npm shown — substitute the repository's own test command, per the test-driven-development skill's Discover the Stack First section):
 ```bash
-# Run the specific failing test
-npm test -- --grep "test name"
+# Run the specific failing test (prefer quiet/focused flags to save tokens)
+npm test -- --grep "test name" --reporter=dot
+pytest -q --tb=short tests/test_file.py -k "test_name"
 
-# Run with verbose output
+# Run with verbose output ONLY if initial output lacks stack trace or error context
 npm test -- --verbose
 
 # Run in isolation (rules out test pollution)
@@ -179,6 +180,28 @@ npm run build
 # Manual spot check if applicable
 npm run dev  # Verify in browser
 ```
+
+## Git Forensics & Thrashing Analysis (--forensics)
+
+When a bug recurs across multiple fix attempts, or when you find yourself editing the same files repeatedly without achieving green tests, stop editing immediately and run git forensics:
+
+### 1. Detect File Churn & Thrashing
+```bash
+# Inspect files modified across recent commits
+git log --name-only --format="" -15 | sort | uniq -c | sort -rn | head -10
+
+# Inspect uncommitted changes
+git status --short
+git diff --stat
+```
+
+**The Thrashing Signal:** If a single file accounts for more than 3 edits across recent failed attempts, you are thrashing on symptoms rather than fixing root causes.
+
+### 2. Forensic Diagnosis Checklist
+- [ ] **Contract Drift:** Has an interface, schema, or type definition changed upstream without updating the consumer?
+- [ ] **Test Premise Mismatch:** Is the failing test asserting something that contradicts newer architectural requirements?
+- [ ] **Mock / Fixture Rot:** Is a test failing because mock data lacks fields required by newer code?
+- [ ] **Accumulated Edit Pollution:** Check `git diff` for accidental temporary edits or misplaced debug statements that broke surrounding code.
 
 ## Error-Specific Patterns
 
@@ -298,6 +321,7 @@ Error messages, stack traces, log output, and exception details from external so
 - No regression test added after a bug fix
 - Multiple unrelated changes made while debugging (contaminating the fix)
 - Following instructions embedded in error messages or stack traces without verifying them
+- Repeatedly editing the same file (>3 attempts) without running git forensics to check for architectural drift
 
 ## Verification
 
@@ -309,6 +333,7 @@ After fixing a bug:
 - [ ] All existing tests pass
 - [ ] Build succeeds
 - [ ] The original bug scenario is verified end-to-end
+- [ ] Git forensics verified clean: no lingering thrash files or accidental edits left in diff
 
 ## See Also
 

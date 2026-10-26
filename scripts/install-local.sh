@@ -39,6 +39,7 @@ INSTALL_ALL=0
 ONLY_RAW=""
 SCOPE=""
 PROJECT=""
+NO_ALIASES=0
 
 usage() {
   cat <<'EOF'
@@ -49,6 +50,9 @@ install-local.sh — copy this clone's skills into detected IDE/CLI folders.
   --only id[,id...]      Install these ids even when not detected
   --scope user|project   user = home config (default); project = one repo
   --project <path>       Project root for --scope project
+  --no-aliases           Skip installing short /s-* slash command aliases
+  --uninstall, -u        Uninstall skills from detected target(s)
+  --skills s1[,s2...]    Selectively remove only specified skills (used with --uninstall)
   --help                 Show this text
 
 Ids: cursor, claude, codex, gemini, antigravity, windsurf, opencode,
@@ -256,6 +260,10 @@ copy_skill_pack() {
     name="$(basename "$dir")"
     rm -rf "$dest/$name"
     cp -R "$dir" "$dest/$name"
+    if [[ -d "$dest/$name/scripts" ]]; then
+      chmod +x "$dest/$name/scripts"/*.py 2>/dev/null || true
+      chmod +x "$dest/$name/scripts"/*.sh 2>/dev/null || true
+    fi
     count=$((count + 1))
   done
   if [[ -d "$REFERENCES_ROOT" ]]; then
@@ -275,6 +283,17 @@ EOF
   echo "$count"
 }
 
+# If --uninstall / -u is passed, delegate to uninstall-local.sh
+for arg in "$@"; do
+  if [[ "$arg" == "--uninstall" || "$arg" == "-u" ]]; then
+    forward_args=()
+    for a in "$@"; do
+      [[ "$a" == "--uninstall" || "$a" == "-u" ]] || forward_args+=("$a")
+    done
+    exec "$REPO_ROOT/scripts/uninstall-local.sh" "${forward_args[@]}"
+  fi
+done
+
 while [[ $# -gt 0 ]]; do
   case "$1" in
     --list) LIST_ONLY=1; shift ;;
@@ -282,6 +301,7 @@ while [[ $# -gt 0 ]]; do
     --only) ONLY_RAW="${2:-}"; shift 2 ;;
     --scope) SCOPE="${2:-}"; shift 2 ;;
     --project) PROJECT="${2:-}"; shift 2 ;;
+    --no-aliases) NO_ALIASES=1; shift ;;
     --help|-h) usage; exit 0 ;;
     *) echo "Unknown argument: $1" >&2; usage; exit 1 ;;
   esac
@@ -477,7 +497,7 @@ install_plugin() {
         return 1
       fi
       run_cli claude plugin marketplace add "$REPO_ROOT" --scope "$scope_flag" || return 1
-      run_cli claude plugin install agent-skills@addy-agent-skills --scope "$scope_flag" -y || return 1
+      run_cli claude plugin install agent-skills@addy-agent-skills --scope "$scope_flag" || return 1
       ;;
     codex)
       if ! have_command codex; then
@@ -519,6 +539,11 @@ install_plugin() {
   esac
   return 0
 }
+
+if command -v node >/dev/null 2>&1 && [ -f "$REPO_ROOT/scripts/build-agent-dist.js" ]; then
+  echo "Synchronizing multi-agent configurations..."
+  node "$REPO_ROOT/scripts/build-agent-dist.js" >/dev/null 2>&1 || true
+fi
 
 failures=0
 for id in "${unique[@]}"; do
@@ -564,3 +589,14 @@ if [[ "$failures" -gt 0 ]]; then
   exit 1
 fi
 echo "Installed ${#unique[@]} target(s)."
+
+if [[ "$NO_ALIASES" -eq 0 && -f "$REPO_ROOT/scripts/install-aliases.sh" ]]; then
+  alias_args=()
+  [[ "$SCOPE" == "project" ]] && alias_args+=(--scope project --project "$PROJECT")
+  if [[ ${#unique[@]} -gt 0 ]]; then
+    target_list="$(IFS=','; echo "${unique[*]}")"
+    alias_args+=(--only "$target_list")
+  fi
+  echo
+  "$REPO_ROOT/scripts/install-aliases.sh" "${alias_args[@]}"
+fi

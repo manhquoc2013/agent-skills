@@ -1,6 +1,6 @@
 ---
 name: dispatching-parallel-agents
-description: Dispatches one agent per independent problem domain so work runs concurrently. Use when facing two or more independent tasks, failures, or investigations that share no state and no sequential dependency, and when the coordinator's context should stay free for integration.
+description: Dispatches one agent per independent problem domain so work runs concurrently in parallel. Use when facing two or more independent tasks, failures, or investigations that share no state and no sequential dependency, and when the coordinator's context should stay free for integration.
 ---
 
 # Dispatching Parallel Agents
