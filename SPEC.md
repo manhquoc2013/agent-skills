@@ -1,67 +1,51 @@
-# Specification: Multi-Agent Skill Uninstallation & Selective Removal
+# Specification: Slash Command & Installation Deduplication and Parity
 
 ## Objective
 
-Deliver a comprehensive, safe, and cross-platform uninstallation capability for `agent-skills`, enabling users and agents to uninstall skills and slash command aliases when they are no longer needed.
-
-Key Requirements:
-1. **Dedicated Uninstaller Scripts**: Provide `scripts/uninstall-local.sh` and `scripts/uninstall-local.ps1`.
-2. **Flag Integration**: Support `--uninstall` / `-u` in `scripts/install-local.sh` and `scripts/install-aliases.sh`.
-3. **Selective & Clean-All Modes**:
-   - Ability to remove all installed skills across all detected targets or specific IDE/CLI targets.
-   - Ability to selectively remove specific skills (e.g. `--skills <name1,name2>`) without affecting others.
-4. **Lifecycle Command & Alias Cleanup**: Automatically clean up corresponding `/s-*` command aliases and prompts unless `--keep-aliases` is passed.
-5. **Dual Scoping**: Full support for both `--scope user` (global/home directories) and `--scope project` (repository-level).
-6. **Documentation & npm Script**: Add npm script `npm run uninstall` and document uninstallation steps in `INSTALL.md` and `README.md`.
+Resolve all duplicate definitions, conflicting installation pipelines, naming discrepancies, and platform-specific bugs identified in `/s-review`:
+1. **Fix Antigravity Project Path**: Correct `.agent/skills` to `.agents/skills` across all install and uninstall scripts.
+2. **Standardize Command Naming**: Unify `/s-planning` to `/s-plan` across Antigravity and Gemini CLI TOML commands, removing the artificial `NAME_MAP` translation in `validate-commands.js`.
+3. **Resolve Cursor Slash Command Conflict & Overwrite**: Ensure Cursor alias installation is consistent, prevent `install-aliases.sh` from conflicting with or stripping `disable-model-invocation: true` on Cursor aliases, and maintain parity with `cursor-slash-commands.tsv`.
+4. **Prevent Antigravity Skill Pollution**: Prevent `install-aliases.sh` from generating duplicate `s-*` skill directories inside Antigravity's global skills catalog, which already natively loads `commands/*.toml`.
+5. **Implement Alias Cleanup in PowerShell Uninstaller**: Bring `uninstall-local.ps1` to feature parity with `uninstall-local.sh` by cleaning up `/s-*` aliases and Cursor slash commands when `-KeepAliases` is not specified.
+6. **Cross-Platform Test Suite Execution**: Ensure `scripts/uninstall-test.js` reliably invokes `.sh` scripts via `bash` when executing on Windows platforms so that `npm test` passes cleanly.
 
 ---
 
-## Architectural Design
+## Architectural Changes
 
-### 1. Targets and Destinations
-The uninstaller tracks the exact same canonical targets as `install-local.sh`:
-- `cursor`: `$HOME/.cursor/skills` (user) / `.cursor/skills` (project)
-- `claude`: `$HOME/.claude/skills` (user) / `.claude/skills` (project)
-- `codex`: `$HOME/.codex/skills` (user) / `.agents/skills` (project)
-- `gemini`: `$HOME/.gemini/skills` (user) / `.gemini/skills` (project)
-- `antigravity`: `$HOME/.gemini/config/plugins/agent-skills/skills` and `$HOME/.gemini/config/skills` (user) / `.agent/skills` (project)
-- `windsurf`: `$HOME/.codeium/windsurf/skills` (user) / `.windsurf/skills` (project)
-- `opencode`: `$HOME/.config/opencode/skills` (user) / `.opencode/skills` (project)
-- `copilot`: `$HOME/.agents/skills` and `$HOME/.github/skills` (user) / `.github/skills` (project)
-- `copilot-cli`: `$HOME/.copilot/skills` (user) / `.github/skills` (project)
-- `kiro`: `$HOME/.kiro/skills` (user) / `.kiro/skills` (project)
-- `commandcode`: `$HOME/.commandcode/skills` (user) / `.commandcode/skills` (project)
+### 1. Antigravity Workspace Root Parity
+- Change `.agent/skills` to `.agents/skills` in:
+  - `scripts/install-local.sh`
+  - `scripts/uninstall-local.sh`
+  - `scripts/install-local.ps1`
+  - `SPEC.md`
 
-### 2. Selective vs All Uninstallation
-- When `--skills <comma-separated-list>` is specified:
-  - Validates skill names against the repo catalog or installed names.
-  - Deletes only those specific skill subdirectories within the target destination.
-  - Updates `.agent-skills-install.json` skill count if present.
-- When no specific skills are passed (or `--all-skills`):
-  - Enumerates all skills defined in `skills/` and removes each from the destination.
-  - Removes `.agent-skills-install.json`.
-  - Removes `references/` if installed alongside the skills.
-  - If target directory is empty, cleans up the directory.
+### 2. Slash Command Standardization (`s-plan`)
+- Rename `commands/s-planning.toml` -> `commands/s-plan.toml`
+- Rename `.gemini/commands/s-planning.toml` -> `.gemini/commands/s-plan.toml`
+- Remove `NAME_MAP = { 's-plan': 's-planning' }` from `scripts/validate-commands.js`.
+- All three environments (`.claude/commands/`, `.gemini/commands/`, `commands/`) will now share exact 1:1 filename stems (`s-plan`).
 
-### 3. Alias / Slash Command Cleanup
-- Integrates with `scripts/install-aliases.sh --uninstall`:
-  - Iterates through discovered `/s-*` commands (`s-agent`, `s-build`, `s-debt`, `s-debug`, `s-guard`, `s-perf`, `s-plan`, `s-review`, `s-ship`, `s-simplify`, `s-spec`, `s-test`).
-  - Removes wrapper directories (`<dest>/<cmd>`) and prompts (`<dest>/<cmd>.prompt.md`).
+### 3. Cursor & Antigravity Alias De-duplication
+- In `scripts/install-aliases.sh`:
+  - When target is `cursor`, ensure generated `SKILL.md` preserves `disable-model-invocation: true`.
+  - When target is `antigravity`, skip creating alias skills in `$HOME/.gemini/config/skills` and `$HOME/.gemini/config/plugins/agent-skills/skills` because `commands/*.toml` already provides native slash commands.
+- In `scripts/install-local.sh`:
+  - Align Cursor alias installation with `cursor-slash-commands.tsv`.
 
-### 4. Interactive & Non-Interactive CLI Interface
-- Flags:
-  - `--list`: Display installed skills and status across detected targets.
-  - `--all`: Uninstall from all detected targets without prompting.
-  - `--only <id[,id...]>`: Uninstall only from specified IDE targets.
-  - `--skills <skill[,skill...]>`: Selective uninstallation of specific skills.
-  - `--scope user|project`: user config vs repo project config.
-  - `--project <path>`: project directory root.
-  - `--keep-aliases`: Skip removing `/s-*` slash command wrappers.
-  - `--help`: Print usage instructions.
+### 4. PowerShell Uninstaller Parity (`scripts/uninstall-local.ps1`)
+- Add alias cleanup logic when `-KeepAliases` is false:
+  - Remove all `/s-*` alias folders in destination skills directory (`cursor`, `copilot`, `gemini`, etc.).
+  - Remove `.prompt.md` files in Copilot prompt directories.
+
+### 5. Windows Shell Test Compatibility (`scripts/uninstall-test.js`)
+- Helper function `runScript(scriptPath, args)` that prefixes `bash` when running on Windows (`process.platform === 'win32'`).
 
 ---
 
-## Validation Strategy
-1. Unit testing with temporary dummy install directory in `scripts/uninstall-test.js`.
-2. Execution of `--list`, selective `--skills`, and full `--all` runs in dry/isolated modes.
-3. Regression check with `npm test` ensuring existing validators pass.
+## Testing Strategy
+1. `node scripts/validate-commands.js` (must pass with 0 errors without `NAME_MAP`).
+2. `node scripts/validate-skills.js`.
+3. `node scripts/validate-reference-links.js`.
+4. `npm test` (must pass 100% on Windows and Unix).

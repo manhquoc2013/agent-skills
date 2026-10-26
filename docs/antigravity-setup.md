@@ -53,7 +53,7 @@ Use the native plugin skills directly while that importer limitation applies:
 |------------------|-------------------------------|-------|
 | `/s-spec` | `/agent-skills:spec-driven-development` | Writes a structured spec before code |
 | `/s-guard` | `/agent-skills:constraint-driven-development` | Defines and enforces the project's quality bar |
-| `/s-planning` | `/agent-skills:planning-and-task-breakdown` | Antigravity's built-in `/s-planning` command is a separate plan-mode control |
+| `/s-plan` | `/agent-skills:planning-and-task-breakdown` | Breaks a spec into small verifiable tasks |
 | `/s-build` | `/agent-skills:incremental-implementation` | Also invoke `/agent-skills:test-driven-development`; wrapper-only `/s-build auto` orchestration is unavailable |
 | `/s-test` | `/agent-skills:test-driven-development` | Runs the red-green-refactor workflow |
 | `/s-review` | `/agent-skills:code-review-and-quality` | Runs the five-axis review workflow |

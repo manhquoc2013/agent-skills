@@ -53,11 +53,11 @@ const GUARDED_FILES = [
   '.claude/commands/s-build.md',
   // Gemini CLI commands
   '.gemini/commands/s-spec.toml',
-  '.gemini/commands/s-planning.toml',
+  '.gemini/commands/s-plan.toml',
   '.gemini/commands/s-build.toml',
   // Root command set (Antigravity, Codex, and other TOML-based hosts)
   'commands/s-spec.toml',
-  'commands/s-planning.toml',
+  'commands/s-plan.toml',
   'commands/s-build.toml',
   // Skills the commands invoke
   'skills/spec-driven-development/SKILL.md',

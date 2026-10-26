@@ -63,17 +63,17 @@ afterEach(() => {
   }
 });
 
-test('passes matching command twins and maps s-plan to s-planning', () => {
+test('passes matching command twins including s-plan', () => {
   const root = makeSandbox();
   const description = 'Break work into ordered tasks';
   writeClaudeCommand(root, 's-plan', `description: ${description}`);
-  writeTomlCommand(root, path.join('.gemini', 'commands'), 's-planning', `description = '${description}'`);
-  writeTomlCommand(root, 'commands', 's-planning', `description = '${description}'`);
+  writeTomlCommand(root, path.join('.gemini', 'commands'), 's-plan', `description = '${description}'`);
+  writeTomlCommand(root, 'commands', 's-plan', `description = '${description}'`);
 
   const result = run(root);
 
   assert.equal(result.status, 0, result.stdout + result.stderr);
-  assert.match(result.stdout, /✓  s-plan \(s-planning in toml dirs\)/);
+  assert.match(result.stdout, /✓  s-plan/);
   assert.match(result.stdout, /1 commands checked — 0 error\(s\) — PASSED/);
 });
 

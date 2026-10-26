@@ -214,6 +214,7 @@ create_alias_skill() {
 ---
 name: $cmd_name
 description: $desc
+disable-model-invocation: true
 ---
 
 # /$cmd_name
@@ -360,6 +361,10 @@ echo "=========================================================="
 echo
 
 for id in "${SELECTED[@]}"; do
+  if [[ "$id" == "antigravity" ]]; then
+    echo "Target: antigravity (skipped — commands/*.toml provides native slash commands)"
+    continue
+  fi
   echo "Target: $id"
   if [[ "$SCOPE" == "project" ]]; then
     while IFS= read -r dest; do

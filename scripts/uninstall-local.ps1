@@ -138,7 +138,7 @@ function Get-HostCatalog {
                 (Join-Path $homeDir '.gemini\antigravity-cli')
             )
             UserSkills = (Join-Path $homeDir '.gemini\config\plugins\agent-skills\skills')
-            ProjectSkills = '.agent\skills'
+            ProjectSkills = '.agents\skills'
         },
         @{
             Id = 'windsurf'
@@ -356,6 +356,44 @@ function Remove-SkillsFromDestination {
     return $removed
 }
 
+function Remove-AliasesFromDestination {
+    param([string]$Destination)
+    if (-not (Test-Path -LiteralPath $Destination)) {
+        return 0
+    }
+    $removed = 0
+    $aliasNames = New-Object System.Collections.Generic.HashSet[string]
+    $tsvPath = Join-Path $Script:RepoRoot 'scripts\cursor-slash-commands.tsv'
+    if (Test-Path -LiteralPath $tsvPath) {
+        foreach ($entry in (Import-Csv -LiteralPath $tsvPath -Delimiter "`t")) {
+            if ($entry.alias) { [void]$aliasNames.Add([string]$entry.alias) }
+        }
+    }
+    $claudeCommandsDir = Join-Path $Script:RepoRoot '.claude\commands'
+    if (Test-Path -LiteralPath $claudeCommandsDir) {
+        foreach ($file in (Get-ChildItem -LiteralPath $claudeCommandsDir -Filter '*.md')) {
+            [void]$aliasNames.Add($file.BaseName)
+        }
+    }
+    foreach ($known in @('s-agent','s-build','s-debt','s-debug','s-guard','s-perf','s-plan','s-review','s-ship','s-simplify','s-spec','s-test')) {
+        [void]$aliasNames.Add($known)
+    }
+
+    foreach ($alias in $aliasNames) {
+        $aliasDir = Join-Path $Destination $alias
+        if (Test-Path -LiteralPath $aliasDir) {
+            Remove-Item -LiteralPath $aliasDir -Recurse -Force
+            $removed++
+        }
+        $promptFile = Join-Path $Destination "$alias.prompt.md"
+        if (Test-Path -LiteralPath $promptFile) {
+            Remove-Item -LiteralPath $promptFile -Force
+            $removed++
+        }
+    }
+    return $removed
+}
+
 Write-Host "=========================================================="
 if ($Skills -and $Skills.Count -gt 0) {
     Write-Host ("Selectively Uninstalling Skill(s): {0}" -f ($Skills -join ', '))
@@ -378,6 +416,30 @@ foreach ($id in $selectedIds) {
     Write-Host "Processing $($targetObj.Label) ($id)..."
     $count = Remove-SkillsFromDestination -Destination $dest -SkillList $Skills
     Write-Host "  ✓ Removed $count skill(s) from $dest"
+
+    if (-not $KeepAliases -and (-not $Skills -or $Skills.Count -eq 0)) {
+        $aliasCount = Remove-AliasesFromDestination -Destination $dest
+        if ($aliasCount -gt 0) {
+            Write-Host "  ✓ Removed $aliasCount /s-* command wrapper(s) from $dest"
+        }
+    }
+
+    if ($id -eq 'antigravity' -and $Scope -eq 'user') {
+        $homeDir = if ($env:USERPROFILE) { $env:USERPROFILE } elseif ($env:HOME) { $env:HOME } else { '' }
+        $extraDest = Join-Path $homeDir '.gemini\config\skills'
+        if (Test-Path -LiteralPath $extraDest) {
+            $extraRemoved = Remove-SkillsFromDestination -Destination $extraDest -SkillList $Skills
+            if ($extraRemoved -gt 0) {
+                Write-Host "  ✓ Removed $extraRemoved skill(s) from $extraDest"
+            }
+            if (-not $KeepAliases -and (-not $Skills -or $Skills.Count -eq 0)) {
+                $extraAliasRemoved = Remove-AliasesFromDestination -Destination $extraDest
+                if ($extraAliasRemoved -gt 0) {
+                    Write-Host "  ✓ Removed $extraAliasRemoved /s-* command wrapper(s) from $extraDest"
+                }
+            }
+        }
+    }
 }
 
 Write-Host ""

@@ -130,7 +130,7 @@ project_skills_for() {
     claude) echo ".claude/skills" ;;
     codex) echo ".agents/skills" ;;
     gemini) echo ".gemini/skills" ;;
-    antigravity) echo ".agent/skills" ;;
+    antigravity) echo ".agents/skills" ;;
     windsurf) echo ".windsurf/skills" ;;
     opencode) echo ".opencode/skills" ;;
     copilot) echo ".github/skills" ;;
@@ -593,10 +593,15 @@ echo "Installed ${#unique[@]} target(s)."
 if [[ "$NO_ALIASES" -eq 0 && -f "$REPO_ROOT/scripts/install-aliases.sh" ]]; then
   alias_args=()
   [[ "$SCOPE" == "project" ]] && alias_args+=(--scope project --project "$PROJECT")
-  if [[ ${#unique[@]} -gt 0 ]]; then
-    target_list="$(IFS=','; echo "${unique[*]}")"
+  alias_targets=()
+  for u in "${unique[@]}"; do
+    [[ "$u" == "cursor" || "$u" == "antigravity" ]] && continue
+    alias_targets+=("$u")
+  done
+  if [[ ${#alias_targets[@]} -gt 0 ]]; then
+    target_list="$(IFS=','; echo "${alias_targets[*]}")"
     alias_args+=(--only "$target_list")
+    echo
+    "$REPO_ROOT/scripts/install-aliases.sh" "${alias_args[@]}"
   fi
-  echo
-  "$REPO_ROOT/scripts/install-aliases.sh" "${alias_args[@]}"
 fi

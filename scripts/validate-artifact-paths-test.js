@@ -141,7 +141,7 @@ test('fails when a Gemini command drifts while the Claude Code copy stays canoni
 
 test('fails when a root TOML consumer drifts away from the producers', () => {
   const root = makeSandbox();
-  writeFile(root, 'commands/s-planning.toml', 'prompt = """\nSave the plan to `tasks/plan.md` and the task list to `tasks/todo.md`.\n"""\n');
+  writeFile(root, 'commands/s-plan.toml', 'prompt = """\nSave the plan to `tasks/plan.md` and the task list to `tasks/todo.md`.\n"""\n');
   writeFile(root, 'commands/s-build.toml', 'prompt = """\nRead the plan from `planning/plan.md` before starting.\n"""\n');
 
   const result = run(root);
@@ -155,9 +155,8 @@ test('passes when all three command surfaces agree on the canonical paths', () =
   const root = makeSandbox();
   for (const dir of ['.claude/commands', '.gemini/commands', 'commands']) {
     const ext = dir === '.claude/commands' ? 'md' : 'toml';
-    const planStem = dir === '.claude/commands' ? 's-plan' : 's-planning';
     writeFile(root, `${dir}/s-spec.${ext}`, 'Save the spec as `SPEC.md`.\n');
-    writeFile(root, `${dir}/${planStem}.${ext}`, 'Save to `tasks/plan.md` and `tasks/todo.md`.\n');
+    writeFile(root, `${dir}/s-plan.${ext}`, 'Save to `tasks/plan.md` and `tasks/todo.md`.\n');
     writeFile(root, `${dir}/s-build.${ext}`, 'Require `SPEC.md` or `docs/SPEC.md`, and `tasks/plan.md`.\n');
   }
 

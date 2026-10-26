@@ -1,40 +1,28 @@
-# Task List: Multi-Agent Skill Uninstaller & Selective Removal
+# Tasks: Slash Command & Installation Deduplication and Parity
 
-## Wave 1: Alias & Slash Command Wrapper Uninstallation
-- [x] **Task 1.1: Add `--uninstall` flag to `scripts/install-aliases.sh`** ([S])
-  - **Scope**: Support removing generated alias skill folders and copilot prompt files from target IDE destinations.
-  - **Verify**: Run `./scripts/install-aliases.sh --help` and verify `--uninstall` option; test removing an alias target.
+- [x] **Task 1.1: Fix Antigravity project skills path typo (`.agent` -> `.agents`)**
+  - **Files**: `scripts/install-local.sh`, `scripts/uninstall-local.sh`, `scripts/install-local.ps1`
+  - **Verify**: Inspect lines and verify `.agents/skills` is used consistently.
+
+- [x] **Task 1.2: Standardize `s-planning.toml` to `s-plan.toml` & Update Validator**
+  - **Files**: `commands/s-planning.toml`, `.gemini/commands/s-planning.toml`, `scripts/validate-commands.js`
+  - **Verify**: Run `node scripts/validate-commands.js` without `NAME_MAP`.
+
+- [x] **Task 2.1: Fix Cursor Alias Frontmatter in `scripts/install-aliases.sh`**
   - **Files**: `scripts/install-aliases.sh`
+  - **Verify**: Check that Cursor alias skills receive `disable-model-invocation: true`.
 
-## Wave 2: Core Shell Uninstaller & `install-local.sh` Integration
-- [x] **Task 2.1: Implement `scripts/uninstall-local.sh`** ([M])
-  - **Scope**: Build full-featured uninstaller with target detection, selective `--skills`, `--all`, `--only`, `--scope user|project`, interactive menu, and alias cleanup.
-  - **Verify**: `chmod +x scripts/uninstall-local.sh && ./scripts/uninstall-local.sh --help`
-  - **Files**: `scripts/uninstall-local.sh`
+- [x] **Task 2.2: Prevent Duplicate Antigravity Skills in `scripts/install-aliases.sh`**
+  - **Files**: `scripts/install-aliases.sh`
+  - **Verify**: Check `user_destinations_for antigravity` or skip generating duplicate skills for Antigravity.
 
-- [x] **Task 2.2: Add `--uninstall` / `-u` delegation to `scripts/install-local.sh`** ([XS])
-  - **Scope**: Allow `./scripts/install-local.sh --uninstall [args]` to invoke `uninstall-local.sh`.
-  - **Verify**: `./scripts/install-local.sh --help` shows `--uninstall` flag.
-  - **Files**: `scripts/install-local.sh`
+- [x] **Task 3.1: Add Alias Cleanup to `scripts/uninstall-local.ps1`**
+  - **Files**: `scripts/uninstall-local.ps1`
+  - **Verify**: Test uninstallation logic to ensure `/s-*` aliases are removed when `-KeepAliases` is not passed.
 
-## Wave 3: PowerShell Parity (`scripts/uninstall-local.ps1`)
-- [x] **Task 3.1: Implement `scripts/uninstall-local.ps1` and update `scripts/install-local.ps1`** ([M])
-  - **Scope**: Mirror all features of `uninstall-local.sh` in PowerShell with parameter validation and `-Uninstall` support.
-  - **Verify**: Validate PowerShell script syntax.
-  - **Files**: `scripts/uninstall-local.ps1`, `scripts/install-local.ps1`
-
-## Wave 4: Automated Testing, Documentation & Package Integration
-- [x] **Task 4.1: Create automated unit test suite `scripts/uninstall-test.js`** ([S])
-  - **Scope**: Test isolated full install -> test uninstaller -> test selective removal -> test alias cleanup.
-  - **Verify**: `node scripts/uninstall-test.js` passes 100%.
+- [x] **Task 4.1: Fix Windows Shell Execution in `scripts/uninstall-test.js`**
   - **Files**: `scripts/uninstall-test.js`
+  - **Verify**: Run `node scripts/uninstall-test.js` on Windows directly.
 
-- [x] **Task 4.2: Update `package.json`, `INSTALL.md`, and `README.md`** ([S])
-  - **Scope**: Add `"uninstall"` script to `package.json`, document uninstallation and selective removal commands in `INSTALL.md` and `README.md`.
-  - **Verify**: `node scripts/validate-reference-links.js`
-  - **Files**: `package.json`, `INSTALL.md`, `README.md`
-
-- [x] **Task 4.3: Final Validation and Verification** ([XS])
-  - **Scope**: Run full repo test suite `npm test` and verify zero lint or validation regressions.
-  - **Verify**: `npm test`
-  - **Files**: All modified files
+- [x] **Task 4.2: Full Regression & Verification Run**
+  - **Verify**: `npm test` passes completely (0 errors).

@@ -1,41 +1,18 @@
-# Implementation Plan: Multi-Agent Skill Uninstaller & Selective Removal
+# Implementation Plan: Slash Command & Installation Deduplication and Parity
 
-## Overview
-Implement complete uninstallation capabilities for `agent-skills`, including `scripts/uninstall-local.sh`, `scripts/uninstall-local.ps1`, flag integration in `scripts/install-local.sh` and `scripts/install-aliases.sh`, package script integration, test suite, and documentation.
+## Phase 1: Naming & Path Parity
+- Task 1.1: Fix Antigravity project skills path typo (`.agent/skills` -> `.agents/skills`) across `install-local.sh`, `uninstall-local.sh`, and `install-local.ps1`.
+- Task 1.2: Rename `commands/s-planning.toml` and `.gemini/commands/s-planning.toml` to `s-plan.toml`.
+- Task 1.3: Update `scripts/validate-commands.js` to remove `NAME_MAP` and verify 1:1 filename parity.
 
----
+## Phase 2: Deduplication & Alias Integrity
+- Task 2.1: Update `scripts/install-aliases.sh` to include `disable-model-invocation: true` when writing alias skills for Cursor.
+- Task 2.2: Prevent `scripts/install-aliases.sh` from polluting Antigravity with duplicate `s-*` skill directories since Antigravity uses native `commands/*.toml`.
+- Task 2.3: In `scripts/install-local.sh`, ensure Cursor slash commands installation does not conflict or get overwritten with improper frontmatter.
 
-## Phase Breakdown
+## Phase 3: PowerShell Uninstaller Parity
+- Task 3.1: Implement alias cleanup in `scripts/uninstall-local.ps1` when `-KeepAliases` is not specified.
 
-### Wave 1: Alias & Slash Command Wrapper Uninstallation
-- Extend `scripts/install-aliases.sh`:
-  - Add `--uninstall` / `-u` flag.
-  - When `--uninstall` is set, iterate through all detected or specified targets and remove created alias skill folders (`<dest>/<cmd>`) and prompt files (`<dest>/<cmd>.prompt.md`).
-  - Clean up parent directories if empty.
-
-### Wave 2: Core Shell Uninstallation Script (`scripts/uninstall-local.sh`) & Flag in `install-local.sh`
-- Create `scripts/uninstall-local.sh`:
-  - Full detection parity with `install-local.sh` (cursor, claude, codex, gemini, antigravity, windsurf, opencode, copilot, copilot-cli, kiro, commandcode).
-  - Scope support: `--scope user` and `--scope project` (with `--project <path>`).
-  - Filtering: `--only <ids>` and selective skill removal `--skills <skill1,skill2...>`.
-  - Cleanup of skills, metadata `.agent-skills-install.json`, and `references/`.
-  - Automatic invocation of `install-aliases.sh --uninstall` unless `--keep-aliases` is passed.
-  - Interactive selection menu when run without flags.
-- Update `scripts/install-local.sh`:
-  - Add `--uninstall` / `-u` flag that forwards arguments to `scripts/uninstall-local.sh`.
-
-### Wave 3: PowerShell Cross-Platform Parity (`scripts/uninstall-local.ps1`)
-- Create `scripts/uninstall-local.ps1`:
-  - Implement matching logic for Windows environments with `-Only`, `-All`, `-Skills`, `-Scope`, `-Project`, `-KeepAliases`, `-List`.
-- Update `scripts/install-local.ps1`:
-  - Support `-Uninstall` flag.
-
-### Wave 4: Testing, Documentation, and Package Integration
-- Add `uninstall-test.js` to verify:
-  - Full uninstallation cleans all copied skills and metadata.
-  - Selective uninstallation removes only targeted skills while retaining others.
-  - Alias uninstallation cleans all `/s-*` command folders.
-- Update `package.json`:
-  - Add `"uninstall": "bash scripts/uninstall-local.sh"`.
-- Update `INSTALL.md` and `README.md` with uninstallation guides.
-- Execute full validation suite: `npm test` and custom test suites.
+## Phase 4: Test Suite & Windows Compatibility Verification
+- Task 4.1: Update `scripts/uninstall-test.js` to execute `.sh` scripts via `bash` on Windows platforms.
+- Task 4.2: Run full verification suite (`npm test`, `validate-commands`, `validate-skills`).

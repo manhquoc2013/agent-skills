@@ -99,7 +99,7 @@ project_skills_for() {
     claude) echo ".claude/skills" ;;
     codex) echo ".agents/skills" ;;
     gemini) echo ".gemini/skills" ;;
-    antigravity) echo ".agent/skills" ;;
+    antigravity) echo ".agents/skills" ;;
     windsurf) echo ".windsurf/skills" ;;
     opencode) echo ".opencode/skills" ;;
     copilot) echo ".github/skills" ;;

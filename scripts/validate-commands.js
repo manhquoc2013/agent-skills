@@ -42,10 +42,8 @@ const DIRS = {
 };
 
 // Commands where the file stem differs between Claude and the TOML dirs.
-// Key = Claude stem, value = TOML stem.
-const NAME_MAP = {
-  's-plan': 's-planning',
-};
+// Key = Claude stem, value = TOML stem. All commands now share identical stems.
+const NAME_MAP = {};
 const NAME_MAP_REVERSE = Object.fromEntries(
   Object.entries(NAME_MAP).map(([k, v]) => [v, k])
 );

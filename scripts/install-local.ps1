@@ -197,7 +197,7 @@ function Get-HostCatalog {
                 (Join-Path $homeDir '.gemini\antigravity-cli')
             )
             UserSkills = (Join-Path $homeDir '.gemini\config\plugins\agent-skills\skills')
-            ProjectSkills = '.agent\skills'
+            ProjectSkills = '.agents\skills'
             Note = 'Installs the whole plugin with: agy plugin install <repo>. Antigravity keeps that plugin global.'
             Plugin = $true
         },
