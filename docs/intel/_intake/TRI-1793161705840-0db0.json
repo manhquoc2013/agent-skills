@@ -1,0 +1,69 @@
+{
+  "request_id": "ses_e7fc8f032ffeNgdQINBCzwpaTQ/msg_180c42216001XuEQC6ZWYz2E5D/call_00_T9kj3Lur1ToZm0Oqtfe19207",
+  "decision_axes": {
+    "version": 1,
+    "scope": {
+      "files": 1,
+      "packages": 0,
+      "write_regions": 1
+    },
+    "risk": {
+      "status": "unassessed",
+      "groups": []
+    },
+    "complexity": "unassessed",
+    "execution": {
+      "owner": true,
+      "basis": "scope_envelope",
+      "parallelism": "not_inferred",
+      "local_batch_files": 8
+    }
+  },
+  "triage_id": "TRI-1793161705840-0db0",
+  "created_at": 1793161705840,
+  "request_summary": "Add a --show-rank1-misses diagnostic to the eval runner so the positive prompts that rank outside first place are visible instead of being silently counted, since the runner currently only prints a prompt that falls out of the top-K entirely.",
+  "change_class": "C0",
+  "handling": "inline",
+  "evidence": {
+    "edit_target_files": [
+      "scripts/run-evals.js"
+    ],
+    "impact_files": [
+      "scripts/run-evals.js"
+    ],
+    "packages": [
+      "."
+    ],
+    "shape": "brownfield",
+    "write_scope_clusters": 1,
+    "brownfield_extend": false,
+    "one_way_door_hits": [],
+    "dev_footprint": "backend"
+  },
+  "rationale": "C0: 1 edit-target files in one package, no one-way door (1 edit-target files / 0 package(s) (root pseudo-package excluded, Q1 2026-08-21) / 1 write-scope clusters / co-change unassessed / shape=brownfield)",
+  "entry_point": "`node scripts/run-evals.js --min-rank1 95` (the ranking gate in npm test and CI)",
+  "blast_radius": 1,
+  "done_oracle": "`node scripts/run-evals.js --min-rank1 95 --show-rank1-misses` prints, for each positive prompt whose skill did not rank first, the prompt, its actual rank and the skill that outranked it; without the flag the output is unchanged and the gate still passes at 96%.",
+  "verification_commands": [
+    {
+      "command": "node scripts/run-evals.js --min-rank1 95",
+      "cwd": "D:\\Works\\Tools\\agent-skills",
+      "timeout_ms": 180000
+    }
+  ],
+  "change_type": "implementation",
+  "source_snapshot": {
+    "vcs": "git",
+    "head": "5841452c4ce20aee62fb11dd03baf8c333c2419e",
+    "dirty": true,
+    "captured_at": 1793161706068
+  },
+  "budget": {
+    "wall_clock_ms": 1140000,
+    "turns": 48,
+    "turns_used": 0
+  },
+  "no_single_gate_reason": "The change adds a reporting flag to the eval runner itself; the runner's own gate (rank-1 floor plus 174 checks) is the verification, and the new flag is exercised by running it.",
+  "risk_facts": [],
+  "risk_facts_source": "declared"
+}

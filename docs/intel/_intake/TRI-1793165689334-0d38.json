@@ -1,0 +1,124 @@
+{
+  "request_id": "ses_e7fc8f032ffeNgdQINBCzwpaTQ/msg_18100fcb1001DruI5FOYKfc2si/call_00_Idj7OhozSuykurs4PNoJ8300",
+  "decision_axes": {
+    "version": 1,
+    "scope": {
+      "files": 4,
+      "packages": 0,
+      "write_regions": 1
+    },
+    "risk": {
+      "status": "unassessed",
+      "groups": []
+    },
+    "complexity": "unassessed",
+    "execution": {
+      "owner": true,
+      "basis": "scope_envelope",
+      "parallelism": "not_inferred",
+      "local_batch_files": 8
+    }
+  },
+  "triage_id": "TRI-1793165689334-0d38",
+  "created_at": 1793165689334,
+  "request_summary": "Close the two defects the second review found: unify bash resolution so the hook runner stops silently skipping suites a working Git Bash could run, and narrow the frontend description that doubled the `component` term frequency and stole a code-simplification routing prompt.",
+  "change_class": "C1",
+  "handling": "inline_declared_scope",
+  "evidence": {
+    "edit_target_files": [
+      "scripts/lib/bash-probe.js",
+      "scripts/run-hook-tests.js",
+      "scripts/uninstall-test.js",
+      "skills/frontend-ui-engineering/SKILL.md"
+    ],
+    "impact_files": [
+      "scripts/lib/bash-probe.js",
+      "scripts/run-hook-tests.js",
+      "scripts/uninstall-test.js",
+      "skills/frontend-ui-engineering/SKILL.md"
+    ],
+    "packages": [
+      "."
+    ],
+    "shape": "brownfield",
+    "write_scope_clusters": 1,
+    "brownfield_extend": false,
+    "one_way_door_hits": [],
+    "cochange": {
+      "status": "measured",
+      "window_commits": 492,
+      "areas": 2,
+      "judged_pairs": 1,
+      "novel_pair_count": 0,
+      "novel_pairs": [],
+      "min_confidence": 0.05,
+      "risk_score": 0.812
+    },
+    "dev_footprint": "backend"
+  },
+  "rationale": "C1: 4 edit-target files in one package, no one-way door — pre-declared write scope required (4 edit-target files / 0 package(s) (root pseudo-package excluded, Q1 2026-08-21) / 1 write-scope clusters / co-change risk 0.812 (0/1 judged pairs novel) / shape=brownfield)",
+  "entry_point": "The exact-file test command and `node scripts/run-evals.js --min-rank1 95`",
+  "blast_radius": 4,
+  "done_oracle": "The exact-file test command (no silent skip), because both scripts resolve bash the same way; `--require-bash` still hard-fails when no working bash is found anywhere; `node scripts/uninstall-test.js` still runs 6/6; and the frontend description no longer outranks code-simplification for the prompt \"Simplify this over-clever component\" while the eval suite still passes with zero errors.",
+  "verification_commands": [
+    {
+      "command": "node scripts/run-hook-tests.js",
+      "cwd": "D:\\Works\\Tools\\agent-skills",
+      "timeout_ms": 300000
+    },
+    {
+      "command": "node scripts/uninstall-test.js",
+      "cwd": "D:\\Works\\Tools\\agent-skills",
+      "timeout_ms": 300000
+    },
+    {
+      "command": "node scripts/run-evals.js --min-rank1 95",
+      "cwd": "D:\\Works\\Tools\\agent-skills",
+      "timeout_ms": 180000
+    },
+    {
+      "command": "node scripts/validate-skills.js",
+      "cwd": "D:\\Works\\Tools\\agent-skills",
+      "timeout_ms": 180000
+    }
+  ],
+  "change_type": "implementation",
+  "declared_write_scope": [
+    "scripts/lib/bash-probe.js",
+    "scripts/run-hook-tests.js",
+    "scripts/uninstall-test.js",
+    "skills/frontend-ui-engineering/SKILL.md"
+  ],
+  "seam_claims": [
+    {
+      "file": "scripts/run-hook-tests.js",
+      "line": 39,
+      "quote": "const probe = spawnSync('bash', ['-c', 'exit 0'], { stdio: 'ignore' });",
+      "source_hash": "7ccb9cbaa49833edccbc41f9fe38a72668f61781d18974e843277329f29adc0b",
+      "quote_hash": "e31e63772fcf04f15772c562cf7ed96f14fe1a6b705395771531ab6fdfc8e16f",
+      "note": "The bare-bash probe that skips on this machine while the uninstaller finds Git Bash.",
+      "line_corrected_from": 28
+    },
+    {
+      "file": "scripts/uninstall-test.js",
+      "line": 23,
+      "quote": "const BASH_CMD = (() => {",
+      "source_hash": "c57ef7bff758fe79fa0ae30469b16d5a1693c8c377aaba0a9e7ba41dc6577729",
+      "quote_hash": "2fb90a0cbf0f75e3c2ccf1607278ee4df327ccfa9279edd6ecab4d990187b7c0",
+      "note": "The multi-candidate resolver the hook runner should reuse."
+    }
+  ],
+  "source_snapshot": {
+    "vcs": "git",
+    "head": "5d5fa2f6b0f0ef465cf8d6872667c8c3d7dd93f4",
+    "dirty": true,
+    "captured_at": 1793165689540
+  },
+  "budget": {
+    "wall_clock_ms": 2220000,
+    "turns": 94,
+    "turns_used": 0
+  },
+  "risk_facts": [],
+  "risk_facts_source": "declared"
+}

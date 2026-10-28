@@ -1,0 +1,14 @@
+{
+  "schema_version": 1,
+  "kind": "verdict",
+  "at": 1793164673629,
+  "triage_id": "TRI-1793161728053-19a0",
+  "task_id": "ses_4b79757adf8099b68b92f0bb792b434f71f37e4fc026164e06606ad38498e697",
+  "seat": "engineering-qa-engineer",
+  "verdict": "Pass",
+  "attribution": "brief",
+  "measured": {
+    "loc_changed": 195,
+    "files_touched": 4
+  }
+}

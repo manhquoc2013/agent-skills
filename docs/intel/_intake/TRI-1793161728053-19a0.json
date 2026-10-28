@@ -1,0 +1,164 @@
+{
+  "request_id": "ses_e7fc8f032ffeNgdQINBCzwpaTQ/msg_180c47991001S0Ynp70554zMGj/call_00_WB79c3hs6Vb96WezT7ak5141",
+  "decision_axes": {
+    "version": 1,
+    "scope": {
+      "files": 13,
+      "packages": 0,
+      "write_regions": 1
+    },
+    "risk": {
+      "status": "identified",
+      "groups": [
+        "deploy"
+      ]
+    },
+    "complexity": "unassessed",
+    "execution": {
+      "owner": false,
+      "basis": "identified_risk",
+      "parallelism": "not_inferred",
+      "local_batch_files": 8
+    }
+  },
+  "triage_id": "TRI-1793161728053-19a0",
+  "created_at": 1793161728053,
+  "request_summary": "Close all six recommendations from the post-optimization review and raise the eval rank-1 routing rate above the current 96% by making four skill descriptions discriminate better, without weakening the eval, removing cases or lowering the floor.",
+  "change_class": "C3",
+  "handling": "reduced_pipeline",
+  "evidence": {
+    "edit_target_files": [
+      ".github/workflows/test-plugin-install.yml",
+      "CLAUDE.md",
+      "docs/developer-onboarding.md",
+      "README.md",
+      "scripts/run-evals.js",
+      "scripts/run-hook-tests.js",
+      "scripts/uninstall-test.js",
+      "scripts/validate-catalog.js",
+      "scripts/validate-versions-test.js",
+      "skills/autonomous-agent-workflow/SKILL.md",
+      "skills/frontend-ui-engineering/SKILL.md",
+      "skills/idea-refine/SKILL.md",
+      "skills/planning-and-task-breakdown/SKILL.md"
+    ],
+    "impact_files": [
+      ".github/workflows/test-plugin-install.yml",
+      "CLAUDE.md",
+      "docs/developer-onboarding.md",
+      "README.md",
+      "scripts/run-evals.js",
+      "scripts/run-hook-tests.js",
+      "scripts/uninstall-test.js",
+      "scripts/validate-catalog.js",
+      "scripts/validate-versions-test.js",
+      "skills/autonomous-agent-workflow/SKILL.md",
+      "skills/frontend-ui-engineering/SKILL.md",
+      "skills/idea-refine/SKILL.md",
+      "skills/planning-and-task-breakdown/SKILL.md"
+    ],
+    "packages": [
+      "."
+    ],
+    "shape": "brownfield",
+    "write_scope_clusters": 1,
+    "brownfield_extend": false,
+    "one_way_door_hits": [
+      {
+        "group": "deploy",
+        "path": ".github/workflows/test-plugin-install.yml"
+      },
+      {
+        "group": "deploy",
+        "path": ".github/workflows/test-plugin-install.yml"
+      },
+      {
+        "group": "deploy",
+        "path": "declared:deployment"
+      }
+    ],
+    "risk_effects": [
+      {
+        "group": "deploy",
+        "path": ".github/workflows/test-plugin-install.yml"
+      }
+    ],
+    "dev_footprint": "backend"
+  },
+  "rationale": "C3: one-way door: deploy:.github/workflows/test-plugin-install.yml, deploy:.github/workflows/test-plugin-install.yml, deploy:declared:deployment — multi-file irreversible change floors at C3; pipeline reach: no pipeline seat may edit .github/workflows/test-plugin-install.yml — the root session that ran this triage makes those edits itself (or the operator, for any its own grants refuse) and the pipeline brief must exclude them; the rest of the footprint routes as classified (13 edit-target files / 0 package(s) (root pseudo-package excluded, Q1 2026-08-21) / 1 write-scope clusters / co-change unassessed / shape=brownfield)",
+  "entry_point": "The exact-file test command and the CI workflow",
+  "blast_radius": 13,
+  "done_oracle": "Every recommendation in the review report is closed: the two docs that deny package.json/npm test describe them correctly, README's scripts/case counts are true, the hook runner no longer claims CI calls it, the CI matrix job runs validate-catalog-test.js, uninstall-test skips loudly without bash instead of failing, and duplicated lists have a single source or a drift gate. The eval rank-1 rate is strictly above 96% and no existing check regresses.",
+  "verification_commands": [
+    {
+      "command": "node scripts/run-evals.js --min-rank1 96",
+      "cwd": "D:\\Works\\Tools\\agent-skills",
+      "timeout_ms": 180000
+    },
+    {
+      "command": "node scripts/validate-skills.js",
+      "cwd": "D:\\Works\\Tools\\agent-skills",
+      "timeout_ms": 180000
+    },
+    {
+      "command": "node scripts/validate-catalog.js",
+      "cwd": "D:\\Works\\Tools\\agent-skills",
+      "timeout_ms": 120000
+    },
+    {
+      "command": "node scripts/validate-versions.js",
+      "cwd": "D:\\Works\\Tools\\agent-skills",
+      "timeout_ms": 120000
+    },
+    {
+      "command": "node scripts/run-hook-tests.js",
+      "cwd": "D:\\Works\\Tools\\agent-skills",
+      "timeout_ms": 180000
+    }
+  ],
+  "change_type": "implementation",
+  "seam_claims": [
+    {
+      "file": "scripts/run-evals.js",
+      "line": 314,
+      "quote": "if (idx === 0 && hit.score > 0) rank1++;",
+      "source_hash": "b22f3042ca05a3fed24e5e8223ef5981a0585984d1c4b4e28750afd6de57db02",
+      "quote_hash": "ef3ec81fb98e0b99a77f5ba9da97e3cd7693cf3c2ed268aeae224965fbf55a01",
+      "note": "The rank-1 counter that the new diagnostic sits beside; the rate it feeds is the number the work must raise."
+    },
+    {
+      "file": "skills/planning-and-task-breakdown/SKILL.md",
+      "line": 4,
+      "quote": "description:",
+      "source_hash": "9b7654d2deb94a8778368ee169e7f673021eb9d4aa24e6421c028b7dc7b0f6d0",
+      "quote_hash": "12cf2d62a8e89706f8b5855d5072823b8534f7f2dae4175bc4f5297d9215c527",
+      "note": "One of the four descriptions that loses a near-tie; its wording is what has to change."
+    },
+    {
+      "file": ".github/workflows/test-plugin-install.yml",
+      "line": 122,
+      "quote": "      - name: Validate all skills",
+      "source_hash": "f9c0f137a0203da1f977adfa0c5a6974aeaa229b881737aef46b3d24c89a1374",
+      "quote_hash": "9de7d0861632d09b4be0a57b9b47077119b2d4ce7939e3709b64a3006bdc18c7",
+      "note": "The matrix job's node --test block, which currently omits validate-catalog-test.js."
+    }
+  ],
+  "source_snapshot": {
+    "vcs": "git",
+    "head": "5841452c4ce20aee62fb11dd03baf8c333c2419e",
+    "dirty": true,
+    "captured_at": 1793161728301
+  },
+  "pipeline_unreachable": [
+    ".github/workflows/test-plugin-install.yml"
+  ],
+  "budget": {
+    "wall_clock_ms": 16080000,
+    "turns": 956,
+    "turns_used": 0
+  },
+  "risk_facts": [
+    "deployment"
+  ],
+  "risk_facts_source": "declared"
+}

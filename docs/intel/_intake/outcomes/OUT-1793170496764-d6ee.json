@@ -1,0 +1,14 @@
+{
+  "schema_version": 1,
+  "kind": "verdict",
+  "at": 1793170496764,
+  "triage_id": "TRI-1793166687707-a4fa",
+  "task_id": "ses_5860b74ff06e2500c057ad5317c0d3e053f9cd3d68159cf471c9f72838e9c44c",
+  "seat": "pmo-software-project-manager",
+  "verdict": "Blocked",
+  "attribution": "brief",
+  "measured": {
+    "loc_changed": 90,
+    "files_touched": 2
+  }
+}

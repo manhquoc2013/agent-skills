@@ -1,0 +1,10 @@
+{
+  "schema_version": 1,
+  "kind": "verdict",
+  "at": 1793161508348,
+  "triage_id": "TRI-1793160387538-4166",
+  "task_id": "ses_c5b66387bdc2ef54cee86279503ee922b3d990df8ae9b5d227d41e50dc27499b",
+  "seat": "verify",
+  "verdict": "Changes-requested",
+  "attribution": "dispatcher"
+}

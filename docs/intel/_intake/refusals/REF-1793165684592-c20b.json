@@ -1,0 +1,16 @@
+{
+  "at": 1793165684591,
+  "kind": "seam_verification_failed",
+  "change_class": "C1",
+  "shape": "brownfield",
+  "candidate_files": 4,
+  "claims": 2,
+  "failures": [
+    {
+      "file": "scripts/uninstall-test.js",
+      "line": 23,
+      "kind": "quote_not_found"
+    }
+  ],
+  "detail": "scripts/uninstall-test.js:23 — quote_not_found"
+}

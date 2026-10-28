@@ -1,0 +1,14 @@
+{
+  "schema_version": 1,
+  "kind": "verdict",
+  "at": 1793164982635,
+  "triage_id": "TRI-1793161728053-19a0",
+  "task_id": "ses_42fc9692828885931c5159de1016972462f6acbb981af68bc8ffa5745695acd7",
+  "seat": "pmo-software-project-manager",
+  "verdict": "Pass",
+  "attribution": "brief",
+  "measured": {
+    "loc_changed": 0,
+    "files_touched": 0
+  }
+}

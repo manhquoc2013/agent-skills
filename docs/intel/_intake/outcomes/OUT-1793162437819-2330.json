@@ -1,0 +1,14 @@
+{
+  "schema_version": 1,
+  "kind": "verdict",
+  "at": 1793162437819,
+  "triage_id": "TRI-1793161728053-19a0",
+  "task_id": "ses_17af80c0403df9a6a2aa4f8372df52dfad0e303777f3092674402c680a80bdc1",
+  "seat": "engineering-solution-designer",
+  "verdict": "Pass",
+  "attribution": "brief",
+  "measured": {
+    "loc_changed": 0,
+    "files_touched": 0
+  }
+}

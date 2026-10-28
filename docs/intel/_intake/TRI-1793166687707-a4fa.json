@@ -1,0 +1,114 @@
+{
+  "request_id": "ses_e7fc8f032ffeNgdQINBCzwpaTQ/msg_18110329e001yBhcWbJQZiWJCL/call_00_cYtV5gB97gKSaWhZ04Fl2574",
+  "decision_axes": {
+    "version": 1,
+    "scope": {
+      "files": 3,
+      "packages": 0,
+      "write_regions": 1
+    },
+    "risk": {
+      "status": "identified",
+      "groups": [
+        "boundary"
+      ]
+    },
+    "complexity": "unassessed",
+    "execution": {
+      "owner": false,
+      "basis": "identified_risk",
+      "parallelism": "not_inferred",
+      "local_batch_files": 8
+    }
+  },
+  "triage_id": "TRI-1793166687707-a4fa",
+  "created_at": 1793166687707,
+  "request_summary": "Replace the long validator-and-test chain inside package.json with one checked-in Node gate, so the list of suites has a single source and the whole local gate runs as one command.",
+  "change_class": "C2",
+  "handling": "reduced_pipeline",
+  "evidence": {
+    "edit_target_files": [
+      "package.json",
+      "scripts/build-agent-dist.js",
+      "scripts/test-all.js"
+    ],
+    "impact_files": [
+      "package.json",
+      "scripts/build-agent-dist.js",
+      "scripts/test-all.js"
+    ],
+    "packages": [
+      "."
+    ],
+    "shape": "brownfield",
+    "write_scope_clusters": 1,
+    "brownfield_extend": false,
+    "one_way_door_hits": [
+      {
+        "group": "boundary",
+        "path": "package.json"
+      }
+    ],
+    "dev_footprint": "backend"
+  },
+  "rationale": "C2: bounded one-way door: boundary:package.json — reduced-pipeline floor for ≤3 files in one real package (3 edit-target files / 0 package(s) (root pseudo-package excluded, Q1 2026-08-21) / 1 write-scope clusters / co-change unassessed / shape=brownfield)",
+  "entry_point": "The exact-file test command",
+  "blast_radius": 3,
+  "done_oracle": "The exact-file test command, stops at the first failure and exits 0 on a clean tree; the exact-file test command; the suite list exists once in scripts/test-all.js instead of being spelled out inside the generated package.json.",
+  "verification_commands": [
+    {
+      "command": "node scripts/validate-skills.js",
+      "cwd": "D:\\Works\\Tools\\agent-skills",
+      "timeout_ms": 180000
+    },
+    {
+      "command": "node scripts/validate-catalog.js",
+      "cwd": "D:\\Works\\Tools\\agent-skills",
+      "timeout_ms": 120000
+    },
+    {
+      "command": "node scripts/run-evals.js --min-rank1 95",
+      "cwd": "D:\\Works\\Tools\\agent-skills",
+      "timeout_ms": 180000
+    },
+    {
+      "command": "node scripts/validate-catalog-test.js",
+      "cwd": "D:\\Works\\Tools\\agent-skills",
+      "timeout_ms": 180000
+    },
+    {
+      "command": "node scripts/validate-versions-test.js",
+      "cwd": "D:\\Works\\Tools\\agent-skills",
+      "timeout_ms": 180000
+    },
+    {
+      "command": "node scripts/run-hook-tests.js",
+      "cwd": "D:\\Works\\Tools\\agent-skills",
+      "timeout_ms": 300000
+    }
+  ],
+  "change_type": "implementation",
+  "seam_claims": [
+    {
+      "file": "scripts/build-agent-dist.js",
+      "line": 218,
+      "quote": "\"test:gates\": \"node scripts/validate-skills.js && node scripts/validate-versions.js",
+      "source_hash": "9f222986cc6168b7a6d52f22cb9653b099b761ffd46737460cad7f270823c818",
+      "quote_hash": "e405b6c9eb3607486df5132c3f62573533ed098778f3e64cdb5cfdade747efa7",
+      "note": "The generated test:gates chain that becomes a single call to the new gate script."
+    }
+  ],
+  "source_snapshot": {
+    "vcs": "git",
+    "head": "ff255f81a281edc523902a09e7a1735cc0d04e9e",
+    "dirty": true,
+    "captured_at": 1793166687942
+  },
+  "budget": {
+    "wall_clock_ms": 6000000,
+    "turns": 340,
+    "turns_used": 0
+  },
+  "risk_facts": [],
+  "risk_facts_source": "declared"
+}
