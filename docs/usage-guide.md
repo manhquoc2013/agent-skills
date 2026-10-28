@@ -1,6 +1,6 @@
 # Hướng dẫn sử dụng Agent Skills
 
-Tài liệu hướng dẫn sử dụng bộ skill trong repo này — dành cho người dùng tiếng Việt. Căn cứ trực tiếp trên 26 skill trong `skills/`, 9 slash command trong `.claude/commands/`, 4 persona trong `agents/`, và các quy tắc phối hợp trong `AGENTS.md` + `docs/skill-anatomy.md`.
+Tài liệu hướng dẫn sử dụng bộ skill trong repo này — dành cho người dùng tiếng Việt. Căn cứ trực tiếp trên 31 skill trong `skills/`, 9 slash command trong `.claude/commands/`, 4 persona trong `agents/`, và các quy tắc phối hợp trong `AGENTS.md` + `docs/skill-anatomy.md`.
 
 ## 1. Tổng quan
 
@@ -42,7 +42,7 @@ Một tính năng hoàn chỉnh đi qua các giai đoạn, mỗi giai đoạn c�
 | **REVIEW** | `code-review-and-quality` | Review 5 trục trước khi merge |
 | **SHIP** | `shipping-and-launch` | Checklist trước khi lên production |
 
-## 4. Catalog 26 skill
+## 4. Catalog 31 skill
 
 ### 4.1 Điều phối & meta (4)
 
