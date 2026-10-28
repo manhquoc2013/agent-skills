@@ -1,6 +1,6 @@
 ---
 name: frontend-ui-engineering
-description: Builds production-quality, accessible, responsive user-facing UIs backed by deterministic design intelligence (79 styles, 192 product reasoning profiles, 192 color palettes, 74 typography pairings, 119 UX guidelines, and 22 technology stacks). Use when designing, building, or modifying interfaces, pages, components, layouts, design systems, meeting WCAG requirements, or eliminating generic AI aesthetics.
+description: Builds production-quality, accessible, responsive user-facing UIs — reusable components and design systems — with deliberate state management, backed by deterministic design intelligence (79 styles, 192 product reasoning profiles, 192 color palettes, 74 typography pairings, 119 UX guidelines, and 22 technology stacks). Use when designing, building, refactoring, or modifying interfaces, pages, components, layouts, or design systems, meeting WCAG requirements, or eliminating generic AI aesthetics.
 ---
 
 # Frontend UI Engineering

@@ -40,8 +40,10 @@ Before adding a new skill or significantly reworking an existing one, run the pr
 
 ## Commands
 
-- `npm test` — Not applicable (this is a documentation project)
-- Validate: Check that all SKILL.md files have valid YAML frontmatter with name and description
+- `npm run build` — `scripts/build-agent-dist.js` regenerates package.json and the host descriptors; CI fails on drift.
+- `npm test` — `test:gates` (validators + exact-file unit tests + eval floor), then `test:hooks`.
+- Exact-file test command: `node --test scripts/lib/skill-lint-test.js scripts/validate-versions-test.js scripts/run-evals-test.js scripts/validate-reference-links-test.js scripts/validate-commands-test.js scripts/validate-artifact-paths-test.js scripts/floor-guard-reference-test.js scripts/validate-catalog-test.js`
+- Validators: `node scripts/validate-skills.js` (frontmatter), `node scripts/validate-reference-links.js` (reference links), `node scripts/validate-versions.js` (manifest versions), `node scripts/validate-commands.js` (command parity), `node scripts/validate-artifact-paths.js` (artifact paths), `node scripts/validate-catalog.js` (README catalog + counts).
 - Evals: `node scripts/run-evals.js` — trigger/routing evals for every skill (CI); `--behavioral <skill>` for graded runs
 
 ## Pull Requests

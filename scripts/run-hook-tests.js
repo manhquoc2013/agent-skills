@@ -9,8 +9,9 @@
  *
  * Without a usable bash the default is to SKIP with a loud banner, so a
  * contributor on a bash-less Windows box is not blocked by a suite that has
- * nothing to do with their change. `--require-bash` turns that skip into a hard
- * error, which is the form CI should call so a gate is never silently skipped.
+ * nothing to do with their change. CI calls
+ * `node scripts/run-hook-tests.js --require-bash`, which turns that skip into a
+ * hard error so a gate is never silently skipped.
  *
  * The flag, not an ambient `CI` environment variable, decides this. `CI` is set
  * on plenty of developer machines and inside agent harnesses, so keying the
@@ -59,8 +60,9 @@ function skipBanner() {
     '    - Install Git Bash (https://gitforwindows.org), or enable WSL,',
     '      then re-run:  npm run test:hooks',
     '',
-    '  NOTE: this skip is a LOCAL convenience only. Call the runner with',
-    '        --require-bash (as CI does) to turn it into a hard error.',
+    '  NOTE: this skip is a LOCAL convenience only. CI calls',
+    '        `node scripts/run-hook-tests.js --require-bash` to turn it into a',
+    '        hard error.',
     '=============================================================='
   );
   return lines.join('\n');

@@ -10,10 +10,18 @@ const manifestPaths = [
   ".claude-plugin/plugin.json",
   ".claude-plugin/marketplace.json",
   ".agents/plugins/marketplace.json",
+  "package.json",
+  "gemini-extension.json",
+  "plugin.yaml",
 ];
 
 function readManifestVersion(manifestPath) {
-  const manifest = JSON.parse(readFileSync(manifestPath, "utf8"));
+  const text = readFileSync(manifestPath, "utf8");
+  if (/\.ya?ml$/i.test(manifestPath)) {
+    const m = /^version:\s*(.+)$/m.exec(text);
+    return m ? m[1].trim() : undefined;
+  }
+  const manifest = JSON.parse(text);
   return manifest.version ?? manifest.plugins?.[0]?.version;
 }
 

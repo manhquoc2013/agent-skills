@@ -34,7 +34,7 @@ git clone https://github.com/manhquoc2013/agent-skills.git
 cd agent-skills
 ```
 
-There's no build step and no `package.json`; validators are plain Node scripts. You need:
+There is a `package.json`; `npm run build` regenerates it plus the host descriptors via `scripts/build-agent-dist.js` (CI fails on drift). Validators and unit tests are plain Node scripts — the exact-file test command in §3 covers them. You need:
 
 - **Node 24** (the version CI pins) for the `scripts/` validators
 - **bash** (+ `jq` recommended) for the hook regression tests
@@ -55,6 +55,9 @@ The repo eats its own cooking: verification is non-negotiable for skills, and it
 # Tier 1, structural: frontmatter, naming, required sections, layout and line budget
 node scripts/validate-skills.js
 
+# README catalog table and every stated skill count agree with skills/
+node scripts/validate-catalog.js
+
 # Links from skills to references/ resolve, including #anchor fragments
 node scripts/validate-reference-links.js
 
@@ -67,9 +70,13 @@ node scripts/validate-commands.js
 # Spec/plan/todo artifact paths agree across every command surface and the docs
 node scripts/validate-artifact-paths.js
 
-# Unit tests for the validators and the eval runner
-# (on PowerShell, list the files instead of using the globs)
-node --test scripts/*-test.js scripts/lib/*-test.js
+# Unit tests for the validators and the eval runner (exact files, Windows-safe)
+node --test scripts/lib/skill-lint-test.js scripts/validate-versions-test.js scripts/run-evals-test.js scripts/validate-reference-links-test.js scripts/validate-commands-test.js scripts/validate-artifact-paths-test.js scripts/floor-guard-reference-test.js scripts/validate-catalog-test.js
+
+# Generated distribution descriptors must match the source (CI fails on drift)
+node scripts/build-agent-dist.js
+git diff --exit-code
+test -z "$(git status --porcelain)"
 
 # Tier 2, trigger & routing: positive prompts rank top-k, negatives don't collide.
 # CI enforces the rank-1 floor, so run it the way CI does.
@@ -79,10 +86,10 @@ node scripts/run-evals.js --min-rank1 95
 node scripts/run-evals.js --behavioral <skill-name> --dry-run
 
 # Hook regression tests, required if you touch anything under hooks/ or
-# skills/using-agent-skills/SKILL.md (the session-start script embeds that file)
-bash hooks/session-start-test.sh
-bash hooks/sdd-cache-test.sh
-bash hooks/simplify-ignore-test.sh
+# skills/using-agent-skills/SKILL.md (the session-start script embeds that file).
+# Executes the session-start, sdd-cache and simplify-ignore suites; --require-bash
+# matches CI so a missing bash fails here rather than silently skipping.
+node scripts/run-hook-tests.js --require-bash
 ```
 
 CI runs this set on Ubuntu, then runs the validators and unit tests again on macOS and Windows, so path handling and line endings get exercised too. Two further jobs need the Claude Code CLI and are not in the block: `claude plugin validate .` checks the marketplace and plugin manifests, and a marketplace install (`claude plugin marketplace add ./`, then `claude plugin install agent-skills@addy-agent-skills --scope user`) proves the plugin installs from a checkout. Run those if you touch `plugin.json`, the `.claude-plugin/` manifests, or anything the install path reads. When the workflow gains a step, this block should gain the same line; if they ever disagree, [the workflow file](../.github/workflows/test-plugin-install.yml) is the source of truth.
@@ -118,8 +125,8 @@ One point worth internalizing rather than looking up: when writing trigger promp
 - [ ] Tier 1 green: `node scripts/validate-skills.js`, plus `node scripts/validate-reference-links.js` if you touched a skill that links to `references/`
 - [ ] Tier 2 green the way CI runs it: `node scripts/run-evals.js --min-rank1 95`
 - [ ] Command parity and artifact paths green if you touched any command directory: `node scripts/validate-commands.js` and `node scripts/validate-artifact-paths.js`
-- [ ] Unit tests green if you touched `scripts/`: `node --test scripts/*-test.js scripts/lib/*-test.js`
-- [ ] Hook tests green if you touched `hooks/` or `using-agent-skills`: `bash hooks/session-start-test.sh`, `bash hooks/sdd-cache-test.sh`, `bash hooks/simplify-ignore-test.sh`
+- [ ] Unit tests green if you touched `scripts/`: `node --test scripts/lib/skill-lint-test.js scripts/validate-versions-test.js scripts/run-evals-test.js scripts/validate-reference-links-test.js scripts/validate-commands-test.js scripts/validate-artifact-paths-test.js scripts/floor-guard-reference-test.js scripts/validate-catalog-test.js`
+- [ ] Hook tests green if you touched `hooks/` or `using-agent-skills`: `node scripts/run-hook-tests.js --require-bash`
 - [ ] New skill → eval case file present with the minimum trigger/behavioral counts
 - [ ] New skill → gap justified in the PR description; catalog and open PRs checked
 - [ ] No duplicated content; cross-references used instead

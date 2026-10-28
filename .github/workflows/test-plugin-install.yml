@@ -55,9 +55,6 @@ jobs:
       - name: Test floor-guard reference
         run: node --test scripts/floor-guard-reference-test.js
 
-      - name: Test session-start hook payload
-        run: bash hooks/session-start-test.sh
-
       # build-agent-dist.js regenerates 20 generated descriptors from source. Without
       # this step a skill edit ships in skills/ while .cursor/, .codex-plugin/ and the
       # rest keep the old text, and CI stays green. Regenerate, then fail on a tracked
@@ -120,6 +117,7 @@ jobs:
           scripts/validate-commands-test.js
           scripts/validate-artifact-paths-test.js
           scripts/floor-guard-reference-test.js
+          scripts/validate-catalog-test.js
 
       - name: Validate all skills
         run: node scripts/validate-skills.js
@@ -148,11 +146,10 @@ jobs:
     steps:
       - uses: actions/checkout@v6
 
-      - name: Test sdd-cache hooks (stubbed curl, no network)
-        run: bash hooks/sdd-cache-test.sh
-
-      - name: Test simplify-ignore hook
-        run: bash hooks/simplify-ignore-test.sh
+      # All three suites, from the one list the local gate also uses. --require-bash
+      # makes a runner image without bash fail this job instead of skipping it.
+      - name: Run hook regression suites
+        run: node scripts/run-hook-tests.js --require-bash
 
   validate:
     name: Validate plugin structure

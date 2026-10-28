@@ -1,6 +1,6 @@
 ---
 name: planning-and-task-breakdown
-description: Breaks work into ordered tasks. Use when you have a spec or clear requirements and need to break work into implementable tasks. Use when a task feels too large to start, when you need to estimate scope, or when parallel work is possible.
+description: Breaks a spec or PRD into an ordered task list of verifiable tasks, each with acceptance criteria and dependencies, ready to execute. Use when you have a spec or clear requirements and need to break work into implementable tasks, when a task feels too large to start, when you need to estimate scope or sequence dependencies, or when parallel work is possible.
 ---
 
 # Planning and Task Breakdown

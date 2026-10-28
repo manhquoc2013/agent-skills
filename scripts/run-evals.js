@@ -205,7 +205,7 @@ function duplicateEvalIds(evals) {
 
 // ---------- tier 2 ----------
 
-function runDeterministic(minRank1) {
+function runDeterministic(minRank1, showRank1Misses = false) {
   const skills = loadSkills();
   const cases = loadCases();
   const corpus = buildCorpus(skills);
@@ -312,6 +312,16 @@ function runDeterministic(minRank1) {
       const idx = ranking.findIndex((r) => r.name === expected);
       const hit = ranking[idx];
       if (idx === 0 && hit.score > 0) rank1++;
+      // A rank-1 miss that still lands inside top_k passes (and counts as an
+      // error only outside it), so it is invisible in the summary. Raising the
+      // rank-1 rate is impossible without seeing which prompts those are, so
+      // the flag makes them explicit without changing any verdict.
+      if (showRank1Misses && idx !== 0 && hit && hit.score > 0) {
+        const winner = ranking[0];
+        console.log(`  ·  ${expected}: ranked #${idx + 1}, not #1`);
+        console.log(`       "${t.prompt}"`);
+        console.log(`       outranked by: ${winner.name} (${winner.score.toFixed(2)} vs ${hit.score.toFixed(2)})`);
+      }
       if (idx >= 0 && idx < topK && hit.score > 0) {
         passed++;
       } else if (!hit || hit.score === 0) {
@@ -650,6 +660,7 @@ function runBehavioral(skillName, dryRun) {
 function main(args = process.argv.slice(2)) {
   const bIdx = args.indexOf('--behavioral');
   const rankIdx = args.indexOf('--min-rank1');
+  const showRank1Misses = args.includes('--show-rank1-misses');
   let minRank1 = null;
   if (rankIdx !== -1) {
     const raw = args[rankIdx + 1];
@@ -666,7 +677,7 @@ function main(args = process.argv.slice(2)) {
     }
     runBehavioral(args[bIdx + 1], args.includes('--dry-run'));
   } else {
-    runDeterministic(minRank1);
+    runDeterministic(minRank1, showRank1Misses);
   }
 }
 

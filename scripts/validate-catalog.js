@@ -20,6 +20,7 @@ const SKILLS_DIR = path.join(ROOT, 'skills');
 // `[<name>](skills/<name>/SKILL.md)` — group 2 is the skill name.
 const README_LINK_RE = /\[([^\]]+)\]\(skills\/([^/)]+)\/SKILL\.md\)/g;
 // `\b(\d+)\s+skills?\b` case-insensitive.
+// Not an exhaustive count: matches only digit counts written "N skills"/"N skill", and the docs walk is deliberately non-recursive because docs/comparison.md and docs/cursor-setup.md (excluded below) carry counts that are not this repo's catalog size.
 const COUNT_RE = /\b(\d+)\s+skills?\b/gi;
 
 // Documents whose `N skills` text is NOT a claim about this repo's catalog.

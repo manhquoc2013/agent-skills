@@ -1,6 +1,6 @@
 ---
 name: autonomous-agent-workflow
-description: Orchestrates autonomous end-to-end engineering from requirements interview to final verification. Use when starting a feature or project that requires interactive clarification, spec generation, task breakdown, sub-agent dispatch, autonomous self-healing TDD, and multi-axis review until 100% complete.
+description: Orchestrates autonomous end-to-end engineering, from a high-level idea through requirements interview, spec generation, task breakdown, parallel sub-agent dispatch, self-healing TDD, and multi-axis review until 100% complete. Use when you want the agent to ask clarifying questions, close every gap, and build a whole feature end to end without stopping, or when starting a feature or project that requires interactive clarification and autonomous execution to final verification.
 ---
 
 # Autonomous Agent Workflow
