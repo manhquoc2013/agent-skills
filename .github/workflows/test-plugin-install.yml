@@ -60,11 +60,13 @@ jobs:
 
       # build-agent-dist.js regenerates 20 generated descriptors from source. Without
       # this step a skill edit ships in skills/ while .cursor/, .codex-plugin/ and the
-      # rest keep the old text, and CI stays green. Regenerate and demand a clean tree:
-      # porcelain (not just diff) so an untracked generated file is caught too.
+      # rest keep the old text, and CI stays green. Regenerate, then fail on a tracked
+      # change (git diff) or an untracked generated file (porcelain) -- diff alone
+      # misses a file the build created for the first time.
       - name: Verify generated agent distributions are in sync
         run: |
           node scripts/build-agent-dist.js
+          git diff --exit-code
           test -z "$(git status --porcelain)"
 
   validate-commands:
