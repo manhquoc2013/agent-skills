@@ -1,0 +1,14 @@
+{
+  "schema_version": 1,
+  "kind": "verdict",
+  "at": 1793155267797,
+  "triage_id": "TRI-1793153122574-d0e4",
+  "task_id": "ses_1aab58e54b49611e43fad88cf39f3c86796ff719aa23a76561ea3c110f9391f7",
+  "seat": "engineering-code-reviewer",
+  "verdict": "Pass",
+  "attribution": "brief",
+  "measured": {
+    "loc_changed": 0,
+    "files_touched": 0
+  }
+}

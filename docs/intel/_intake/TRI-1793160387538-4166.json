@@ -1,0 +1,95 @@
+{
+  "request_id": "ses_e7fc8f032ffeNgdQINBCzwpaTQ/msg_180b01306001NMQnfnh1Ow5GV3/call_00_NOK5UT66bcVUWNQUZZPR5383",
+  "decision_axes": {
+    "version": 1,
+    "scope": {
+      "files": 1,
+      "packages": 0,
+      "write_regions": 1
+    },
+    "risk": {
+      "status": "identified",
+      "groups": [
+        "deploy"
+      ]
+    },
+    "complexity": "unassessed",
+    "execution": {
+      "owner": true,
+      "basis": "identified_risk",
+      "parallelism": "not_inferred",
+      "local_batch_files": 8
+    }
+  },
+  "triage_id": "TRI-1793160387538-4166",
+  "created_at": 1793160387538,
+  "request_summary": "Make the CI drift step call `git diff --exit-code` explicitly as requested, keeping the porcelain check so untracked generated files are still caught.",
+  "change_class": "C2",
+  "handling": "inline",
+  "evidence": {
+    "edit_target_files": [
+      ".github/workflows/test-plugin-install.yml"
+    ],
+    "impact_files": [
+      ".github/workflows/test-plugin-install.yml"
+    ],
+    "packages": [
+      "."
+    ],
+    "shape": "brownfield",
+    "write_scope_clusters": 1,
+    "brownfield_extend": false,
+    "one_way_door_hits": [
+      {
+        "group": "deploy",
+        "path": ".github/workflows/test-plugin-install.yml"
+      },
+      {
+        "group": "deploy",
+        "path": ".github/workflows/test-plugin-install.yml"
+      },
+      {
+        "group": "deploy",
+        "path": "declared:deployment"
+      }
+    ],
+    "risk_effects": [
+      {
+        "group": "deploy",
+        "path": ".github/workflows/test-plugin-install.yml"
+      }
+    ],
+    "dev_footprint": "unknown"
+  },
+  "rationale": "C2: bounded one-way door: deploy:.github/workflows/test-plugin-install.yml, deploy:.github/workflows/test-plugin-install.yml, deploy:declared:deployment — reduced-pipeline floor for ≤3 files in one real package; pipeline reach: no pipeline seat may edit .github/workflows/test-plugin-install.yml, so a pipeline lane could never finish this change — it is routed to the root session that ran this triage (or to the operator for any edit the root session's own grants refuse) and the handling is inline; the class above still states the change's weight (1 edit-target files / 0 package(s) (root pseudo-package excluded, Q1 2026-08-21) / 1 write-scope clusters / co-change unassessed / shape=brownfield)",
+  "entry_point": "GitHub Actions step \"Verify generated agent distributions are in sync\"",
+  "blast_radius": 1,
+  "done_oracle": "The drift step runs `node scripts/build-agent-dist.js`, then `git diff --exit-code`, then the porcelain check for untracked files, so the literal requirement is visible in the file while untracked generated files are still caught.",
+  "verification_commands": [
+    {
+      "command": "node scripts/build-agent-dist.js",
+      "cwd": "D:\\Works\\Tools\\agent-skills",
+      "timeout_ms": 120000
+    }
+  ],
+  "change_type": "implementation",
+  "source_snapshot": {
+    "vcs": "git",
+    "head": "cd5325299d9003ddfaacd86688e4cdd5beea6ef8",
+    "dirty": true,
+    "captured_at": 1793160387728
+  },
+  "pipeline_unreachable": [
+    ".github/workflows/test-plugin-install.yml"
+  ],
+  "budget": {
+    "wall_clock_ms": 6360000,
+    "turns": 352,
+    "turns_used": 0
+  },
+  "no_single_gate_reason": "A GitHub Actions step has no local runner; GitHub's parser decides its validity at push time. The commands it runs are the same regenerate-then-diff check already measured locally (two consecutive builds leave the tree unchanged).",
+  "risk_facts": [
+    "deployment"
+  ],
+  "risk_facts_source": "declared"
+}

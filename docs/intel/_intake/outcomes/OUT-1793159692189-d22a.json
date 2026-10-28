@@ -1,0 +1,10 @@
+{
+  "schema_version": 1,
+  "kind": "verdict",
+  "at": 1793159692189,
+  "triage_id": "TRI-1793158882831-c5a4",
+  "task_id": "ses_09b987e1de1f60caf0dc56bf2761f84244e08a4173d19c811da7fbe35a99061e",
+  "seat": "engineering-backend-developer",
+  "verdict": "Blocked",
+  "attribution": "brief"
+}

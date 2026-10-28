@@ -1,0 +1,8 @@
+{
+  "at": 1793153115050,
+  "kind": "target_module_not_found",
+  "change_class": "C3",
+  "shape": "brownfield",
+  "candidate_files": 8,
+  "detail": "target_module M-001 has no folder under docs/modules"
+}

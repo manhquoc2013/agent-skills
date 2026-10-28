@@ -1,0 +1,14 @@
+{
+  "schema_version": 1,
+  "kind": "verdict",
+  "at": 1793156948424,
+  "triage_id": "TRI-1793153122574-d0e4",
+  "task_id": "ses_4ac7f18b11642b834cf0cf129fd25e74cd92cd288ba2eebe261c2d668095e367",
+  "seat": "utility-security-auditor",
+  "verdict": "Pass",
+  "attribution": "brief",
+  "measured": {
+    "loc_changed": 190,
+    "files_touched": 4
+  }
+}

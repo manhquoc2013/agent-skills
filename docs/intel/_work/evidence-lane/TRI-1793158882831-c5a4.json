@@ -1,0 +1,47 @@
+{
+  "runID": "EVL-1793158923596-ce66",
+  "triageID": "TRI-1793158882831-c5a4",
+  "changeClass": "C2",
+  "builder": "software.backend",
+  "breaker": "software.verification",
+  "request": "Fix a regression introduced by the npm-test alignment: `npm test` now hard-fails on a machine without bash, because `test:hooks` calls `bash hooks/*.sh` three times. This Windows machine has no working bash (the WSL relay errors with \"execvpe(/bin/bash) failed\"), so `npm test` is red for a reason unrelated to any contributor's change.\n\nSCOPE — exactly these 3 files:\n1. scripts/run-hook-tests.js (new)\n2. scripts/build-agent-dist.js (the generated package.json template)\n3. package.json (regenerated from that template)\n\nDeliverable: a small zero-dependency Node runner, scripts/run-hook-tests.js, that owns the three bash suites in order:\n  session-start-test.sh, sdd-cache-test.sh, simplify-ignore-test.sh\n\nBehaviour, in this order:\n- Probe for bash (spawnSync('bash', ['-c', 'exit 0'])). A machine can have `bash` on PATH that is a broken WSL relay, so a failed probe counts as \"no bash\".\n- bash works -> run each suite with bash hooks/<file>, stdio inherited, stop at the first failure, exit with its code. Print which suite is running.\n- bash missing AND process.env.CI is set -> this is the important branch: print an error naming the three suites that could not run and exit 1. CI must never silently skip a gate.\n- bash missing, no CI -> print a clearly marked SKIPPED banner naming the three unrun suites, why they were skipped, and how to run them (install bash / Git Bash), then exit 0. Local convenience only; the banner must be loud enough that nobody mistakes it for a pass.\n\nThen change the template's `test:hooks` in scripts/build-agent-dist.js (currently line 219) from the three-call bash chain to `node scripts/run-hook-tests.js`, and regenerate package.json with `node scripts/build-agent-dist.js` so the committed JSON matches the generator byte for byte. Leave `test`, `test:gates`, `build`, `prepare` and `uninstall` untouched.\n\nACCEPTANCE CRITERIA\n- `node scripts/run-hook-tests.js` exits 0 on this machine and prints the SKIPPED banner listing all three files.\n- The same command with CI=true exits 1 and names the three files (prove this in the shell by setting the env var for the one call).\n- Two consecutive `node scripts/build-agent-dist.js` runs leave `git status --porcelain -- package.json scripts/build-agent-dist.js` showing only the expected modification, and package.json's test:hooks matches the template exactly.\n- `node scripts/validate-versions.js` still passes (package.json version must stay 0.6.13).\n- No new dependencies; Node stdlib only. No other file touched.\n\nReport the per-file change, the exact commands you ran with their output (including the CI=true proof), and anything left out.",
+  "rounds": [
+    {
+      "round": 1,
+      "builderTaskID": "ses_edde5e482934cd711dcec212a7fa2c957cd048096ddf076868571bd88aca3d30",
+      "build": {
+        "verdict": "Blocked",
+        "changedFiles": [
+          "package.json",
+          "scripts/build-agent-dist.js",
+          "scripts/run-hook-tests.js"
+        ],
+        "testsAdded": [],
+        "commandsRun": [
+          "git status --porcelain (coordinator; confirmed only the 3 in-scope files changed)",
+          "git diff -- package.json scripts/build-agent-dist.js (coordinator; confirmed the minimal test:hooks change)",
+          "node scripts/run-hook-tests.js -> exit 1, CI-branch error naming 3 suites (implement child ses_09b987e1de1f60caf0dc56bf2761f84244e08a4173d19c811da7fbe35a99061e)",
+          "set \"CI=\" && node scripts/run-hook-tests.js -> exit 0 + SKIPPED banner naming all 3 suites (implement child)",
+          "set \"CI=true\" && node scripts/run-hook-tests.js -> exit 1 + names the 3 files (implement child)",
+          "node scripts/build-agent-dist.js (x2) -> exit 0 both; idempotent (implement child)",
+          "node scripts/validate-versions.js -> exit 0, 'All plugin manifests use version 0.6.13.' (implement child)"
+        ],
+        "summary": "The change itself is complete and correct; it is blocked only by a gate/environment-vs-intake conflict, not a code defect.\n\nDELIVERED (exactly the 3 in-scope files, confirmed via git status/diff):\n- scripts/run-hook-tests.js (new): zero-dependency Node runner (child_process.spawnSync + path only). Four branches per spec: bash probe spawnSync('bash',['-c','exit 0']); bash works -> run the three suites in order with inherited stdio, print each name, stop at first non-zero exit; bash missing + CI set -> error naming the three suites + exit 1; bash missing + no CI -> loud SKIPPED banner naming the three suites + reason + how-to-run, exit 0.\n- scripts/build-agent-dist.js: template test:hooks (line 219) -> \"node scripts/run-hook-tests.js\"; test/test:gates/build/prepare/uninstall untouched.\n- package.json: regenerated; test:hooks matches the template; version still 0.6.13.\n\nVERIFIED BEHAVIOR (implement child): no-CI branch exit 0 + SKIPPED banner (proven by unsetting CI); CI branch exit 1 naming the files (proven with CI=true); build idempotent over two runs; validate-versions passes at 0.6.13. The bash-present branch is code-correct but not live-runnable — this machine has no working bash, which is the regression being fixed.\n\nBLOCKER: the platform's execution and acceptance-gate environment sets ambient CI=1 (implementer measured `echo CI=[%CI%]` -> [1]; the engine gate independently failed the bare command). So the intake's first verification command, `node scripts/run-hook-tests.js`, exits 1 — the spec-mandated CI branch — instead of 0. The intake record (TRI-1793158882831-c5a4, no_single_gate_reason) explicitly assumes the gate env shows the no-CI 'skip path'; the ambient CI contradicts that. No code change can satisfy both 'CI set -> exit 1' and 'bare under ambient CI=1 -> exit 0' — they are mutually exclusive by design.\n\nCONSEQUENCE: the engine acceptance gate marks implement blocked, and the verify and review suite steps are gated behind a passing implement receipt, so they were never dispatched.\n\nOWNING NEXT ACTION (parent): (a) run the gate with CI unset / accept the proven no-CI exit-0 as satisfying 'bare exits 0', or (b) amend the intake verification command to explicitly clear CI for the skip-branch check. Note: I could not re-probe CI myself — my shell is read-only git only, and ad-hoc subagent dispatch was refused by the direct-mode manager constraint."
+      },
+      "startedAt": 1793158923770,
+      "endedAt": 1793160101340
+    }
+  ],
+  "outcome": "builder-failed",
+  "reason": "The builder returned Blocked; its required work is incomplete: The change itself is complete and correct; it is blocked only by a gate/environment-vs-intake conflict, not a code defect.\n\nDELIVERED (exactly the 3 in-scope files, confirmed via git status/diff):\n- scripts/run-hook-tests.js (new): zero-dependency Node runner (child_process.spawnSync + path only). Four branches per spec: bash probe spawnSync('bash',['-c','exit 0']); bash works -> run the three suites in order with inherited stdio, print each name, stop at first non-zero exit; bash missing + CI set -> error naming the three suites + exit 1; bash missing + no CI -> loud SKIPPED banner naming the three suites + reason + how-to-run, exit 0.\n- scripts/build-agent-dist.js: template test:hooks (line 219) -> \"node scripts/run-hook-tests.js\"; test/test:gates/build/prepare/uninstall untouched.\n- package.json: regenerated; test:hooks matches the template; version still 0.6.13.\n\nVERIFIED BEHAVIOR (implement child): no-CI branch exit 0 + SKIPPED banner (proven by unsetting CI); CI branch exit 1 naming the files (proven with CI=true); build idempotent over two runs; validate-versions passes at 0.6.13. The bash-present branch is code-correct but not live-runnable — this machine has no working bash, which is the regression being fixed.\n\nBLOCKER: the platform's execution and acceptance-gate environment sets ambient CI=1 (implementer measured `echo CI=[%CI%]` -> [1]; the engine gate independently failed the bare command). So the intake's first verification command, `node scripts/run-hook-tests.js`, exits 1 — the spec-mandated CI branch — instead of 0. The intake record (TRI-1793158882831-c5a4, no_single_gate_reason) explicitly assumes the gate env shows the no-CI 'skip path'; the ambient CI contradicts that. No code change can satisfy both 'CI set -> exit 1' and 'bare under ambient CI=1 -> exit 0' — they are mutually exclusive by design.\n\nCONSEQUENCE: the engine acceptance gate marks implement blocked, and the verify and review suite steps are gated behind a passing implement receipt, so they were never dispatched.\n\nOWNING NEXT ACTION (parent): (a) run the gate with CI unset / accept the proven no-CI exit-0 as satisfying 'bare exits 0', or (b) amend the intake verification command to explicitly clear CI for the skip-branch check. Note: I could not re-probe CI myself — my shell is read-only git only, and ad-hoc subagent dispatch was refused by the direct-mode manager constraint.",
+  "startedAt": 1793158923596,
+  "endedAt": 1793160101340,
+  "phase": "done",
+  "round": 1,
+  "context": {
+    "execution_contract": "governed-suite/v1",
+    "max_rework": "2"
+  },
+  "builderTaskID": "ses_edde5e482934cd711dcec212a7fa2c957cd048096ddf076868571bd88aca3d30",
+  "roundStartedAt": 1793158923770
+}

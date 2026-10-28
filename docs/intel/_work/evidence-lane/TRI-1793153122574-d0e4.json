@@ -1,0 +1,90 @@
+{
+  "runID": "EVL-1793153164649-effc",
+  "triageID": "TRI-1793153122574-d0e4",
+  "changeClass": "C3",
+  "builder": "software.backend",
+  "breaker": "software.verification",
+  "request": "Deliver four repo-integrity fixes in D:\\Works\\Tools\\agent-skills so the local contributor gate stops being weaker than CI.\n\nSCOPE — exactly these 7 files; do NOT touch .github/workflows/test-plugin-install.yml (the root session owns it separately):\n1. scripts/build-agent-dist.js\n2. package.json (GENERATED — edit the generator, then run `node scripts/build-agent-dist.js`)\n3. README.md\n4. INSTALL.md\n5. scripts/validate-catalog.js (new)\n6. scripts/validate-catalog-test.js (new)\n7. scripts/validate-versions.js\n\n(1) npm test must run the same gates as CI.\n`package.json` is generated: scripts/build-agent-dist.js:177-223 writes it from a hardcoded template whose `scripts` block is at line 213-218. Edit THAT template, then regenerate with `node scripts/build-agent-dist.js` so the committed JSON matches the generator. Required shape:\n  test         -> `npm run test:gates && npm run test:hooks`\n  test:gates   -> validate-skills, validate-catalog, validate-commands, validate-reference-links, validate-versions, validate-artifact-paths, run-evals --min-rank1 95, then the node --test suites (scripts/lib/skill-lint-test.js, scripts/validate-versions-test.js, scripts/validate-catalog-test.js, scripts/run-evals-test.js, scripts/validate-reference-links-test.js, scripts/validate-commands-test.js, scripts/validate-artifact-paths-test.js, scripts/floor-guard-reference-test.js), then scripts/uninstall-test.js\n  test:hooks   -> bash hooks/session-start-test.sh && bash hooks/sdd-cache-test.sh && bash hooks/simplify-ignore-test.sh\nKeep build/prepare/uninstall unchanged. Rationale for the two-step split: hook tests need bash, so a failure tells the contributor which half broke.\n\n(2) New validator scripts/validate-catalog.js — single source of truth is the filesystem `skills/` directory.\n - Collect skill directory names (dirs containing SKILL.md).\n - README.md carries the catalog table: rows of the form `[<name>](skills/<name>/SKILL.md)`. Extract every such link target. Report BOTH directions: a skill directory with no README table row, and a README row pointing at a missing skill.\n - Every stated skill count in README.md and INSTALL.md (`\\b(\\d+)\\s+skills\\b`, case-insensitive) must equal the real directory count. Currently README.md:59 and README.md:372 say 26 while README.md:234 and the filesystem say 31 — fix those two numbers to 31.\n - Exit 0 on agreement, 1 with one line per discrepancy. Match the style of scripts/validate-skills.js (shebang, 'use strict', console output, exit code, try/catch wrapper). Export a PURE function (e.g. checkCatalog({skillDirs, readmeText, otherDocs})) that the CLI wraps, so the test needs no filesystem.\n\n(3) scripts/validate-catalog-test.js — node:test, same style as scripts/validate-versions-test.js, exercising the pure function with synthetic fixtures: matching catalog passes; a skill missing from README fails; a README row for a non-existent skill fails; a wrong stated count fails. Do not read the real repo inside the test.\n\n(4) scripts/validate-versions.js — extend manifestPaths to cover the three manifests that currently escape the check, keeping plugin.json as the expected version:\n - package.json (JSON, top-level `version`)\n - gemini-extension.json (JSON, top-level `version`)\n - plugin.yaml (YAML, a `version:` line — parse with a simple /^version:\\s*(.+)$/m regex; the repo has zero dependencies and must stay that way)\nAll three currently read 0.6.13 and must keep passing. Update scripts/validate-versions-test.js only if its list of manifests needs to mirror the new coverage.\n\n(5) Adjacent documentation correction, same drift class, one line each: INSTALL.md:77 says \"Registers all 10 commands\" but commands/ holds 12 .toml files — change 10 to 12. Do NOT add a command-count check; that is out of scope.\n\nACCEPTANCE CRITERIA\n- `node scripts/validate-catalog.js` exits 0 on the fixed tree and exits 1 (naming the offending skill/count) when a fixture is broken.\n- `node scripts/validate-catalog-test.js` and `node scripts/validate-versions-test.js` pass.\n- `node scripts/validate-skills.js`, `node scripts/validate-commands.js`, `node scripts/validate-versions.js` still pass unchanged.\n- `node scripts/build-agent-dist.js` twice in a row leaves `git status --porcelain` empty (build is idempotent and package.json matches its template).\n- No new npm dependencies; Node stdlib only.\n- Existing validator behaviour, skill content and all other files untouched.\n\nReport what you changed per file, the exact commands you ran and their output, and anything you deliberately left out.",
+  "rounds": [
+    {
+      "round": 1,
+      "builderTaskID": "ses_f76b7b89b161d79f418fe2b9362f6e2604d5e49f35f9c426cea119ea34eb1ee1",
+      "breakerTaskID": "ses_cd4fb640be934e3d5c7dcae156b27c1d4424df638ba21f09864ede442e35cbf6",
+      "build": {
+        "verdict": "Pass",
+        "changedFiles": [
+          "scripts/build-agent-dist.js",
+          "package.json",
+          "README.md",
+          "INSTALL.md",
+          "scripts/validate-catalog.js",
+          "scripts/validate-catalog-test.js",
+          "scripts/validate-versions.js"
+        ],
+        "testsAdded": [
+          "scripts/validate-catalog-test.js"
+        ],
+        "commandsRun": [
+          "node scripts/validate-catalog.js  (exit 0: 'Catalog valid: 31 skills agree with the README table and count claims.')",
+          "node scripts/validate-catalog-test.js  (exit 0: tests 4 pass 4 fail 0)",
+          "node scripts/validate-versions-test.js  (exit 0: tests 1 pass 1 fail 0)",
+          "node scripts/validate-versions.js  (exit 0: 'All plugin manifests use version 0.6.13.')",
+          "node scripts/validate-skills.js  (exit 0: '31 skills and 4 personas checked — 0 error(s) — PASSED')",
+          "node scripts/validate-commands.js  (exit 0: '12 commands checked — 0 error(s) — PASSED')",
+          "npm run build (== node scripts/build-agent-dist.js) twice + git status --porcelain before/after (byte-identical → zero build drift)"
+        ],
+        "summary": "Delivered the four repo-integrity fixes so the local contributor gate (npm test) matches CI. All 6 required verification commands exit 0, and build idempotency is proven. Executed by a compiled direct-mode suite — design → design-review → implement → verify+security (parallel) → review — every step returned Pass.\n\nPer-file:\n- scripts/build-agent-dist.js: template scripts block now emits test = `npm run test:gates && npm run test:hooks`; test:gates = 6 validate-* gates (incl. new validate-catalog) + run-evals --min-rank1 95 + node --test on all 8 test files + `node scripts/uninstall-test.js` (LAST); test:hooks = 3 bash hook tests. build/prepare/uninstall unchanged.\n- package.json: regenerated from the template; verified byte-identical.\n- scripts/validate-catalog.js (new): pure checkCatalog({skillDirs, readmeText, otherDocs}) -> string[]; both-direction check (skill dir missing from README AND README row for a missing skill) via /\\[([^\\]]+)\\]\\(skills\\/([^/)]+)\\/SKILL\\.md\\)/g; count check /\\b(\\d+)\\s+skills?\\b/gi over README.md + INSTALL.md; exit 0/1; style of validate-skills.js.\n- scripts/validate-catalog-test.js (new): node:test, 4 synthetic fixtures (matching passes; missing-from-README fails; non-existent-skill row fails; wrong count fails), no real-repo reads.\n- scripts/validate-versions.js: manifestPaths extended to 8 (adds package.json, gemini-extension.json, plugin.yaml) with per-format reader (YAML /^version:\\s*(.+)$/m else JSON.parse); plugin.json stays the expected version. All read 0.6.13.\n- README.md: lines 59 and 372 corrected 26→31.\n- INSTALL.md: line 77 corrected 10→12 commands.\n\nReview chain and rework: design Pass → design-review Pass (first pass returned Changes-requested for one defect — the reconstructed test:gates dropped the trailing `&& node scripts/uninstall-test.js`; the design author restored it and the re-review Passed) → implement Pass → verify Pass + security Pass (parallel) → review Pass.\n\nCaveats (non-blocking, no defect): (1) `git status --porcelain` is not literally empty — it shows the 7 uncommitted deliverables plus a peer's concurrent edit to .github/workflows/test-plugin-install.yml and the harness's untracked docs/intel/ artifacts; build idempotency (the criterion's intent) is proven by byte-identical porcelain before vs after two builds. (2) Tests invoked via `node scripts/*-test.js` (node:test auto-runs) because the harness firewall blocks `node --test <file>`; same assertions, exit 0. (3) scripts/validate-versions-test.js NOT modified (not admitted by the intake); stays at 5 original manifests and passes; the 3 new manifests are exercised by validate-versions.js itself. (4) README.md:376 'commands/ (9 commands)' left untouched (out of scope) — residual drift for the parent. (5) CI gating of validate-catalog.js and the CI build-diff step belong to the root session owning .github/workflows/test-plugin-install.yml, not this assignment."
+      },
+      "break": {
+        "verdict": "Pass",
+        "findings": [
+          {
+            "severity": "minor",
+            "title": "Stale \"26 skills\" counts remain in docs/ (out of the 7-file scope, same drift class)",
+            "reproduction": "grep -riE '[0-9]+ skills?' docs/ → docs/codex-setup.md:25 \"All 26 skills\", docs/adoption-guide.md:68 \"26 skills\", docs/comparison.md:21 \"26 skills\", docs/commandcode-setup.md:15 \"26 skills\", docs/usage-guide.md:3 & :45 \"26 skill\"",
+            "expected": "Every stated skill count equals the real skills/ directory count (31) — the invariant validate-catalog.js now enforces",
+            "actual": "Six docs still state 26. The brief scoped the count check to README.md + INSTALL.md only, so this is not a defect of the change — flagged as follow-up chip sug_mvrkd8a1wwcztk."
+          },
+          {
+            "severity": "minor",
+            "title": "validate-versions-test.js does not mirror the 3 newly added manifests",
+            "reproduction": "read scripts/validate-versions-test.js (manifestPaths = 5 entries: plugin.json, .codex-plugin, .claude-plugin, .claude-plugin/marketplace, .agents/plugins/marketplace) vs scripts/validate-versions.js (8 entries incl. package.json, gemini-extension.json, plugin.yaml)",
+            "expected": "Regression test mirrors the validator's coverage, or the brief's conditional ('update only if its list needs to mirror') is met",
+            "actual": "Test still covers only the 5 original manifests. No functional gap: package.json / gemini-extension.json / plugin.yaml drift is still caught because validate-versions.js itself runs earlier in test:gates."
+          }
+        ],
+        "testsAdded": [
+          "C:\\Users\\quoctm\\AppData\\Local\\Temp\\ai-studio\\sessions\\36e45b9b92a332c21ea7b886f9c66fd670a4cc783c71a3805bd6fb69ca39e011\\catalog-edge.test.js"
+        ],
+        "commandsRun": [
+          "node scripts/validate-catalog.js → exit 0: 'Catalog valid: 31 skills agree with the README table and count claims.'",
+          "node scripts/validate-catalog-test.js → exit 0: 4 pass / 0 fail / 0 skipped",
+          "node scripts/validate-versions-test.js → exit 0: 1 pass / 0 fail / 0 skipped",
+          "node scripts/validate-versions.js → exit 0: 'All plugin manifests use version 0.6.13.'",
+          "node scripts/validate-skills.js → exit 0: '31 skills and 4 personas checked — 0 error(s), 0 warning(s) — PASSED'",
+          "node scripts/validate-commands.js → exit 0: '12 commands checked — 0 error(s) — PASSED'",
+          "node scripts/build-agent-dist.js (run twice) → exit 0 both; git status --porcelain and git diff --stat identical before vs after (idempotent; package.json matches its template)",
+          "node <scratch>/catalog-edge.test.js → exit 0: 6 pass / 0 fail (incl. behavioral CLI exit-1 on a broken tree)"
+        ],
+        "summary": "Attacked the four repo-integrity fixes over their real seams. (1) npm test split into test:gates + test:hooks — package.json's test script matches the build-agent-dist.js template byte-for-byte (regeneration produced zero diff), and every referenced validator/test/hook file exists on disk (8 validators + run-evals.js, whose --min-rank1 flag is confirmed at run-evals.js:652 + 8 node:test suites + uninstall-test.js + 3 bash hook scripts). (2) validate-catalog.js — pure checkCatalog extracted and exported; I probed it with empty, unicode, duplicate, digit-bearing-name, and INSTALL-count fixtures (all correct) and proved the CLI exits 1 naming both the missing skill and the wrong count on a broken tree, and exits 0 on the current tree (31 skills). README has 31 skill links = 31 skill dirs; all README/INSTALL count claims now say 31. (3) validate-versions.js now covers 8 manifests incl. package.json, gemini-extension.json, plugin.yaml (YAML parsed via /^version:\\s*(.+)$/m); all read 0.6.13. (4) Build idempotency: two consecutive build-agent-dist runs leave git status --porcelain and diff --stat unchanged. No blocking or major finding; every acceptance criterion observed executing against the real product. Two minor notes: docs/*.md still say 26 (out of scope, flagged as follow-up chip sug_mvrkd8a1wwcztk), and validate-versions-test.js does not mirror the 3 new manifests (the validator itself still gates them in test:gates)."
+      },
+      "decision": {
+        "kind": "accept"
+      },
+      "startedAt": 1793153165532,
+      "endedAt": 1793158723843
+    }
+  ],
+  "outcome": "verified",
+  "reason": "The breaker found nothing actionable and its verification ran green: Attacked the four repo-integrity fixes over their real seams. (1) npm test split into test:gates + test:hooks — package.json's test script matches the build-agent-dist.js template byte-for-byte (regeneration produced zero diff), and every referenced validator/test/hook file exists on disk (8 validators + run-evals.js, whose --min-rank1 flag is confirmed at run-evals.js:652 + 8 node:test suites + uninstall-test.js + 3 bash hook scripts). (2) validate-catalog.js — pure checkCatalog extracted and exported; I probed it with empty, unicode, duplicate, digit-bearing-name, and INSTALL-count fixtures (all correct) and proved the CLI exits 1 naming both the missing skill and the wrong count on a broken tree, and exits 0 on the current tree (31 skills). README has 31 skill links = 31 skill dirs; all README/INSTALL count claims now say 31. (3) validate-versions.js now covers 8 manifests incl. package.json, gemini-extension.json, plugin.yaml (YAML parsed via /^version:\\s*(.+)$/m); all read 0.6.13. (4) Build idempotency: two consecutive build-agent-dist runs leave git status --porcelain and diff --stat unchanged. No blocking or major finding; every acceptance criterion observed executing against the real product. Two minor notes: docs/*.md still say 26 (out of scope, flagged as follow-up chip sug_mvrkd8a1wwcztk), and validate-versions-test.js does not mirror the 3 new manifests (the validator itself still gates them in test:gates).",
+  "startedAt": 1793153164649,
+  "endedAt": 1793158723844,
+  "phase": "done",
+  "round": 1,
+  "context": {
+    "execution_contract": "governed-suite/v1",
+    "max_rework": "2"
+  },
+  "builderTaskID": "ses_f76b7b89b161d79f418fe2b9362f6e2604d5e49f35f9c426cea119ea34eb1ee1",
+  "roundStartedAt": 1793153165532
+}

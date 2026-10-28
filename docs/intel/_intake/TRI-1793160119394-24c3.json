@@ -1,0 +1,74 @@
+{
+  "request_id": "ses_e7fc8f032ffeNgdQINBCzwpaTQ/msg_180abf44b001d5iK6nD4XIQyPc/call_00_NdpJSB0D0ztLEiatKmPQ2863",
+  "decision_axes": {
+    "version": 1,
+    "scope": {
+      "files": 1,
+      "packages": 0,
+      "write_regions": 1
+    },
+    "risk": {
+      "status": "unassessed",
+      "groups": []
+    },
+    "complexity": "unassessed",
+    "execution": {
+      "owner": true,
+      "basis": "scope_envelope",
+      "parallelism": "not_inferred",
+      "local_batch_files": 8
+    }
+  },
+  "triage_id": "TRI-1793160119394-24c3",
+  "created_at": 1793160119394,
+  "request_summary": "Replace the CI-environment check in the hook-test runner with an explicit --require-bash flag so a machine that merely exports CI (as this harness does) still gets the local skip instead of a hard failure.",
+  "change_class": "C0",
+  "handling": "inline",
+  "evidence": {
+    "edit_target_files": [
+      "scripts/run-hook-tests.js"
+    ],
+    "impact_files": [
+      "scripts/run-hook-tests.js"
+    ],
+    "packages": [
+      "."
+    ],
+    "shape": "brownfield",
+    "write_scope_clusters": 1,
+    "brownfield_extend": false,
+    "one_way_door_hits": [],
+    "dev_footprint": "backend"
+  },
+  "rationale": "C0: 1 edit-target files in one package, no one-way door (1 edit-target files / 0 package(s) (root pseudo-package excluded, Q1 2026-08-21) / 1 write-scope clusters / co-change unassessed / shape=brownfield)",
+  "entry_point": "The exact-file test command (invoked by `npm test`) on a Windows machine without a usable bash",
+  "blast_radius": 1,
+  "done_oracle": "`node scripts/run-hook-tests.js` exits 0 and prints the SKIPPED banner on a machine without bash even when the ambient environment exports CI=1; `node scripts/run-hook-tests.js --require-bash` exits 1 naming the three unrun suites; with a working bash both forms run all three suites and propagate the first failure.",
+  "verification_commands": [
+    {
+      "command": "node scripts/run-hook-tests.js",
+      "cwd": "D:\\Works\\Tools\\agent-skills",
+      "timeout_ms": 180000
+    },
+    {
+      "command": "node scripts/build-agent-dist.js",
+      "cwd": "D:\\Works\\Tools\\agent-skills",
+      "timeout_ms": 120000
+    }
+  ],
+  "change_type": "implementation",
+  "source_snapshot": {
+    "vcs": "git",
+    "head": "33f3ff2e6c98afa5cbf4488d30472499405f6e52",
+    "dirty": true,
+    "captured_at": 1793160119588
+  },
+  "budget": {
+    "wall_clock_ms": 1140000,
+    "turns": 48,
+    "turns_used": 0
+  },
+  "no_single_gate_reason": "The script is itself the gate; executing it in this environment is the whole check. The bash-present branch cannot be exercised here because no working bash exists on the machine.",
+  "risk_facts": [],
+  "risk_facts_source": "declared"
+}

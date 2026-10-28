@@ -1,0 +1,113 @@
+{
+  "request_id": "ses_e7fc8f032ffeNgdQINBCzwpaTQ/msg_1806b2d220017J7FtBWwcnajRS/call_00_tHvoBItI7qXdmEoV8GQQ8041",
+  "decision_axes": {
+    "version": 1,
+    "scope": {
+      "files": 1,
+      "packages": 0,
+      "write_regions": 1
+    },
+    "risk": {
+      "status": "identified",
+      "groups": [
+        "deploy"
+      ]
+    },
+    "complexity": "unassessed",
+    "execution": {
+      "owner": true,
+      "basis": "identified_risk",
+      "parallelism": "not_inferred",
+      "local_batch_files": 8
+    }
+  },
+  "triage_id": "TRI-1793155876847-d5a1",
+  "created_at": 1793155876847,
+  "request_summary": "Add two CI steps to the existing test-plugin-install workflow: run the new skill-catalog validator with its unit test, and a generated-distribution drift check that regenerates build-agent-dist output and fails on a non-empty git status.",
+  "change_class": "C2",
+  "handling": "inline",
+  "evidence": {
+    "edit_target_files": [
+      ".github/workflows/test-plugin-install.yml"
+    ],
+    "impact_files": [
+      ".github/workflows/test-plugin-install.yml"
+    ],
+    "packages": [
+      "."
+    ],
+    "shape": "brownfield",
+    "write_scope_clusters": 1,
+    "brownfield_extend": false,
+    "one_way_door_hits": [
+      {
+        "group": "deploy",
+        "path": ".github/workflows/test-plugin-install.yml"
+      },
+      {
+        "group": "deploy",
+        "path": ".github/workflows/test-plugin-install.yml"
+      },
+      {
+        "group": "deploy",
+        "path": "declared:deployment"
+      }
+    ],
+    "risk_effects": [
+      {
+        "group": "deploy",
+        "path": ".github/workflows/test-plugin-install.yml"
+      }
+    ],
+    "dev_footprint": "unknown"
+  },
+  "rationale": "C2: bounded one-way door: deploy:.github/workflows/test-plugin-install.yml, deploy:.github/workflows/test-plugin-install.yml, deploy:declared:deployment — reduced-pipeline floor for ≤3 files in one real package; pipeline reach: no pipeline seat may edit .github/workflows/test-plugin-install.yml, so a pipeline lane could never finish this change — it is routed to the root session that ran this triage (or to the operator for any edit the root session's own grants refuse) and the handling is inline; the class above still states the change's weight (1 edit-target files / 0 package(s) (root pseudo-package excluded, Q1 2026-08-21) / 1 write-scope clusters / co-change unassessed / shape=brownfield)",
+  "entry_point": "GitHub Actions CI on push and pull_request (.github/workflows/test-plugin-install.yml)",
+  "blast_radius": 1,
+  "done_oracle": "The CI workflow runs `node scripts/validate-catalog.js` and its test suite alongside the existing validators, and gains a step that regenerates the multi-agent distribution and fails the job when `git status --porcelain` is non-empty. No existing step is removed or reordered, and the file remains valid GitHub Actions YAML.",
+  "verification_commands": [
+    {
+      "command": "node scripts/validate-skills.js",
+      "cwd": "D:\\Works\\Tools\\agent-skills",
+      "timeout_ms": 180000
+    }
+  ],
+  "change_type": "implementation",
+  "seam_claims": [
+    {
+      "file": ".github/workflows/test-plugin-install.yml",
+      "line": 22,
+      "quote": "- name: Validate all skills",
+      "source_hash": "fe1437efbdd99bd9ea1fa2bf79aa921f8bdd68a067802e4b41af531a3aa39597",
+      "quote_hash": "9de7d0861632d09b4be0a57b9b47077119b2d4ce7939e3709b64a3006bdc18c7",
+      "note": "The ubuntu job whose step list must gain the catalog validator and the drift check."
+    },
+    {
+      "file": ".github/workflows/test-plugin-install.yml",
+      "line": 37,
+      "quote": "- name: Run skill evals (trigger + routing)",
+      "source_hash": "fe1437efbdd99bd9ea1fa2bf79aa921f8bdd68a067802e4b41af531a3aa39597",
+      "quote_hash": "7d9f41d03288ddd8656db1994dcb63ecc663c7f53f19985558c0ca3db739d39e",
+      "note": "Existing eval step that must keep running; proof the step list is order-sensitive."
+    }
+  ],
+  "source_snapshot": {
+    "vcs": "git",
+    "head": "a41ac53e56f11109463fd09f3b3ddf769643d297",
+    "dirty": true,
+    "captured_at": 1793155877089
+  },
+  "pipeline_unreachable": [
+    ".github/workflows/test-plugin-install.yml"
+  ],
+  "budget": {
+    "wall_clock_ms": 6360000,
+    "turns": 352,
+    "turns_used": 0
+  },
+  "no_single_gate_reason": "A GitHub Actions workflow YAML has no runnable local gate: correctness is decided by GitHub's own workflow parser at push time, and the steps it declares only execute on a runner. The two declared commands are the pre-existing repo gates that must not regress as a side effect of editing the file; the YAML itself is reviewed by diff and validated by GitHub on the next push.",
+  "risk_facts": [
+    "deployment"
+  ],
+  "risk_facts_source": "declared"
+}

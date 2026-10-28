@@ -1,0 +1,9 @@
+{
+  "at": 1793158874898,
+  "kind": "seam_evidence_missing",
+  "change_class": "C2",
+  "shape": "brownfield",
+  "candidate_files": 3,
+  "claims": 0,
+  "detail": "C2 non-greenfield route submitted without seam_claims"
+}

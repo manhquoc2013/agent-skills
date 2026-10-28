@@ -1,0 +1,6 @@
+{
+  "at": 1793153104517,
+  "kind": "verification_plan_refused",
+  "candidate_files": 8,
+  "detail": "verification command 'node --test scripts/validate-catalog-test.js' is unsafe: test command \"node --test scripts/validate-catalog-test.js\" is unscoped or opaque; directories and package-manager test scripts are not bounded targets, so no bounded target or selector can be proven; use the direct underlying runner with exact test file target(s). For example: `npx vitest run path/to/exact.test.ts`, `b…"
+}
