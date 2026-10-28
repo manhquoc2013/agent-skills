@@ -31,6 +31,10 @@
       {
         "prompt": "Tag and publish the release",
         "owner": "git-workflow-and-versioning"
+      },
+      {
+        "prompt": "Simplify this over-clever component",
+        "owner": "code-simplification"
       }
     ]
   },

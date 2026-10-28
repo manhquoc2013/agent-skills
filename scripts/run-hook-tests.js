@@ -25,6 +25,8 @@
 const { spawnSync } = require('child_process');
 const path = require('path');
 
+const { BASH_CMD, hasWorkingBash, skipBanner } = require('./lib/bash-probe');
+
 const HOOK_SUITES = [
   'session-start-test.sh',
   'sdd-cache-test.sh',
@@ -33,46 +35,11 @@ const HOOK_SUITES = [
 
 const HOOKS_DIR = path.resolve(__dirname, '..', 'hooks');
 
-function hasWorkingBash() {
-  // A broken WSL relay fails the probe with a spawn error (status === null),
-  // so treat "bash exists but cannot exec" as "no bash".
-  const probe = spawnSync('bash', ['-c', 'exit 0'], { stdio: 'ignore' });
-  return !probe.error && probe.status === 0;
-}
-
-function skipBanner() {
-  const lines = [
-    '==============================================================',
-    '  SKIPPED — hook test suites were NOT run',
-    '==============================================================',
-    '',
-    '  Reason: no working bash was detected on this machine',
-    '          (probe `bash -c "exit 0"` failed, e.g. a broken WSL relay).',
-    '',
-    '  Suites skipped (NOT run):',
-  ];
-  for (const suite of HOOK_SUITES) {
-    lines.push(`    - hooks/${suite}`);
-  }
-  lines.push(
-    '',
-    '  How to run them:',
-    '    - Install Git Bash (https://gitforwindows.org), or enable WSL,',
-    '      then re-run:  npm run test:hooks',
-    '',
-    '  NOTE: this skip is a LOCAL convenience only. CI calls',
-    '        `node scripts/run-hook-tests.js --require-bash` to turn it into a',
-    '        hard error.',
-    '=============================================================='
-  );
-  return lines.join('\n');
-}
-
 function main() {
   if (hasWorkingBash()) {
     for (const suite of HOOK_SUITES) {
       console.log(`\nRunning hook suite: ${suite}`);
-      const result = spawnSync('bash', [path.join(HOOKS_DIR, suite)], {
+      const result = spawnSync(BASH_CMD, [path.join(HOOKS_DIR, suite)], {
         stdio: 'inherit',
       });
       if (result.error) {
@@ -96,7 +63,11 @@ function main() {
     process.exit(1);
   }
 
-  console.log(skipBanner());
+  console.log(skipBanner({
+    title: 'hook test suites',
+    items: HOOK_SUITES.map((suite) => `hooks/${suite}`),
+    runCommand: 'npm run test:hooks',
+  }));
   process.exit(0);
 }
 
@@ -104,4 +75,4 @@ if (require.main === module) {
   main();
 }
 
-module.exports = { HOOK_SUITES, hasWorkingBash, skipBanner };
+module.exports = { HOOK_SUITES, hasWorkingBash };

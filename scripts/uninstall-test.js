@@ -2,15 +2,16 @@
  * Automated test suite for multi-agent skill uninstallation.
  * Verifies full uninstallation, selective skill removal, alias cleanup, and delegation.
  *
- * Mirrors scripts/run-hook-tests.js bash handling: probes the SAME executable the
- * suites run. Without a working bash the default is to SKIP with a loud banner;
+ * Bash handling comes from scripts/lib/bash-probe.js, shared with
+ * scripts/run-hook-tests.js so the two cannot disagree about which bash to use.
+ * Without a working bash the default is to SKIP with a loud banner;
  * --require-bash turns that skip into a hard error (as CI calls it).
  */
 'use strict';
 const fs = require('fs');
 const path = require('path');
 const os = require('os');
-const { execSync, spawnSync } = require('child_process');
+const { execSync } = require('child_process');
 const assert = require('assert');
 
 const REPO_ROOT = path.resolve(__dirname, '..');
@@ -18,26 +19,7 @@ const INSTALL_SCRIPT = path.join(REPO_ROOT, 'scripts', 'install-local.sh');
 const UNINSTALL_SCRIPT = path.join(REPO_ROOT, 'scripts', 'uninstall-local.sh');
 const ALIASES_SCRIPT = path.join(REPO_ROOT, 'scripts', 'install-aliases.sh');
 
-// The unquoted resolved path: quote it only inside runScript's exec template so
-// hasWorkingBash() probes the exact same executable the suites actually run.
-const BASH_CMD = (() => {
-  if (process.platform !== 'win32') return 'bash';
-  const candidates = [
-    process.env.GIT_BASH,
-    path.join(process.env.LOCALAPPDATA || '', 'Programs', 'Git', 'bin', 'bash.exe'),
-    path.join(process.env.ProgramFiles || 'C:\\Program Files', 'Git', 'bin', 'bash.exe'),
-    path.join(process.env['ProgramFiles(x86)'] || 'C:\\Program Files (x86)', 'Git', 'bin', 'bash.exe'),
-  ];
-  for (const c of candidates) {
-    if (c && fs.existsSync(c)) return c;
-  }
-  try {
-    const gitExec = execSync('git --exec-path', { encoding: 'utf8' }).trim();
-    const gitBash = path.resolve(gitExec, '..', '..', 'bin', 'bash.exe');
-    if (fs.existsSync(gitBash)) return gitBash;
-  } catch {}
-  return 'bash';
-})();
+const { BASH_CMD, hasWorkingBash, skipBanner } = require('./lib/bash-probe');
 
 const SUITES = [
   'help/flags',
@@ -55,38 +37,6 @@ function toPosixPath(p) {
 function runScript(scriptPath, args, options = {}) {
   const normScript = `"${toPosixPath(scriptPath)}"`;
   return execSync(`"${BASH_CMD}" ${normScript} ${args}`, options);
-}
-
-function hasWorkingBash() {
-  // A broken WSL relay fails the probe with a spawn error (status === null),
-  // so treat "bash exists but cannot exec" as "no bash".
-  const probe = spawnSync(BASH_CMD, ['-c', 'exit 0'], { stdio: 'ignore' });
-  return !probe.error && probe.status === 0;
-}
-
-function skipBanner() {
-  const lines = [
-    '==============================================================',
-    '  SKIPPED — uninstaller test suite was NOT run',
-    '==============================================================',
-    '',
-    '  Reason: no working bash was detected on this machine',
-    '          (probe `bash -c "exit 0"` failed, e.g. a broken WSL relay).',
-    '',
-    '  Suites skipped (NOT run):',
-  ];
-  for (const suite of SUITES) {
-    lines.push(`    - ${suite}`);
-  }
-  lines.push(
-    '',
-    '  How to run them:',
-    '    - Install Git Bash (https://gitforwindows.org), or enable WSL,',
-    '      then re-run after installing Git Bash / enabling WSL:',
-    '      node scripts/uninstall-test.js',
-    '=============================================================='
-  );
-  return lines.join('\n');
 }
 
 function runTests() {
@@ -171,7 +121,11 @@ function main() {
     process.exit(1);
   }
 
-  console.log(skipBanner());
+  console.log(skipBanner({
+    title: 'uninstaller test suite',
+    items: SUITES,
+    runCommand: 'node scripts/uninstall-test.js',
+  }));
   process.exit(0);
 }
 
