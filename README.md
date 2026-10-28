@@ -56,7 +56,7 @@ Need instant, deterministic design intelligence? Query the embedded zero-depende
 **Fastest path — any agent, one command.** The open [skills CLI](https://github.com/vercel-labs/skills) installs into 70+ agents (Claude Code, Cursor, Codex, Copilot, Cline, and more):
 
 ```bash
-npx skills add manhquoc2013/agent-skills            # install all 26 skills
+npx skills add manhquoc2013/agent-skills            # install all 31 skills
 npx skills add manhquoc2013/agent-skills --list     # browse before installing
 ```
 
@@ -369,11 +369,11 @@ The portable core stays in shared directories. Host-specific paths are native di
 
 | Layer / consumer | Repository paths | Purpose |
 |---|---|---|
-| Shared workflow core | `skills/` (26 skills) | Portable `SKILL.md` workflows used by every integration |
+| Shared workflow core | `skills/` (31 skills) | Portable `SKILL.md` workflows used by every integration |
 | Shared review material | `agents/` (4 personas), `references/` (7 checklists) | Specialist reviewers and pack-level checklists carried by whole-repo installs |
-| Claude Code adapter | `.claude/commands/` (9 commands), `.claude-plugin/`, `hooks/` | Slash-command wrappers, marketplace metadata, and lifecycle hooks |
-| Gemini CLI adapter | `.gemini/commands/` (9 commands) | Gemini-native TOML command wrappers |
-| Antigravity CLI adapter | `commands/` (9 commands), `plugin.json` | Legacy TOML wrappers and the root plugin manifest; see the [known wrapper limitation](docs/antigravity-setup.md#lifecycle-workflows-and-command-compatibility) |
+| Claude Code adapter | `.claude/commands/` (12 commands), `.claude-plugin/`, `hooks/` | Slash-command wrappers, marketplace metadata, and lifecycle hooks |
+| Gemini CLI adapter | `.gemini/commands/` (12 commands) | Gemini-native TOML command wrappers |
+| Antigravity CLI adapter | `commands/` (12 commands), `plugin.json` | Legacy TOML wrappers and the root plugin manifest; see the [known wrapper limitation](docs/antigravity-setup.md#lifecycle-workflows-and-command-compatibility) |
 | Codex adapter | `.codex-plugin/`, `.agents/plugins/` | Codex plugin metadata and marketplace registration; Codex consumes `skills/` directly |
 | GitHub Copilot CLI adapter | `plugin.json` | Root plugin metadata; Copilot CLI discovers `skills/` by convention and does not register the lifecycle wrappers |
 | Contributor tooling | `scripts/` (13 scripts), `evals/` (26 case files), `.github/workflows/` | Validation, routing evals, and CI |

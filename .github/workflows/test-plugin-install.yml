@@ -22,6 +22,15 @@ jobs:
       - name: Validate all skills
         run: node scripts/validate-skills.js
 
+      # The README catalog table and every stated skill count are prose; they drift
+      # from skills/ silently (both said 26 while 31 shipped). The filesystem is the
+      # source of truth, so this fails CI rather than waiting for a reader to notice.
+      - name: Validate skill catalog matches README
+        run: node scripts/validate-catalog.js
+
+      - name: Test catalog validator
+        run: node --test scripts/validate-catalog-test.js
+
       - name: Test skill lint rules
         run: node --test scripts/lib/skill-lint-test.js
 
@@ -48,6 +57,15 @@ jobs:
 
       - name: Test session-start hook payload
         run: bash hooks/session-start-test.sh
+
+      # build-agent-dist.js regenerates 20 generated descriptors from source. Without
+      # this step a skill edit ships in skills/ while .cursor/, .codex-plugin/ and the
+      # rest keep the old text, and CI stays green. Regenerate and demand a clean tree:
+      # porcelain (not just diff) so an untracked generated file is caught too.
+      - name: Verify generated agent distributions are in sync
+        run: |
+          node scripts/build-agent-dist.js
+          test -z "$(git status --porcelain)"
 
   validate-commands:
     name: Validate command parity and description sync
@@ -103,6 +121,9 @@ jobs:
 
       - name: Validate all skills
         run: node scripts/validate-skills.js
+
+      - name: Validate skill catalog matches README
+        run: node scripts/validate-catalog.js
 
       - name: Validate manifest versions
         run: node scripts/validate-versions.js

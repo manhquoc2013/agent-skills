@@ -1,6 +1,6 @@
 # Hướng dẫn sử dụng Agent Skills
 
-Tài liệu hướng dẫn sử dụng bộ skill trong repo này — dành cho người dùng tiếng Việt. Căn cứ trực tiếp trên 31 skill trong `skills/`, 9 slash command trong `.claude/commands/`, 4 persona trong `agents/`, và các quy tắc phối hợp trong `AGENTS.md` + `docs/skill-anatomy.md`.
+Tài liệu hướng dẫn sử dụng bộ skill trong repo này — dành cho người dùng tiếng Việt. Căn cứ trực tiếp trên 31 skill trong `skills/`, 12 slash command trong `.claude/commands/`, 4 persona trong `agents/`, và các quy tắc phối hợp trong `AGENTS.md` + `docs/skill-anatomy.md`.
 
 ## 1. Tổng quan
 

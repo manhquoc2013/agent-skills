@@ -74,7 +74,7 @@ Install the extension directly:
 gemini extensions install https://github.com/manhquoc2013/agent-skills
 ```
 
-Registers all 10 commands and loads `AGENTS.md` as continuous context.
+Registers all 12 commands and loads `AGENTS.md` as continuous context.
 
 ---
 

@@ -36,7 +36,9 @@
     "build": "node scripts/build-agent-dist.js",
     "prepare": "node scripts/build-agent-dist.js",
     "uninstall": "bash scripts/uninstall-local.sh",
-    "test": "node scripts/validate-skills.js && node scripts/validate-commands.js && node scripts/validate-reference-links.js && node scripts/uninstall-test.js"
+    "test": "npm run test:gates && npm run test:hooks",
+    "test:gates": "node scripts/validate-skills.js && node scripts/validate-versions.js && node scripts/validate-reference-links.js && node scripts/validate-commands.js && node scripts/validate-artifact-paths.js && node scripts/validate-catalog.js && node scripts/run-evals.js --min-rank1 95 && node --test scripts/lib/skill-lint-test.js scripts/validate-versions-test.js scripts/run-evals-test.js scripts/validate-reference-links-test.js scripts/validate-commands-test.js scripts/validate-artifact-paths-test.js scripts/floor-guard-reference-test.js scripts/validate-catalog-test.js && node scripts/uninstall-test.js",
+    "test:hooks": "bash hooks/session-start-test.sh && bash hooks/sdd-cache-test.sh && bash hooks/simplify-ignore-test.sh"
   },
   "publishConfig": {
     "access": "public"
