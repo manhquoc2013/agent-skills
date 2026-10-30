@@ -117,9 +117,13 @@ user_destinations_for() {
   case "$id" in
     cursor) echo "$HOME/.cursor/skills" ;;
     antigravity)
-      # Antigravity supports global skills in ~/.gemini/config/skills and in plugins
+      # Un-namespaced slash commands (/s-spec, /s-plan, ...). Plugin skills under
+      # ~/.gemini/config/plugins/agent-skills/skills are invoked as /agent-skills:<name>,
+      # and agy does not surface commands/*.toml as /s-* commands.
+      # IDE: https://antigravity.google/docs/migration/workflows-to-skills/
+      # CLI: https://antigravity.google/docs/cli/gcli-migration/
       echo "$HOME/.gemini/config/skills"
-      echo "$HOME/.gemini/config/plugins/agent-skills/skills"
+      echo "$HOME/.gemini/antigravity-cli/skills"
       ;;
     claude) echo "$HOME/.claude/skills" ;;
     codex) echo "$HOME/.codex/skills" ;;
@@ -361,10 +365,6 @@ echo "=========================================================="
 echo
 
 for id in "${SELECTED[@]}"; do
-  if [[ "$id" == "antigravity" ]]; then
-    echo "Target: antigravity (skipped — commands/*.toml provides native slash commands)"
-    continue
-  fi
   echo "Target: $id"
   if [[ "$SCOPE" == "project" ]]; then
     while IFS= read -r dest; do

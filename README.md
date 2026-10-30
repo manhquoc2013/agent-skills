@@ -117,7 +117,7 @@ Put workflow skills under `.cursor/skills/` (sync from `agent-skills/skills/`) a
 <details>
 <summary><b>Antigravity CLI</b></summary>
 
-Install as a native plugin for skills and subagents. In affected Antigravity CLI releases, legacy command TOMLs are reported as converted but their wrapper commands are not discoverable; invoke the underlying namespaced skills directly. See [docs/antigravity-setup.md](docs/antigravity-setup.md#lifecycle-workflows-and-command-compatibility).
+Install as a native plugin for skills and subagents. Short `/s-*` commands are skill wrappers in `~/.gemini/config/skills` (IDE) and `~/.gemini/antigravity-cli/skills` (CLI), because affected Antigravity releases do not surface `commands/*.toml` as slash commands. See [docs/antigravity-setup.md](docs/antigravity-setup.md#lifecycle-workflows-and-command-compatibility).
 
 **Install from the repo:**
 
@@ -373,7 +373,7 @@ The portable core stays in shared directories. Host-specific paths are native di
 | Shared review material | `agents/` (4 personas), `references/` (7 checklists) | Specialist reviewers and pack-level checklists carried by whole-repo installs |
 | Claude Code adapter | `.claude/commands/` (12 commands), `.claude-plugin/`, `hooks/` | Slash-command wrappers, marketplace metadata, and lifecycle hooks |
 | Gemini CLI adapter | `.gemini/commands/` (12 commands) | Gemini-native TOML command wrappers |
-| Antigravity CLI adapter | `commands/` (12 commands), `plugin.json` | Legacy TOML wrappers and the root plugin manifest; see the [known wrapper limitation](docs/antigravity-setup.md#lifecycle-workflows-and-command-compatibility) |
+| Antigravity CLI adapter | `commands/` (12 commands), `plugin.json` | Legacy TOML wrappers and the root plugin manifest; short `/s-*` commands are installed as skills ([setup](docs/antigravity-setup.md#lifecycle-workflows-and-command-compatibility)) |
 | Codex adapter | `.codex-plugin/`, `.agents/plugins/` | Codex plugin metadata and marketplace registration; Codex consumes `skills/` directly |
 | GitHub Copilot CLI adapter | `plugin.json` | Root plugin metadata; Copilot CLI discovers `skills/` by convention and does not register the lifecycle wrappers |
 | Contributor tooling | `scripts/` (34 files), `evals/` (31 case files), `.github/workflows/` | Validation, routing evals, and CI |

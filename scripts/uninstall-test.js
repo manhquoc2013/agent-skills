@@ -93,6 +93,29 @@ function runTests() {
     assert(!fs.existsSync(aliasDir), 'Alias s-agent should be removed after uninstall');
     console.log('  ✓ Test 5 passed.');
 
+    console.log('Test 5b: Antigravity /s-* aliases land in slash-command skill dirs');
+    const fakeHome = path.join(tempDir, 'home');
+    fs.mkdirSync(fakeHome, { recursive: true });
+    const aliasEnv = { ...process.env, HOME: fakeHome };
+    execSync(`"${BASH_CMD}" "${toPosixPath(ALIASES_SCRIPT)}" --only antigravity`, {
+      env: aliasEnv,
+      stdio: 'pipe',
+    });
+    const ideAlias = path.join(fakeHome, '.gemini', 'config', 'skills', 's-spec', 'SKILL.md');
+    const cliAlias = path.join(fakeHome, '.gemini', 'antigravity-cli', 'skills', 's-spec', 'SKILL.md');
+    const pluginAlias = path.join(fakeHome, '.gemini', 'config', 'plugins', 'agent-skills', 'skills', 's-spec');
+    assert(fs.existsSync(ideAlias), 'IDE global /s-spec skill should exist');
+    assert(fs.existsSync(cliAlias), 'CLI global /s-spec skill should exist');
+    assert(!fs.existsSync(pluginAlias), 'Plugin catalog must not receive /s-* wrappers');
+    assert(fs.readFileSync(ideAlias, 'utf8').includes('name: s-spec'), 'Wrapper name must be the slash command');
+    execSync(`"${BASH_CMD}" "${toPosixPath(ALIASES_SCRIPT)}" --uninstall --only antigravity`, {
+      env: aliasEnv,
+      stdio: 'pipe',
+    });
+    assert(!fs.existsSync(ideAlias), 'IDE /s-spec wrapper should be removed');
+    assert(!fs.existsSync(cliAlias), 'CLI /s-spec wrapper should be removed');
+    console.log('  ✓ Test 5b passed.');
+
     // Test 6: Delegation via install-local.sh --uninstall
     console.log('Test 6: Delegation from install-local.sh --uninstall');
     const delegatedList = runScript(INSTALL_SCRIPT, `--uninstall --list --scope project --project "${toPosixPath(tempDir)}"`, { encoding: 'utf8' });

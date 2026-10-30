@@ -147,7 +147,7 @@ note_for() {
     claude) echo "Registers this clone with: claude plugin marketplace add <repo> && claude plugin install agent-skills@addy-agent-skills" ;;
     codex) echo "Registers this clone with: codex plugin marketplace add <repo> && codex plugin add agent-skills@agent-skills" ;;
     gemini) echo "Installs with: gemini skills install <repo>/skills" ;;
-    antigravity) echo "Installs the whole plugin with: agy plugin install <repo>. Antigravity keeps that plugin global." ;;
+    antigravity) echo "Installs the plugin with: agy plugin install <repo>. Short /s-* commands are skill wrappers in ~/.gemini/config/skills (IDE) and ~/.gemini/antigravity-cli/skills (CLI)." ;;
     windsurf) echo "This copies skill folders. Windsurf rules files stay untouched." ;;
     opencode) echo "OpenCode reads .opencode/skills and ~/.config/opencode/skills." ;;
     copilot) echo "VS Code Copilot reads .github/skills in the project and ~/.agents/skills for the user." ;;
@@ -595,7 +595,8 @@ if [[ "$NO_ALIASES" -eq 0 && -f "$REPO_ROOT/scripts/install-aliases.sh" ]]; then
   [[ "$SCOPE" == "project" ]] && alias_args+=(--scope project --project "$PROJECT")
   alias_targets=()
   for u in "${unique[@]}"; do
-    [[ "$u" == "cursor" || "$u" == "antigravity" ]] && continue
+    # Cursor writes /s-* itself via install_cursor_slash_commands.
+    [[ "$u" == "cursor" ]] && continue
     alias_targets+=("$u")
   done
   if [[ ${#alias_targets[@]} -gt 0 ]]; then

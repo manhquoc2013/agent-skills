@@ -45,9 +45,25 @@ agy plugin list
 
 ## Lifecycle Workflows and Command Compatibility
 
-Antigravity's [migration tooling](https://www.agy.dev/docs/cli/gcli-migration/) reports the 9 legacy definitions in `commands/*.toml` as "converted to skills." In affected `agy` 1.1.x releases, validation succeeds but the converted wrappers do not appear in the slash-command or skill catalog. A successful `agy plugin validate` therefore confirms the files are well formed, not that `/s-build` and the other short wrappers are available. This is tracked in [agent-skills #445](https://github.com/addyosmani/agent-skills/issues/445) and upstream in [antigravity-cli #788](https://github.com/google-antigravity/antigravity-cli/issues/788).
+Antigravity's [migration tooling](https://antigravity.google/docs/cli/gcli-migration/) reports the definitions in `commands/*.toml` as "converted to skills." In affected `agy` 1.1.x releases, validation succeeds but those converted wrappers do not appear in the slash-command catalog. A successful `agy plugin validate` confirms the files are well formed, not that `/s-build` is available. This is tracked in [agent-skills #445](https://github.com/addyosmani/agent-skills/issues/445) and upstream in [antigravity-cli #788](https://github.com/google-antigravity/antigravity-cli/issues/788).
 
-Use the native plugin skills directly while that importer limitation applies:
+Plugin skills stay namespaced (`/agent-skills:spec-driven-development`). Short `/s-*` commands are separate skill wrappers. `scripts/install-local.sh` and `scripts/install-aliases.sh` write them where Antigravity indexes an un-namespaced `/name`:
+
+| Host | Path |
+|------|------|
+| Antigravity IDE | `~/.gemini/config/skills/s-*/SKILL.md` |
+| Antigravity CLI | `~/.gemini/antigravity-cli/skills/s-*/SKILL.md` |
+| One project | `<project>/.agents/skills/s-*/SKILL.md` |
+
+They are not written into `~/.gemini/config/plugins/agent-skills/skills/`, because that catalog only exposes `/agent-skills:<name>`.
+
+If a previous install skipped these wrappers, refresh them without reinstalling the plugin:
+
+```bash
+./scripts/install-aliases.sh --only antigravity
+```
+
+Open a new session and type `/s-`. If a wrapper is missing, use the namespaced skill directly:
 
 | Intended wrapper | Direct Antigravity invocation | Notes |
 |------------------|-------------------------------|-------|
@@ -80,7 +96,7 @@ To validate that your local plugin is correctly structured and contains all skil
 agy plugin validate /path/to/agent-skills
 ```
 
-Then start a fresh session and type `/agent-skills:` to inspect the namespaced skill catalog. If the validator reports that commands were converted but `/s-build` returns `No matches`, use the direct invocations above; reinstalling or adding a TOML `name` field does not resolve the known importer limitation.
+Then start a fresh session and type `/s-` for the short wrappers, or `/agent-skills:` for the namespaced skill catalog. If `/s-build` returns `No matches`, run `./scripts/install-aliases.sh --only antigravity` and open a new session. Reinstalling the plugin or adding a TOML `name` field does not register those short commands.
 
 ---
 
